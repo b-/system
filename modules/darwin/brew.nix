@@ -4,16 +4,12 @@
     global = {
       brewfile = true;
     };
-    brews = [
-      "awscli"
-      "earthly"
-    ];
+    brews = [];
 
     taps = [
       "1password/tap"
       "beeftornado/rmtree"
       "cloudflare/cloudflare"
-      "earthly/earthly"
       "homebrew/bundle"
       "homebrew/cask-fonts"
       "homebrew/cask-versions"
@@ -24,10 +20,7 @@
     casks = [
       "1password"
       "1password-cli"
-      "alt-tab"
       "appcleaner"
-      "bartender"
-      "docker"
       "firefox-developer-edition"
       "fork"
       "google-chrome"

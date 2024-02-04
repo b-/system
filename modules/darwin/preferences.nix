@@ -19,12 +19,12 @@
     trackpad = {
       # silent clicking = 0, default = 1
       ActuationStrength = 0;
-      # enable tap to click
-      Clicking = true;
+      # disable tap to click
+      Clicking = false;
       # firmness level, 0 = lightest, 2 = heaviest
-      FirstClickThreshold = 1;
+      FirstClickThreshold = 2;
       # firmness level for force touch
-      SecondClickThreshold = 1;
+      SecondClickThreshold = 2;
       # don't allow positional right click
       TrackpadRightClick = false;
       # three finger drag for space switching
@@ -42,18 +42,18 @@
     # dock settings
     dock = {
       # auto show and hide dock
-      autohide = true;
+      autohide = false;
       # remove delay for showing dock
-      autohide-delay = 0.0;
+      #autohide-delay = 0.0;
       # how fast is the dock showing animation
-      autohide-time-modifier = 1.0;
+      #autohide-time-modifier = 1.0;
       tilesize = 50;
-      static-only = false;
-      showhidden = false;
-      show-recents = false;
+      #static-only = false;
+      #showhidden = false;
+      #show-recents = false;
       show-process-indicators = true;
       orientation = "bottom";
-      mru-spaces = false;
+      #mru-spaces = false; # TODO what does this do
     };
 
     NSGlobalDomain = {
@@ -64,12 +64,12 @@
       # delay between repeated keystrokes upon holding a key
       KeyRepeat = 1;
       AppleShowAllExtensions = true;
-      AppleShowScrollBars = "Automatic";
+      AppleShowScrollBars = "Automatic"; # TODO "Never"?
     };
   };
 
   system.keyboard = {
-    enableKeyMapping = true;
-    remapCapsLockToControl = true;
+    enableKeyMapping = false; # because of karabiner
+    remapCapsLockToControl = false; # because of karabiner
   };
 }
