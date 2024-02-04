@@ -14,7 +14,7 @@
       "${config.user.name}" = {
         isNormalUser = true;
         extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
-        hashedPassword = "$6$1kR9R2U/NA0.$thN8N2sTo7odYaoLhipeuu5Ic4CS7hKDt1Q6ClP9y0I3eVMaFmo.dZNpPfdwNitkElkaLwDVsGpDuM2SO2GqP/";
+        hashedPassword = "$6$JbbwLJPz28ot0r5z$3oq1V30xo.NQOLGoeP/5s/JRlMLvyEGcFfHU.gB.Qv29uF1y3W/hpSiI4e4K3rcJZBwaT9z/i2nF4a7Ql96nw0";
       };
     };
   };
