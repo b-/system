@@ -53,6 +53,7 @@
     packages = with pkgs; [
       # age
       alejandra
+      atuin
       cachix
       cb
       cirrus-cli
@@ -104,6 +105,7 @@
       ruff
       rsync
       shellcheck
+      starship
       stylua
       sysdo
       tree
