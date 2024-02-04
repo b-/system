@@ -189,8 +189,8 @@
       "bri@x86_64-linux" = mkNixosConfig {
         system = "x86_64-linux";
         hardwareModules = [
-          ./modules/hardware/phil.nix
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+          ./modules/hardware/chromebook.nix
+          # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
         extraModules = [./profiles/personal.nix];
       };
