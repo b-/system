@@ -32,6 +32,10 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # shell stuff
     flake-utils.url = "github:numtide/flake-utils";
@@ -44,6 +48,7 @@
     devenv,
     flake-utils,
     home-manager,
+    nixos-generators,
     ...
   } @ inputs: let
     inherit (flake-utils.lib) eachSystemMap;
@@ -175,24 +180,30 @@
         system = "x86_64-darwin";
         extraModules = [./profiles/personal.nix ./modules/darwin/apps.nix];
       };
-      "lejeukc1@aarch64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/work.nix];
-      };
-      "lejeukc1@x86_64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/work.nix];
-      };
+      #  "lejeukc1@aarch64-darwin" = mkDarwinConfig {
+      #    system = "aarch64-darwin";
+      #    extraModules = [./profiles/work.nix];
+      #  };
+      #  "lejeukc1@x86_64-darwin" = mkDarwinConfig {
+      #    system = "aarch64-darwin";
+      #    extraModules = [./profiles/work.nix];
+      #  };
     };
 
     nixosConfigurations = {
       "bri@x86_64-linux" = mkNixosConfig {
+        # imports = [
+        #   nixos-generators.nixosModules.all-formats
+        # ];
         system = "x86_64-linux";
         hardwareModules = [
           ./modules/hardware/chromebook.nix
           # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
-        extraModules = [./profiles/personal.nix];
+        extraModules = [
+          ./profiles/personal.nix
+          nixos-generators.nixosModules.all-formats
+        ];
       };
       # "bri@aarch64-linux" = mkNixosConfig {
       #   system = "aarch64-linux";
@@ -222,11 +233,11 @@
         system = "aarch64-darwin";
         extraModules = [./profiles/home-manager/personal.nix];
       };
-      "lejeukc1@x86_64-linux" = mkHomeConfig {
-        username = "lejeukc1";
-        system = "x86_64-linux";
-        extraModules = [./profiles/home-manager/work.nix];
-      };
+      # "lejeukc1@x86_64-linux" = mkHomeConfig {
+      #   username = "lejeukc1";
+      #   system = "x86_64-linux";
+      #   extraModules = [./profiles/home-manager/work.nix];
+      # };
     };
 
     devShells = eachSystemMap defaultSystems (system: let

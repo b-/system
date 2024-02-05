@@ -102,8 +102,9 @@
       ranger
       rclone
       restic
-      ruff
+      rnix-lsp
       rsync
+      ruff
       shellcheck
       starship
       stylua
