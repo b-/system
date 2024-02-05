@@ -1,9 +1,6 @@
 {
   pkgs,
   config,
-  options,
-  lib,
-  nixpkgs,
   ...
 }: {
   # Enable CUPS to print documents.
@@ -17,7 +14,7 @@
     # Enable the X11 windowing system.
     xserver = {
       enable = true;
-      layout = "us";
+      xkb.layout = "us";
       # services.xserver.xkbOptions = "eurosign:e";
 
       # Enable touchpad support.

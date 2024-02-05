@@ -4,7 +4,6 @@
 {
   config,
   lib,
-  pkgs,
   modulesPath,
   ...
 }: {
@@ -18,12 +17,14 @@
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/d4dfe6a8-4b34-49a5-b6f0-49340ab31631";
+    #device = "/dev/disk/by-uuid/d4dfe6a8-4b34-49a5-b6f0-49340ab31631";
+    device = "/dev/disk/by-label/nixos";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/1B0E-E1C8";
+    #device = "/dev/disk/by-uuid/1B0E-E1C8";
+    device = "/dev/disk/by-label/ESP";
     fsType = "vfat";
   };
 
