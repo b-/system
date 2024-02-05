@@ -4,6 +4,7 @@
       "1password"
       "1password-cli"
       "86box"
+      "balenaetcher"
       "betterTouchTool"
       "discord"
       "discord"
