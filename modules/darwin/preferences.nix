@@ -25,8 +25,8 @@
       FirstClickThreshold = 2;
       # firmness level for force touch
       SecondClickThreshold = 2;
-      # don't allow positional right click
-      TrackpadRightClick = false;
+      # allow 2-finger right click
+      TrackpadRightClick = true;
       # three finger drag for space switching
       # TrackpadThreeFingerDrag = true;
     };
