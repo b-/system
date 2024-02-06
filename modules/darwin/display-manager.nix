@@ -1,10 +1,8 @@
-{ config, ... }:
-{
-  homebrew.extraConfig = ''
-    brew "yabai", restart_service: "changed"
-  '';
+{...}: let
+  isYabaiEnabled = false;
+in {
   services.yabai = {
-    enable = false;
+    enable = isYabaiEnabled;
     config = {
       mouse_follows_focus = "off";
       focus_follows_mouse = "off";
@@ -40,6 +38,13 @@
       yabai -m rule --add title="(Copy|Bin|About This Mac|Info)" manage=off
       # Do not manage some apps which are not resizable
       yabai -m rule --add app="^(Calculator|System Preferences|[sS]tats|[Jj]et[Bb]rains [Tt]ool[Bb]ox)$" manage=off
+    '';
+  };
+
+  system.activationScripts.yabai = {
+    enable = isYabaiEnabled;
+    text = ''
+      yabai --restart-service || yabai --start-service
     '';
   };
 }
