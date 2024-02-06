@@ -48,23 +48,26 @@
       # how fast is the dock showing animation
       #autohide-time-modifier = 1.0;
       tilesize = 50;
-      #static-only = false;
-      #showhidden = false;
-      #show-recents = false;
+      static-only = false;
+      showhidden = false;
+      show-recents = true;
       show-process-indicators = true;
       orientation = "bottom";
-      #mru-spaces = false; # TODO what does this do
+      mru-spaces = true;
+
+      # top-left corner action
+      wvous-tl-corner = 2; # * `1`: Disabled `2`: Mission Control `3`: Application Windows `4`: Desktop `5`: Start Screen Saver `6`: Disable Screen Saver `7`: Dashboard `10`: Put Display to Sleep `11`: Launchpad `12`: Notification Center `13`: Lock Screen `14`: Quick Note
     };
 
     NSGlobalDomain = {
       # allow key repeat
       ApplePressAndHoldEnabled = false;
       # delay before repeating keystrokes
-      InitialKeyRepeat = 10;
+      InitialKeyRepeat = 15;
       # delay between repeated keystrokes upon holding a key
-      KeyRepeat = 1;
+      KeyRepeat = 2;
       AppleShowAllExtensions = true;
-      AppleShowScrollBars = "Automatic"; # TODO "Never"?
+      AppleShowScrollBars = "WhenScrolling";
     };
   };
 
