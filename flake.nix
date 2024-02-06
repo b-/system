@@ -209,7 +209,7 @@
       #  };
     };
 
-    diskoConfigurations.test = import disk-config.nix;
+    diskoConfigurations.test = import ./disk-config.nix;
     nixosConfigurations = {
       "bri@x86_64-linux" = mkNixosConfig {
         # imports = [
