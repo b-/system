@@ -67,7 +67,11 @@ in {
     ];
     oh-my-zsh = {
       enable = true;
-      plugins = ["git" "sudo" "asdf"];
+      plugins = [
+        "git"
+        "sudo"
+        "asdf"
+      ];
     };
   };
 

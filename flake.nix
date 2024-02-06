@@ -2,13 +2,9 @@
   description = "nix system configurations";
 
   nixConfig = {
-    substituters = [
-      "https://cache.nixos.org"
-    ];
+    substituters = ["https://cache.nixos.org"];
 
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    ];
+    trusted-public-keys = ["cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="];
   };
 
   inputs = {
@@ -32,6 +28,16 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # hardware and vm support
+    disko = {
+      url = "github:nix-community/disko/make-disk-image";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # nixos-anywhere = {
+    #   url = "github:numtide/nixos-anywhere";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +52,7 @@
     self,
     darwin,
     devenv,
+    disko,
     flake-utils,
     home-manager,
     nixos-generators,
@@ -79,7 +86,9 @@
       inputs.darwin.lib.darwinSystem {
         inherit system;
         modules = baseModules ++ extraModules;
-        specialArgs = {inherit self inputs nixpkgs;};
+        specialArgs = {
+          inherit self inputs nixpkgs;
+        };
       };
 
     # generate a base nixos configuration with the
@@ -91,13 +100,16 @@
       baseModules ? [
         home-manager.nixosModules.home-manager
         ./modules/nixos
+        nixos-generators.nixosModules.all-formats
       ],
       extraModules ? [],
     }:
       nixpkgs.lib.nixosSystem {
         inherit system;
         modules = baseModules ++ hardwareModules ++ extraModules;
-        specialArgs = {inherit self inputs nixpkgs;};
+        specialArgs = {
+          inherit self inputs nixpkgs;
+        };
       };
 
     # generate a home-manager configuration usable on any unix system
@@ -125,7 +137,9 @@
           inherit system;
           overlays = builtins.attrValues self.overlays;
         };
-        extraSpecialArgs = {inherit self inputs nixpkgs;};
+        extraSpecialArgs = {
+          inherit self inputs nixpkgs;
+        };
         modules = baseModules ++ extraModules;
       };
 
@@ -146,8 +160,7 @@
           .system
           .build
           .toplevel;
-        "${username}_home" =
-          self.homeConfigurations."${username}@${arch}-${os}".activationPackage;
+        "${username}_home" = self.homeConfigurations."${username}@${arch}-${os}".activationPackage;
         devShell = self.devShells."${arch}-${os}".default;
       };
     };
@@ -174,11 +187,17 @@
     darwinConfigurations = {
       "bri@aarch64-darwin" = mkDarwinConfig {
         system = "aarch64-darwin";
-        extraModules = [./profiles/personal.nix ./modules/darwin/apps.nix];
+        extraModules = [
+          ./profiles/personal.nix
+          ./modules/darwin/apps.nix
+        ];
       };
       "bri@x86_64-darwin" = mkDarwinConfig {
         system = "x86_64-darwin";
-        extraModules = [./profiles/personal.nix ./modules/darwin/apps.nix];
+        extraModules = [
+          ./profiles/personal.nix
+          ./modules/darwin/apps.nix
+        ];
       };
       #  "lejeukc1@aarch64-darwin" = mkDarwinConfig {
       #    system = "aarch64-darwin";
@@ -190,6 +209,7 @@
       #  };
     };
 
+    diskoConfigurations.test = import disk-config.nix;
     nixosConfigurations = {
       "bri@x86_64-linux" = mkNixosConfig {
         # imports = [
@@ -201,8 +221,26 @@
           # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
         extraModules = [
+          disko.nixosmodules.disko
           ./profiles/personal.nix
-          nixos-generators.nixosModules.all-formats
+          ./modules/nixos/desktop.nix
+          ./modules/nixos/gnome.nix
+        ];
+      };
+      "server@x86_64-linux" = mkNixosConfig {
+        # imports = [
+        #   nixos-generators.nixosModules.all-formats
+        # ];
+        system = "x86_64-linux";
+        hardwareModules = [
+          ./modules/hardware/chromebook.nix
+          # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+        ];
+        extraModules = [
+          disko.nixosmodules.disko
+          #          ./profiles/personal.nix
+          #          ./modules/nixos/desktop.nix
+          #          ./modules/nixos/gnome.nix
         ];
       };
       # "bri@aarch64-linux" = mkNixosConfig {
@@ -240,95 +278,106 @@
       # };
     };
 
-    devShells = eachSystemMap defaultSystems (system: let
-      pkgs = import inputs.nixpkgs {
-        inherit system;
-        overlays = builtins.attrValues self.overlays;
-      };
-    in {
-      default = devenv.lib.mkShell {
-        inherit inputs pkgs;
-        modules = [
-          (import ./devenv.nix)
-        ];
-      };
-    });
+    devShells = eachSystemMap defaultSystems (
+      system: let
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = builtins.attrValues self.overlays;
+        };
+      in {
+        default = devenv.lib.mkShell {
+          inherit inputs pkgs;
+          modules = [(import ./devenv.nix)];
+        };
+      }
+    );
 
-    packages = eachSystemMap defaultSystems (system: let
-      pkgs = import inputs.nixpkgs {
-        inherit system;
-        overlays = builtins.attrValues self.overlays;
-      };
-    in rec {
-      pyEnv =
-        pkgs.python3.withPackages
-        (ps: with ps; [black typer colorama shellingham]);
-      sysdo = pkgs.writeScriptBin "sysdo" ''
-        #! ${pyEnv}/bin/python3
-        ${builtins.readFile ./bin/do.py}
-      '';
-      cb = pkgs.writeShellScriptBin "cb" ''
-        #! ${pkgs.lib.getExe pkgs.bash}
-        # universal clipboard, stephen@niedzielski.com
+    packages = eachSystemMap defaultSystems (
+      system: let
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = builtins.attrValues self.overlays;
+        };
+      in rec {
+        pyEnv = pkgs.python3.withPackages (
+          ps:
+            with ps; [
+              black
+              typer
+              colorama
+              shellingham
+            ]
+        );
+        sysdo = pkgs.writeScriptBin "sysdo" ''
+          #! ${pyEnv}/bin/python3
+          ${builtins.readFile ./bin/do.py}
+        '';
+        cb = pkgs.writeShellScriptBin "cb" ''
+                      #! ${pkgs.lib.getExe pkgs.bash}
+                      # universal clipboard, stephen@niedzielski.com
 
-        shopt -s expand_aliases
+          shopt - s expand_aliases
 
-        # ------------------------------------------------------------------------------
-        # os utils
 
-        case "$OSTYPE$(uname)" in
-          [lL]inux*) TUX_OS=1 ;;
-         [dD]arwin*) MAC_OS=1 ;;
-          [cC]ygwin) WIN_OS=1 ;;
-                  *) echo "unknown os=\"$OSTYPE$(uname)\"" >&2 ;;
-        esac
+                      # ------------------------------------------------------------------------------
+                      # os utils
 
-        is_tux() { [ ''${TUX_OS-0} -ne 0 ]; }
-        is_mac() { [ ''${MAC_OS-0} -ne 0 ]; }
-        is_win() { [ ''${WIN_OS-0} -ne 0 ]; }
+                      case "$OSTYPE$(uname)" in
+                        [lL]inux*) TUX_OS=1 ;;
+                       [dD]arwin*) MAC_OS=1 ;;
+                        [cC]ygwin) WIN_OS=1 ;;
+                                *) echo "unknown os=\"$OSTYPE$(uname)\"" >&2 ;;
+                      esac
 
-        # ------------------------------------------------------------------------------
-        # copy and paste
+                      is_tux() { [ ''${TUX_OS-0} -ne 0 ]; }
+                      is_mac() { [ ''${MAC_OS-0} -ne 0 ]; }
+                      is_win() { [ ''${WIN_OS-0} -ne 0 ]; }
 
-        if is_mac; then
-          alias cbcopy=pbcopy
-          alias cbpaste=pbpaste
-        elif is_win; then
-          alias cbcopy=putclip
-          alias cbpaste=getclip
-        else
-          alias cbcopy='${pkgs.xclip} -sel c'
-          alias cbpaste='${pkgs.xclip} -sel c -o'
-        fi
+                      # ------------------------------------------------------------------------------
+                      # copy and paste
 
-        # ------------------------------------------------------------------------------
-        cb() {
-          if [ ! -t 0 ] && [ $# -eq 0 ]; then
-            # no stdin and no call for --help, blow away the current clipboard and copy
-            cbcopy
-          else
-            cbpaste ''${@:+"$@"}
-          fi
-        }
+                      if is_mac; then
+                        alias cbcopy=pbcopy
+                        alias cbpaste=pbpaste
+                      elif is_win; then
+                        alias cbcopy=putclip
+                        alias cbpaste=getclip
+                      else
+                        alias cbcopy='${pkgs.xclip} -sel c'
+                        alias cbpaste='${pkgs.xclip} -sel c -o'
+                      fi
 
-        # ------------------------------------------------------------------------------
-        if ! return 2>/dev/null; then
-          cb ''${@:+"$@"}
-        fi
-      '';
-    });
+                      # ------------------------------------------------------------------------------
+                      cb() {
+                        if [ ! -t 0 ] && [ $# -eq 0 ]; then
+                          # no stdin and no call for --help, blow away the current clipboard and copy
+                          cbcopy
+                        else
+                          cbpaste ''${@:+"$@"}
+                        fi
+                      }
 
-    apps = eachSystemMap defaultSystems (system: rec {
-      sysdo = {
-        type = "app";
-        program = "${self.packages.${system}.sysdo}/bin/sysdo";
-      };
-      cb = {
-        type = "app";
-        program = "${self.packages.${system}.cb}/bin/cb";
-      };
-      default = sysdo;
-    });
+                      # ------------------------------------------------------------------------------
+                      if ! return 2>/dev/null; then
+                        cb ''${@:+"$@"}
+                      fi
+        '';
+      }
+    );
+
+    apps = eachSystemMap defaultSystems (
+      system: rec {
+        sysdo = {
+          type = "app";
+          program = "${self.packages.${system}.sysdo}/bin/sysdo";
+        };
+        cb = {
+          type = "app";
+          program = "${self.packages.${system}.cb}/bin/cb";
+        };
+        default = sysdo;
+      }
+    );
 
     overlays = {
       channels = final: prev: {

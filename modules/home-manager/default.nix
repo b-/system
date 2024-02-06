@@ -91,14 +91,15 @@
       poetry
       pre-commit
       # python with default packages
-      (python3.withPackages
-        (ps:
+      (python3.withPackages (
+        ps:
           with ps; [
             numpy
             scipy
             matplotlib
             networkx
-          ]))
+          ]
+      ))
       ranger
       rclone
       restic

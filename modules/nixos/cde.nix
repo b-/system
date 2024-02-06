@@ -1,9 +1,7 @@
 {
-  config,
   pkgs,
   lib,
   options,
-  unstable,
   ...
 }: let
   cde-icons = pkgs.writeShellScriptBin "cde-icons" ''
@@ -16,10 +14,12 @@
   '';
   cde-battery = pkgs.writeScriptBin "cde-battery" ''
     #!${pkgs.cdesktopenv}/opt/dt/bin/dtksh
-    ${pkgs.lib.readFile (pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/edorig/dtksh/5f49e402b391c81ebea9609bdec9c7716e70a8c0/battery";
-      sha256 = "0zjn9zl1as9xbk2845bbdy2xfj29b4hvvalcz8kf2llkndbfswvl";
-    })}
+    ${pkgs.lib.readFile (
+      pkgs.fetchurl {
+        url = "https://raw.githubusercontent.com/edorig/dtksh/5f49e402b391c81ebea9609bdec9c7716e70a8c0/battery";
+        sha256 = "0zjn9zl1as9xbk2845bbdy2xfj29b4hvvalcz8kf2llkndbfswvl";
+      }
+    )}
   '';
 in {
   services.xserver.desktopManager.cde.enable = true;

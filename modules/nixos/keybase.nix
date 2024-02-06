@@ -1,5 +1,9 @@
 {pkgs, ...}: {
-  environment.systemPackages = with pkgs; [kbfs keybase keybase-gui];
+  environment.systemPackages = with pkgs; [
+    kbfs
+    keybase
+    keybase-gui
+  ];
   services.keybase.enable = true;
   services.kbfs = {
     enable = true;
@@ -12,14 +16,22 @@
     keybase.serviceConfig.Slice = "keybase.slice";
 
     kbfs = {
-      environment = {KEYBASE_RUN_MODE = "prod";};
+      environment = {
+        KEYBASE_RUN_MODE = "prod";
+      };
       serviceConfig.Slice = "keybase.slice";
     };
 
     keybase-gui = {
       description = "Keybase GUI";
-      requires = ["keybase.service" "kbfs.service"];
-      after = ["keybase.service" "kbfs.service"];
+      requires = [
+        "keybase.service"
+        "kbfs.service"
+      ];
+      after = [
+        "keybase.service"
+        "kbfs.service"
+      ];
       serviceConfig = {
         ExecStart = "${pkgs.keybase-gui}/share/keybase/Keybase";
         PrivateTmp = true;

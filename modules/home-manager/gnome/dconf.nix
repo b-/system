@@ -3,14 +3,26 @@
   mkTuple = lib.hm.gvariant.mkTuple;
 in {
   dconf.settings = {
-    "org/gnome/control-center" = {last-panel = "notifications";};
+    "org/gnome/control-center" = {
+      last-panel = "notifications";
+    };
 
-    "org/gnome/desktop/datetime" = {automatic-timezone = true;};
+    "org/gnome/desktop/datetime" = {
+      automatic-timezone = true;
+    };
 
     "org/gnome/desktop/input-sources" = {
       current = "uint32 0";
-      sources = [(mkTuple ["xkb" "us"])];
-      xkb-options = ["terminate:ctrl_alt_bksp" "lv3:ralt_switch"];
+      sources = [
+        (mkTuple [
+          "xkb"
+          "us"
+        ])
+      ];
+      xkb-options = [
+        "terminate:ctrl_alt_bksp"
+        "lv3:ralt_switch"
+      ];
     };
 
     "org/gnome/desktop/interface" = {
@@ -23,7 +35,10 @@ in {
     };
 
     "org/gnome/desktop/notifications" = {
-      application-children = ["firefox" "gnome-power-panel"];
+      application-children = [
+        "firefox"
+        "gnome-power-panel"
+      ];
     };
 
     "org/gnome/desktop/notifications/application/firefox" = {
@@ -48,14 +63,24 @@ in {
       report-technical-problems = true;
     };
 
-    "org/gnome/desktop/sound" = {theme-name = "freedesktop";};
+    "org/gnome/desktop/sound" = {
+      theme-name = "freedesktop";
+    };
 
-    "org/gnome/desktop/wm/keybindings" = {close = ["<Alt>w"];};
+    "org/gnome/desktop/wm/keybindings" = {
+      close = ["<Alt>w"];
+    };
 
     "org/gnome/epiphany/state" = {
       is-maximized = false;
-      window-position = mkTuple [(-1) (-1)];
-      window-size = mkTuple [1024 768];
+      window-position = mkTuple [
+        (-1)
+        (-1)
+      ];
+      window-size = mkTuple [
+        1024
+        768
+      ];
     };
 
     "org/gnome/evolution-data-server" = {
@@ -76,10 +101,16 @@ in {
       hinting = "slight";
     };
 
-    "org/gnome/shell/world-clocks" = {locations = "@av []";};
+    "org/gnome/shell/world-clocks" = {
+      locations = "@av []";
+    };
 
-    "org/gnome/system/location" = {enabled = true;};
+    "org/gnome/system/location" = {
+      enabled = true;
+    };
 
-    "org/gtk/settings/file-chooser" = {clock-format = "12h";};
+    "org/gtk/settings/file-chooser" = {
+      clock-format = "12h";
+    };
   };
 }

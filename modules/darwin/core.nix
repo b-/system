@@ -9,7 +9,9 @@ in {
   # environment setup
   environment = {
     loginShell = pkgs.zsh;
-    etc = {darwin.source = "${inputs.darwin}";};
+    etc = {
+      darwin.source = "${inputs.darwin}";
+    };
     # Use a custom configuration.nix location.
     # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
 

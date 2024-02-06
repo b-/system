@@ -39,7 +39,9 @@
 
   # let nix manage home-manager profiles and use global nixpkgs
   home-manager = {
-    extraSpecialArgs = {inherit self inputs;};
+    extraSpecialArgs = {
+      inherit self inputs;
+    };
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
@@ -68,6 +70,9 @@
       # languages
       python3
       ruby
+
+      # nix stuff
+      nixfmt-rfc-style
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";
@@ -75,7 +80,11 @@
       stable.source = "${inputs.stable}";
     };
     # list of acceptable shells in /etc/shells
-    shells = with pkgs; [bash zsh fish];
+    shells = with pkgs; [
+      bash
+      zsh
+      fish
+    ];
   };
 
   fonts = {

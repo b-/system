@@ -8,4 +8,8 @@
     };
     desktopManager.gnome.enable = true;
   };
+
+  hm = {...}: {
+    imports = [../home-manager/gnome];
+  };
 }

@@ -29,7 +29,9 @@
       dataDir = config.user.home;
     };
   };
-  environment.systemPackages = with pkgs; [vscode firefox gnome.gnome-tweaks];
-
-  hm = {...}: {imports = [../home-manager/gnome];};
+  environment.systemPackages = with pkgs; [
+    vscode
+    firefox
+    gnome.gnome-tweaks
+  ];
 }
