@@ -217,7 +217,7 @@
         # ];
         system = "x86_64-linux";
         hardwareModules = [
-          ./modules/hardware/chromebook.nix
+          ./modules/hardware/hardware.nix
           # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
         extraModules = [
@@ -233,7 +233,7 @@
         # ];
         system = "x86_64-linux";
         hardwareModules = [
-          ./modules/hardware/chromebook.nix
+          ./modules/hardware/hardware.nix
           # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
         extraModules = [
