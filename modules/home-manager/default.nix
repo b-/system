@@ -80,6 +80,7 @@
       mmv
       ncdu
       neofetch
+      nil
       nix
       #nixfmt
       nixfmt-rfc-style
