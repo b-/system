@@ -221,7 +221,7 @@
           # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
         extraModules = [
-          disko.nixosmodules.disko
+          disko.nixosModules.disko
           ./profiles/personal.nix
           ./modules/nixos/desktop.nix
           ./modules/nixos/gnome.nix
@@ -237,7 +237,7 @@
           # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
         ];
         extraModules = [
-          disko.nixosmodules.disko
+          disko.nixosModules.disko
           #          ./profiles/personal.nix
           #          ./modules/nixos/desktop.nix
           #          ./modules/nixos/gnome.nix
