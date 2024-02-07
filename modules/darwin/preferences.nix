@@ -76,4 +76,6 @@
     enableKeyMapping = false; # because of karabiner
     remapCapsLockToControl = false; # because of karabiner
   };
+  # Enable Touch ID authentication for sudo
+  security.pam.enableSudoTouchIdAuth = true;
 }
