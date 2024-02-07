@@ -106,28 +106,10 @@
         inherit system;
         modules = baseModules ++ hardwareModules ++ extraModules;
         specialArgs = {inherit self inputs nixpkgs;};
-      };
-    nixosModules.customFormats = {}: {
-      formatConfigs.docker = {lib, ...}: {
-        services.resolved.enable = false;
-        services.qemuGuest.enable = lib.mkForce false;
-      };
-
-      formatConfigs.oracle = {modulesPath, ...}: {
-        imports = [
-          "${toString modulesPath}/virtualisation/oci-image.nix"
-        ];
-
-        formatAttr = "OCIImage";
-        fileExtension = ".qcow2";
-      };
-
-      formatConfigs.proxmox = {...}: {
-        qemuConf = {
+        config.proxmox.qemuConf = {
           bios = "ovmf";
         };
       };
-    };
 
     # generate a home-manager configuration usable on any unix system
     # with overlays and any extraModules applied
@@ -149,7 +131,7 @@
       ],
       extraModules ? [],
     }:
-      inputs.home-manager.lib.homeManagerConfiguration rec {
+      inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           inherit system;
           overlays = builtins.attrValues self.overlays;
