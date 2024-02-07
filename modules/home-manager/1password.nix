@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   home = config.home.homeDirectory;
   darwinSockPath = "${home}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
   sockPath = "${home}/.1password/agent.sock";
@@ -12,7 +13,8 @@
     cachix = "op plugin run -- cachix";
     # brew = "op plugin run -- brew";
   };
-in {
+in
+{
   home.sessionVariables = {
     SSH_AUTH_SOCK = sockPath;
     OP_PLUGIN_ALIASES_SOURCED = 1;

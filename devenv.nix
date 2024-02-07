@@ -3,10 +3,12 @@
   inputs,
   pkgs,
   ...
-}: {
+}:
+{
   packages = [
     pkgs.rnix-lsp
     pkgs.nil
+    pkgs.nixfmt-rfc-style
     self.packages.${pkgs.system}.pyEnv
     (inputs.treefmt-nix.lib.mkWrapper pkgs (import ./treefmt.nix))
   ];
@@ -15,8 +17,9 @@
     hooks = {
       black.enable = true;
       shellcheck.enable = true;
-      #nixfmt.enable = true;
-      alejandra.enable = true;
+      nixfmt.enable = true;
+      nixfmt.entry = pkgs.lib.mkForce "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
+      alejandra.enable = false;
       deadnix.enable = true;
       shfmt.enable = false;
       stylua.enable = true;

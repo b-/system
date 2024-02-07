@@ -1,5 +1,9 @@
-{pkgs, ...}: {
-  home.packages = [pkgs.github-cli pkgs.git-crypt];
+{ pkgs, ... }:
+{
+  home.packages = [
+    pkgs.github-cli
+    pkgs.git-crypt
+  ];
   programs.git = {
     enable = true;
     aliases = {

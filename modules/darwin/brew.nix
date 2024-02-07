@@ -1,8 +1,11 @@
-{...}: {
+{ ... }:
+{
   homebrew = {
     enable = true;
-    global = {brewfile = true;};
-    brews = [];
+    global = {
+      brewfile = true;
+    };
+    brews = [ ];
 
     taps = [
       "1password/tap"

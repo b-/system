@@ -1,8 +1,5 @@
+{ pkgs, config, ... }:
 {
-  pkgs,
-  config,
-  ...
-}: {
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -29,5 +26,9 @@
       dataDir = config.user.home;
     };
   };
-  environment.systemPackages = with pkgs; [vscode firefox gnome.gnome-tweaks];
+  environment.systemPackages = with pkgs; [
+    vscode
+    firefox
+    gnome.gnome-tweaks
+  ];
 }

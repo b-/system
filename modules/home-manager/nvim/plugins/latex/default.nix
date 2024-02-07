@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   programs.neovim = {
     # vimtex config
     plugins = with pkgs.vimPlugins; [
@@ -14,6 +15,6 @@
     ];
 
     # LSP config
-    extraPackages = with pkgs; with nodePackages; [texlab];
+    extraPackages = with pkgs; with nodePackages; [ texlab ];
   };
 }

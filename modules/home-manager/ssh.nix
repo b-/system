@@ -1,7 +1,8 @@
-{...}: {
+{ ... }:
+{
   programs.ssh = {
     enable = true;
-    includes = ["config.d/*"];
+    includes = [ "config.d/*" ];
     forwardAgent = true;
   };
 }

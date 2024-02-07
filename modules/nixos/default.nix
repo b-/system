@@ -1,8 +1,5 @@
+{ config, pkgs, ... }:
 {
-  config,
-  pkgs,
-  ...
-}: {
   # bundles essential nixos modules
   imports = [
     ./keybase.nix
@@ -18,7 +15,10 @@
     users = {
       "${config.user.name}" = {
         isNormalUser = true;
-        extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+        ]; # Enable ‘sudo’ for the user.
         hashedPassword = "$6$JbbwLJPz28ot0r5z$3oq1V30xo.NQOLGoeP/5s/JRlMLvyEGcFfHU.gB.Qv29uF1y3W/hpSiI4e4K3rcJZBwaT9z/i2nF4a7Ql96nw0";
       };
     };
@@ -90,39 +90,49 @@
       defaultFonts = {
         #serif = [ "Ubuntu" ];
         #sansSerif = [ "Ubuntu" ];
-        monospace = ["PragmataPro Liga"];
+        monospace = [ "PragmataPro Liga" ];
         # monospace = [ "Berkeley Mono" ];
       };
     };
   };
-  system.fsPackages = [pkgs.bindfs];
-  fileSystems = let
-    mkRoSymBind = path: {
-      device = path;
-      fsType = "fuse.bindfs";
-      options = ["ro" "resolve-symlinks" "x-gvfs-hide"];
+  system.fsPackages = [ pkgs.bindfs ];
+  fileSystems =
+    let
+      mkRoSymBind = path: {
+        device = path;
+        fsType = "fuse.bindfs";
+        options = [
+          "ro"
+          "resolve-symlinks"
+          "x-gvfs-hide"
+        ];
+      };
+      aggregatedIcons = pkgs.buildEnv {
+        name = "system-icons";
+        paths = with pkgs; [
+          libsForQt5.breeze-qt5 # for plasma
+          gnome.gnome-themes-extra
+        ];
+        pathsToLink = [ "/share/icons" ];
+      };
+      aggregatedFonts = pkgs.buildEnv {
+        name = "system-fonts";
+        paths = config.fonts.packages;
+        pathsToLink = [ "/share/fonts" ];
+      };
+    in
+    {
+      "/usr/share/icons" = mkRoSymBind "${aggregatedIcons}/share/icons";
+      "/usr/local/share/fonts" = mkRoSymBind "${aggregatedFonts}/share/fonts";
     };
-    aggregatedIcons = pkgs.buildEnv {
-      name = "system-icons";
-      paths = with pkgs; [
-        libsForQt5.breeze-qt5 # for plasma
-        gnome.gnome-themes-extra
-      ];
-      pathsToLink = ["/share/icons"];
-    };
-    aggregatedFonts = pkgs.buildEnv {
-      name = "system-fonts";
-      paths = config.fonts.packages;
-      pathsToLink = ["/share/fonts"];
-    };
-  in {
-    "/usr/share/icons" = mkRoSymBind "${aggregatedIcons}/share/icons";
-    "/usr/local/share/fonts" = mkRoSymBind "${aggregatedFonts}/share/fonts";
-  };
 
   fonts = {
     fontDir.enable = true;
-    fonts = with pkgs; [noto-fonts noto-fonts-emoji noto-fonts-cjk];
+    fonts = with pkgs; [
+      noto-fonts
+      noto-fonts-emoji
+      noto-fonts-cjk
+    ];
   };
 
   # This value determines the NixOS release from which the default

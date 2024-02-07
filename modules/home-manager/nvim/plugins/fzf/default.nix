@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   programs.neovim = {
     plugins = with pkgs.vimPlugins; [
       (config.lib.vimUtils.pluginWithCfg {
@@ -11,6 +12,6 @@
         file = ./fzf-vim.lua;
       })
     ];
-    extraPackages = [pkgs.fzf];
+    extraPackages = [ pkgs.fzf ];
   };
 }

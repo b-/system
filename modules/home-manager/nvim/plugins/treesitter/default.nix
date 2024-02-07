@@ -3,8 +3,9 @@
   pkgs,
   lib,
   ...
-}: {
-  home.packages = [pkgs.tree-sitter];
+}:
+{
+  home.packages = [ pkgs.tree-sitter ];
   programs.neovim = {
     plugins = with pkgs.vimPlugins; [
       # new neovim stuff
