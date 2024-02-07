@@ -15,6 +15,7 @@
     hooks = {
       black.enable = true;
       shellcheck.enable = true;
+      #nixfmt.enable = true;
       alejandra.enable = true;
       deadnix.enable = true;
       shfmt.enable = false;

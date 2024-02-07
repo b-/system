@@ -1,9 +1,7 @@
 {...}: {
   homebrew = {
     enable = true;
-    global = {
-      brewfile = true;
-    };
+    global = {brewfile = true;};
     brews = [];
 
     taps = [

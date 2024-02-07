@@ -1,6 +1,4 @@
 {...}: {
   user.name = "bri";
-  hm = {
-    imports = [./home-manager/personal.nix];
-  };
+  hm = {imports = [./home-manager/personal.nix];};
 }

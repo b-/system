@@ -5,10 +5,7 @@
   pkgs,
   ...
 }: {
-  imports = [
-    ./primaryUser.nix
-    ./nixpkgs.nix
-  ];
+  imports = [./primaryUser.nix ./nixpkgs.nix];
 
   nixpkgs.overlays = builtins.attrValues self.overlays;
 
@@ -39,9 +36,7 @@
 
   # let nix manage home-manager profiles and use global nixpkgs
   home-manager = {
-    extraSpecialArgs = {
-      inherit self inputs;
-    };
+    extraSpecialArgs = {inherit self inputs;};
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
@@ -80,11 +75,7 @@
       stable.source = "${inputs.stable}";
     };
     # list of acceptable shells in /etc/shells
-    shells = with pkgs; [
-      bash
-      zsh
-      fish
-    ];
+    shells = with pkgs; [bash zsh fish];
   };
 
   fonts = {

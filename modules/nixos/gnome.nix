@@ -9,7 +9,5 @@
     desktopManager.gnome.enable = true;
   };
 
-  hm = {...}: {
-    imports = [../home-manager/gnome];
-  };
+  hm = {...}: {imports = [../home-manager/gnome];};
 }

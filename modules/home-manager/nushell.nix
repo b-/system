@@ -1,5 +1,1 @@
-{...}: {
-  programs.nushell = {
-    enable = true;
-  };
-}
+{...}: {programs.nushell = {enable = true;};}

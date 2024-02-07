@@ -9,25 +9,22 @@
 }: {
   imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "usb_storage"
-    "sd_mod"
-    "sdhci_pci"
-  ];
+  boot.initrd.availableKernelModules = ["xhci_pci" "usb_storage" "sd_mod" "sdhci_pci"];
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];
   boot.extraModulePackages = [];
 
-  fileSystems."/" = {
-    # device = "/dev/disk/by-label/nixos";
-    device = "/dev/disk/by-label/root";
-    fsType = "ext4";
-  };
+  filesystems = lib.mkDefault {
+    "/" = {
+      # device = "/dev/disk/by-label/nixos";
+      device = "/dev/disk/by-label/root";
+      fsType = "ext4";
+    };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-label/ESP";
-    fsType = "vfat";
+    "/boot" = {
+      device = "/dev/disk/by-label/ESP";
+      fsType = "vfat";
+    };
   };
 
   # FIXME ensure this is okay to comment out…
@@ -41,5 +38,6 @@
   # networking.interfaces.wlp0s12f0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.intel.updateMicrocode =
+    lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

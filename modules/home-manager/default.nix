@@ -18,9 +18,7 @@
     ./tmux.nix
   ];
 
-  nixpkgs.config = {
-    allowUnfree = true;
-  };
+  nixpkgs.config = {allowUnfree = true;};
 
   home = let
     NODE_GLOBAL = "${config.home.homeDirectory}/.node-packages";
@@ -83,7 +81,8 @@
       ncdu
       neofetch
       nix
-      nixfmt
+      #nixfmt
+      nixfmt-rfc-style
       nixpkgs-fmt
       nmap
       nodejs_20
@@ -91,15 +90,7 @@
       poetry
       pre-commit
       # python with default packages
-      (python3.withPackages (
-        ps:
-          with ps; [
-            numpy
-            scipy
-            matplotlib
-            networkx
-          ]
-      ))
+      (python3.withPackages (ps: with ps; [numpy scipy matplotlib networkx]))
       ranger
       rclone
       restic
@@ -118,9 +109,7 @@
   };
 
   programs = {
-    home-manager = {
-      enable = true;
-    };
+    home-manager = {enable = true;};
     dircolors.enable = true;
     go.enable = true;
     gpg.enable = true;

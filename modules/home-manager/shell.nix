@@ -53,7 +53,8 @@ in {
       unset RPS1
     '';
     profileExtra = ''
-      ${lib.optionalString pkgs.stdenvNoCC.isLinux "[[ -e /etc/profile ]] && source /etc/profile"}
+      ${lib.optionalString pkgs.stdenvNoCC.isLinux
+        "[[ -e /etc/profile ]] && source /etc/profile"}
     '';
     plugins = with pkgs; [
       (mkZshPlugin {pkg = zsh-autopair;})
@@ -67,11 +68,7 @@ in {
     ];
     oh-my-zsh = {
       enable = true;
-      plugins = [
-        "git"
-        "sudo"
-        "asdf"
-      ];
+      plugins = ["git" "sudo" "asdf"];
     };
   };
 
