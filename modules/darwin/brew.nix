@@ -2,10 +2,33 @@
 {
   homebrew = {
     enable = true;
+    onActivation = {
+      autoUpdate = true; # update homebrew when running darwin-rebuild
+      cleanup = "zap"; # removes unspecified brews
+    };
     global = {
       brewfile = true;
     };
-    brews = [ ];
+    brews = [
+      "aria2"
+      "atuin"
+      "autojump"
+      "bash"
+      "bat"
+      "go"
+      "just"
+      "kubernetes-cli"
+      "mame"
+      "neovim"
+      "oniguruma"
+      "openssl@3"
+      "stow"
+      "thefuck"
+      "tree-sitter"
+      "unibilium"
+      "xz"
+      "yabai"
+    ];
 
     taps = [
       "1password/tap"
