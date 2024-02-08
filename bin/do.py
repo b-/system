@@ -188,6 +188,8 @@ def build(
         flake = f"{FLAKE_PATH}#{host}"
 
     flags = ["--show-trace"]
+    if remote:
+        flags += "--refresh"
     run_cmd(cmd + [flake] + flags)
 
 
