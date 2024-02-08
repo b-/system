@@ -15,6 +15,7 @@
       "autojump"
       "bash"
       "bat"
+      "rom-tools" # supplies chdman
       "go"
       "just"
       "kubernetes-cli"
