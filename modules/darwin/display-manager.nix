@@ -1,6 +1,6 @@
 { ... }:
 let
-  isYabaiEnabled = true;
+  isYabaiEnabled = false;
 in
 {
   services.yabai = {
