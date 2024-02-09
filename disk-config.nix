@@ -24,7 +24,7 @@
               };
             }
             {
-              name = "root";
+              name = "nixos";
               start = "500MiB";
               end = "100%";
               part-type = "primary";

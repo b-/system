@@ -21,14 +21,8 @@
       "kubernetes-cli"
       "mame"
       "neovim"
-      "oniguruma"
-      "openssl@3"
       "stow"
       "thefuck"
-      "tree-sitter"
-      "unibilium"
-      "xz"
-      "yabai"
     ];
 
     taps = [

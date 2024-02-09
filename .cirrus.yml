@@ -1,16 +1,16 @@
 env:
-  CACHIX_AUTH_TOKEN: ENCRYPTED[!f0f7fdb6a0c000065b7755062731ff7916cee8f510c95478d629e76a2c03604cfe46fe2ec4e74a4128ad0a0aea6d57e7!]
+  CACHIX_AUTH_TOKEN: ENCRYPTED[1f927911bd4beb6def00da2d175c2915e9a0fc65fbea36b6d8a3e45b7306c49065882246cd4cd1ca65e0e8f494ce1b18]
   CACHIX_USER: bri
   CIRRUS_SHELL: bash -il
   DARWIN_BUILD_IMAGE: ghcr.io/cirruslabs/macos-ventura-base:latest
-  GITHUB_TOKEN: ENCRYPTED[!c4841aa1f80b4c94abe2742b4cf2cc998e9b7bbc4d1fa182abb50636b09272b6062bcd2be016a597c225e3715f784969!]
+  GITHUB_TOKEN: ENCRYPTED[764faa3c531242a46d8a72bd72658b4e25fdb47b10f585818ccea114430a87428b8f5e02a410e6937190e230e1665a38]
   LINUX_BUILD_IMAGE: nixos/nix:latest
   NIX_INSTALLER_NO_CONFIRM: "true"
-  NIX_INSTALLER_TAG: "v0.15.1"
+  NIX_INSTALLER_TAG: v0.16.1
   NIX_INSTALLER_EXTRA_CONF: |
     access-tokens = github.com=${GITHUB_TOKEN}
-    substituters = https://cache.nixos.org https://bri.cachix.org https://devenv.cachix.org
-    trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= bri.cachix.org-1:fOCrECygdFZKbMxHClhiTS6oowOkJ/I/dh9q9b1I4ko= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+    substituters = https://cache.nixos.org https://bri.cachix.org https://devenv.cachix.org https://perchnet.cachix.org https://devenv.cachix.org
+    trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc=
     trusted-users = root admin @sudo @wheel
 
 build_template: &BUILD_TEMPLATE

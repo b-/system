@@ -1,6 +1,8 @@
-{...}: let
-  isYabaiEnabled = false;
-in {
+{ ... }:
+let
+  isYabaiEnabled = true;
+in
+{
   services.yabai = {
     enable = isYabaiEnabled;
     config = {

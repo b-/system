@@ -69,6 +69,7 @@
       ruby
 
       # nix stuff
+      cachix
       nixfmt-rfc-style
     ];
     etc = {

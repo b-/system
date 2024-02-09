@@ -2,9 +2,19 @@
   description = "nix system configurations";
 
   nixConfig = {
-    substituters = [ "https://cache.nixos.org" ];
+    substituters = [
+      "https://bri.cachix.org"
+      "https://perchnet.cachix.org"
+      "https://devenv.cachix.org"
+      "https://cache.nixos.org"
+    ];
 
-    trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc="
+      "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+    ];
   };
 
   inputs = {
@@ -14,7 +24,12 @@
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     devenv.url = "github:cachix/devenv/latest";
 
+    ###
     # system management
+    # system-manager = {
+    #   url = "github:numtide/system-manager";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     nixos-hardware.url = "github:nixos/nixos-hardware";
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -50,13 +65,13 @@
 
   outputs =
     {
-      self,
       darwin,
       devenv,
       disko,
       flake-utils,
       home-manager,
       nixos-generators,
+      self,
       ...
     }@inputs:
     let
