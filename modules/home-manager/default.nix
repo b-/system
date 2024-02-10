@@ -50,9 +50,11 @@
 
       # define package definitions for current user environment
       packages = with pkgs; [
-        # age
+        age
+
         alejandra
         atuin
+        # autojump
         cachix
         cb
         cirrus-cli

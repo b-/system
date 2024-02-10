@@ -104,4 +104,9 @@ in
       line_break.disabled = true;
     };
   };
+
+  #autojump - a 'cd' command that learns
+  programs.autojump = {
+    enable = true;
+  };
 }

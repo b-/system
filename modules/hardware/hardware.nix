@@ -31,8 +31,7 @@
     fsType = "vfat";
   };
 
-  # FIXME ensure this is okay to comment out…
-  # swapDevices = [{device = "/dev/disk/by-uuid/02af233f-58c8-4a21-a103-9d3ef2278157";}];
+  swapDevices = [ ]; # if we have a GPT partition marked as swap, it will get initialized automatically by systemd.
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
