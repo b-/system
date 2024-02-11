@@ -36,7 +36,8 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
     variable_name: UPLOAD_SSH_KEY
   upload_artifacts_script: |
         chmod 600 /tmp/ci-upload.key
-        scp -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
+        chmod -R 755 build
+        scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
     #printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
   compress_artifacts_script: |
         filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
