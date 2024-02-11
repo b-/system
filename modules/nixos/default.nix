@@ -34,7 +34,7 @@
   networking.wireless.enable = false;
 
   boot.loader.systemd-boot.enable = lib.mkDefault true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
 
   #  # Use the GRUB 2 boot loader.
   #  boot.loader.grub.enable = true;
