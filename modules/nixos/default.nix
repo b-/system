@@ -29,7 +29,7 @@
     };
   };
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = lib.mkDefault "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
   networking.wireless.enable = false;
 
