@@ -35,12 +35,12 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
     set -x
     find build
     if [[ "${EXT}" == "vma.zst" ]] ; then
-        for i in "build/*.${EXT}" ; do
+        for i in build/*.${EXT} ; do
             mv "$i" build/"vzdump-qemu-${TARGET}_$(basename ${i})"
         done
     else
         for i in "build/*.${EXT}" ; do
-            mv "$i" "${TARGET}_$(basename ${i})"
+            mv "$i" build/"${TARGET}_$(basename ${i})"
         done
     fi
   ssh_key_file:
