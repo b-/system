@@ -265,6 +265,7 @@
           system = "x86_64-linux";
           hardwareModules = [
             ./modules/hardware/hardware.nix
+            self.nixosModules.customFormats
             # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
           ];
           extraModules = [
@@ -279,12 +280,11 @@
           system = "x86_64-linux";
           hardwareModules = [
             ./modules/hardware/hardware.nix
-            # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+            self.nixosModules.customFormats
           ];
           extraModules = [
             disko.nixosModules.disko
             #./disk-config.nix
-            self.nixosModules.customFormats
             ./profiles/personal.nix
             # ./modules/nixos/desktop.nix
             # ./modules/nixos/gnome.nix
