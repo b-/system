@@ -1,7 +1,8 @@
 {
   projectRootFile = "flake.nix";
   programs = {
-    alejandra.enable = true;
+    #alejandra.enable = true;
+    nixfmt.enable = true;
     black.enable = true;
     gofmt.enable = true;
     prettier.enable = true;

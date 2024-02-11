@@ -83,7 +83,7 @@
       isDarwin = system: (builtins.elem system inputs.nixpkgs.lib.platforms.darwin);
       homePrefix = system: if isDarwin system then "/Users" else "/home";
       defaultSystems = [
-        # "aarch64-linux"
+        "aarch64-linux"
         "aarch64-darwin"
         "x86_64-darwin"
         "x86_64-linux"
@@ -241,26 +241,29 @@
             ./modules/nixos/gnome.nix
           ];
         };
-        "server@x86_64-linux" = mkNixosConfig {
-          # imports = [
-          # ];
-          system = "x86_64-linux";
-          hardwareModules = [
-            ./modules/hardware/hardware.nix
-            # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
-          ];
-          extraModules = [
-            disko.nixosModules.disko
-            #          ./profiles/personal.nix
-            #          ./modules/nixos/desktop.nix
-            #          ./modules/nixos/gnome.nix
-          ];
-        };
-        # "bri@aarch64-linux" = mkNixosConfig {
-        #   system = "aarch64-linux";
-        #   hardwareModules = [./modules/hardware/phil.nix];
-        #   extraModules = [./profiles/personal.nix];
+        # "server@x86_64-linux" = mkNixosConfig {
+        #   # imports = [
+        #   # ];
+        #   system = "x86_64-linux";
+        #   hardwareModules = [
+        #     ./modules/hardware/hardware.nix
+        #     # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+        #   ];
+        #   extraModules = [
+        #     disko.nixosModules.disko
+        #     #          ./profiles/personal.nix
+        #     #          ./modules/nixos/desktop.nix
+        #     #          ./modules/nixos/gnome.nix
+        #   ];
         # };
+        "bri@aarch64-linux" = mkNixosConfig {
+          system = "aarch64-linux";
+          hardwareModules = [
+            inputs.nixos-hardware.nixosModules.pine64-pinebook-pro
+            ./modules/hardware/pinebook-pro.nix
+          ];
+          extraModules = [ ./profiles/personal.nix ];
+        };
       };
 
       homeConfigurations = {
@@ -269,11 +272,11 @@
           system = "x86_64-linux";
           extraModules = [ ./profiles/home-manager/personal.nix ];
         };
-        # "bri@aarch64-linux" = mkHomeConfig {
-        #   username = "bri";
-        #   system = "aarch64-linux";
-        #   extraModules = [./profiles/home-manager/personal.nix];
-        # };
+        "bri@aarch64-linux" = mkHomeConfig {
+          username = "bri";
+          system = "aarch64-linux";
+          extraModules = [ ./profiles/home-manager/personal.nix ];
+        };
         "bri@x86_64-darwin" = mkHomeConfig {
           username = "bri";
           system = "x86_64-darwin";

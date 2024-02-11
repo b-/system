@@ -5,7 +5,7 @@
 {
   disko.devices = {
     disk = {
-      vdb = {
+      sda = {
         device = builtins.elemAt disks 0;
         type = "disk";
         content = {
@@ -16,6 +16,7 @@
               name = "ESP";
               start = "1MiB";
               end = "500MiB";
+              type = "EF00";
               bootable = true;
               content = {
                 type = "filesystem";
@@ -30,7 +31,7 @@
               part-type = "primary";
               content = {
                 type = "filesystem";
-                format = "bcachefs";
+                format = "ext4";
                 mountpoint = "/";
               };
             }

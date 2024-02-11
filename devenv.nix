@@ -6,7 +6,7 @@
 }:
 {
   packages = [
-    pkgs.rnix-lsp
+    #pkgs.rnix-lsp
     pkgs.nil
     pkgs.nixfmt-rfc-style
     self.packages.${pkgs.system}.pyEnv
