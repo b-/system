@@ -18,6 +18,9 @@
   };
 
   inputs = {
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
+
     # package repos
     stable.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
