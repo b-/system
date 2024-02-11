@@ -3,6 +3,7 @@ env:
   CACHIX_USER: bri
   CIRRUS_SHELL: bash -il
   DARWIN_BUILD_IMAGE: ghcr.io/cirruslabs/macos-ventura-base:latest
+  UPLOAD_SSH_KEY: ENCRYPTED[8b4cc4b4484b054320b72fc7850ffb5e006f843acb92b5f4900bec511b7ec03be0f02cfc734726aa8c1ce360ab73a9b6]
   GITHUB_TOKEN: ENCRYPTED[764faa3c531242a46d8a72bd72658b4e25fdb47b10f585818ccea114430a87428b8f5e02a410e6937190e230e1665a38]
   LINUX_BUILD_IMAGE: nixos/nix:latest
   NIX_INSTALLER_NO_CONFIRM: "true"
@@ -30,8 +31,15 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
     mkdir -p build
     cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
   #cp -LR "$(cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
+  upload_artifacts_script: |
+        printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
+        scp -i /tmp/ci-upload.key -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
+  compress_artifacts_script: |
+        filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
+        nix-shell -p p7zip.out --run "7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=256m -ms=on nixos-${FORMAT}.7z $filepath"
+        chmod 755 nixos-${FORMAT}.7z
   binaries_artifacts:
-    path: "build/*"
+    path: nixos-${FORMAT}.7z
 
 specs_template: &SPECS
     image: $LINUX_BUILD_IMAGE
@@ -84,30 +92,35 @@ build_image_task:
       env:
         ARCH: x86_64
         FORMAT: proxmox
+        DESTDIR: dump
         EXT: vma.zst
         TARGET: server
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
         FORMAT: raw-efi
+        DESTDIR: images
         EXT: img
         TARGET: server
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
         FORMAT: iso
+        DESTDIR: template/iso
         EXT: iso
         TARGET: server
     # - <<: *LINUX_CONTAINER_TEMPLATE
     #   env:
     #     ARCH: x86_64
     #     FORMAT: proxmox
+    #     DESTDIR: dump
     #     EXT: vma.zst
     #     TARGET: bri
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
         FORMAT: proxmox-lxc
+        DESTDIR: template/cache
         EXT: tar.xz
         TARGET: server
     - <<: *LINUX_CONTAINER_TEMPLATE
@@ -115,6 +128,7 @@ build_image_task:
         ARCH: x86_64
         FORMAT: raw-efi
         EXT: img
+        DESTDIR: images
         TARGET: bri
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
@@ -122,6 +136,7 @@ build_image_task:
         FORMAT: iso
         EXT: iso
         TARGET: bri
+        DESTDIR: template/iso
 
   configure_flake_script: |
     echo "experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
