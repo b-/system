@@ -7,7 +7,6 @@
 {
   # bundles essential nixos modules
   imports = [
-    ./keybase.nix
     #    ./desktop.nix
     #    ./gnome.nix
     ../common.nix
@@ -88,7 +87,7 @@
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = false;
 
   #----=[ Fonts ]=----#
   fonts = {

@@ -1,5 +1,8 @@
 { pkgs, config, ... }:
 {
+  imports = [
+    #./keybase.nix
+  ];
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
