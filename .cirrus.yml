@@ -3,7 +3,7 @@ env:
   CACHIX_USER: bri
   CIRRUS_SHELL: bash -il
   DARWIN_BUILD_IMAGE: ghcr.io/cirruslabs/macos-ventura-base:latest
-  UPLOAD_SSH_KEY: ENCRYPTED[8b4cc4b4484b054320b72fc7850ffb5e006f843acb92b5f4900bec511b7ec03be0f02cfc734726aa8c1ce360ab73a9b6]
+  UPLOAD_SSH_KEY: ENCRYPTED[011e9ea66a3f9ec554f3c324d2213ab5ad0caa889120f604c7c22e39d7faaca07505b7abaeb1a0596700d3a5f7ac58c6]
   GITHUB_TOKEN: ENCRYPTED[764faa3c531242a46d8a72bd72658b4e25fdb47b10f585818ccea114430a87428b8f5e02a410e6937190e230e1665a38]
   LINUX_BUILD_IMAGE: nixos/nix:latest
   NIX_INSTALLER_NO_CONFIRM: "true"
@@ -31,10 +31,13 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
     mkdir -p build
     cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
   #cp -LR "$(cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
+  ssh_key_file:
+    path: /tmp/ci-upload.key
+    variable_name: UPLOAD_SSH_KEY
   upload_artifacts_script: |
-        printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
         chmod 600 /tmp/ci-upload.key
         scp -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
+    #printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
   compress_artifacts_script: |
         filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
         nix-shell -p p7zip.out --run "7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=256m -ms=on nixos-${FORMAT}.7z $filepath"
