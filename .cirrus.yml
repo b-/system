@@ -40,7 +40,7 @@ specs_template: &SPECS
     kvm: true
 
 linux_container_template: &LINUX_CONTAINER_TEMPLATE
-    linux_container:
+    container:
         <<: *SPECS
 
 arm_container_template: &ARM_CONTAINER_TEMPLATE
@@ -60,70 +60,70 @@ build_darwin_task:
   <<: *BUILD_TEMPLATE
 
 build_linux_task:
-    matrix:
-        - arm_container: *SPECS
-          env:
-            ARCH: arm64
-            USER: root
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            USER: root
-          configure_flake_script: |
-            echo "experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
-            echo "$NIX_INSTALLER_EXTRA_CONF" | tee -a /etc/nix/nix.conf
-          <<: *BUILD_TEMPLATE
+  matrix:
+    - <<: *ARM_CONTAINER_TEMPLATE
+      env:
+        ARCH: arm64
+        USER: root
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        USER: root
+  configure_flake_script: |
+    echo "experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
+    echo "$NIX_INSTALLER_EXTRA_CONF" | tee -a /etc/nix/nix.conf
+  <<: *BUILD_TEMPLATE
 
 build_image_task:
-    matrix:
+  matrix:
     # - <<: *ARM_CONTAINER_TEMPLATE
     #   env:
     #     ARCH: arm64
     #     USER: root
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            FORMAT: proxmox
-            EXT: vma.zst
-            TARGET: server
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            FORMAT: raw-efi
-            EXT: img
-            TARGET: server
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            FORMAT: iso
-            EXT: iso
-            TARGET: server
-        # - <<: *LINUX_CONTAINER_TEMPLATE
-        #   env:
-        #     ARCH: x86_64
-        #     FORMAT: proxmox
-        #     EXT: vma.zst
-        #     TARGET: bri
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            FORMAT: proxmox-lxc
-            EXT: tar.xz
-            TARGET: server
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            FORMAT: raw-efi
-            EXT: img
-            TARGET: bri
-        - linux_container: *SPECS
-          env:
-            ARCH: x86_64
-            FORMAT: iso
-            EXT: iso
-            TARGET: bri
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: proxmox
+        EXT: vma.zst
+        TARGET: server
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: raw-efi
+        EXT: img
+        TARGET: server
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: iso
+        EXT: iso
+        TARGET: server
+    # - <<: *LINUX_CONTAINER_TEMPLATE
+    #   env:
+    #     ARCH: x86_64
+    #     FORMAT: proxmox
+    #     EXT: vma.zst
+    #     TARGET: bri
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: proxmox-lxc
+        EXT: tar.xz
+        TARGET: server
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: raw-efi
+        EXT: img
+        TARGET: bri
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: iso
+        EXT: iso
+        TARGET: bri
 
-          configure_flake_script: |
-            echo "experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
-            echo "$NIX_INSTALLER_EXTRA_CONF" | tee -a /etc/nix/nix.conf
-          <<: *BUILD_IMAGE_TEMPLATE
+  configure_flake_script: |
+    echo "experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
+    echo "$NIX_INSTALLER_EXTRA_CONF" | tee -a /etc/nix/nix.conf
+  <<: *BUILD_IMAGE_TEMPLATE
