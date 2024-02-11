@@ -113,13 +113,13 @@ build_image_task:
         DESTDIR: template/iso
         EXT: iso
         TARGET: server
-    # - <<: *LINUX_CONTAINER_TEMPLATE
-    #   env:
-    #     ARCH: x86_64
-    #     FORMAT: proxmox
-    #     DESTDIR: dump
-    #     EXT: vma.zst
-    #     TARGET: bri
+    - <<: *LINUX_CONTAINER_TEMPLATE
+      env:
+        ARCH: x86_64
+        FORMAT: proxmox
+        DESTDIR: dump
+        EXT: vma.zst
+        TARGET: bri
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
