@@ -32,7 +32,7 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
   build_image_script: |
     mkdir -p build
     cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
-  upload_caches: [ "nix_store_cache" ]
+  upload_caches: [ nix_store_cache ]
   #cp -LR "$(cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
   ssh_key_file:
     path: /tmp/ci-upload.key
