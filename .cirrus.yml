@@ -70,6 +70,7 @@ build_image_task:
     #     image: $LINUX_BUILD_IMAGE
     #     cpu: 4
     #     memory: 16G
+    #    kvm: true
     #   env:
     #     ARCH: arm64
     #     USER: root
@@ -77,6 +78,7 @@ build_image_task:
         image: $LINUX_BUILD_IMAGE
         cpu: 4
         memory: 16G
+        kvm: true
       env:
         ARCH: x86_64
         FORMAT: proxmox
@@ -86,6 +88,7 @@ build_image_task:
         image: $LINUX_BUILD_IMAGE
         cpu: 4
         memory: 16G
+        kvm: true
       env:
         ARCH: x86_64
         FORMAT: raw-efi
@@ -95,15 +98,18 @@ build_image_task:
         image: $LINUX_BUILD_IMAGE
         cpu: 4
         memory: 16G
+        kvm: true
       env:
         ARCH: x86_64
         FORMAT: iso
         EXT: iso
         TARGET: server
+        kvm: true
     # - container:
     #     image: $LINUX_BUILD_IMAGE
     #     cpu: 4
     #     memory: 16G
+    #     kvm: true
     #   env:
     #   ARCH: x86_64
     #   FORMAT: proxmox
@@ -113,6 +119,7 @@ build_image_task:
         image: $LINUX_BUILD_IMAGE
         cpu: 4
         memory: 16G
+        kvm: true
       env:
         ARCH: x86_64
         FORMAT: proxmox-lxc
@@ -122,6 +129,7 @@ build_image_task:
         image: $LINUX_BUILD_IMAGE
         cpu: 4
         memory: 16G
+        kvm: true
       env:
         ARCH: x86_64
         FORMAT: raw-efi
@@ -131,6 +139,7 @@ build_image_task:
         image: $LINUX_BUILD_IMAGE
         cpu: 4
         memory: 16G
+        kvm: true
       env:
         ARCH: x86_64
         FORMAT: iso
