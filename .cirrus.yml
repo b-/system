@@ -33,7 +33,7 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
 #cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
   upload_artifacts_script: |
         printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
-        scp -i /tmp/ci-upload.key -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
+        scp -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
   compress_artifacts_script: |
         filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
         nix-shell -p p7zip.out --run "7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=256m -ms=on nixos-${FORMAT}.7z $filepath"
