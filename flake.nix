@@ -210,7 +210,7 @@
             {
               imports = [ "${toString modulesPath}/virtualisation/oci-image.nix" ];
 
-              bios = "ovmf";
+              qemuConf.bios = "ovmf";
             };
         };
 
@@ -270,6 +270,7 @@
           ];
           extraModules = [
             disko.nixosModules.disko
+            ./disk-config.nix
             ./profiles/personal.nix
             ./modules/nixos/desktop.nix
             ./modules/nixos/gnome.nix
@@ -283,6 +284,7 @@
           ];
           extraModules = [
             disko.nixosModules.disko
+            ./disk-config.nix
             self.nixosModules.customFormats
             ./profiles/personal.nix
             # ./modules/nixos/desktop.nix
@@ -295,7 +297,11 @@
             inputs.nixos-hardware.nixosModules.pine64-pinebook-pro
             ./modules/hardware/pinebook-pro.nix
           ];
-          extraModules = [ ./profiles/personal.nix ];
+          extraModules = [
+            disko.nixosModules.disko
+            ./disk-config.nix
+            ./profiles/personal.nix
+          ];
         };
       };
 
