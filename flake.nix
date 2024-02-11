@@ -209,7 +209,7 @@
             { ... }:
             {
 
-              qemuConf.bios = "ovmf";
+              proxmox.qemuConf.bios = "ovmf";
             };
         };
 
