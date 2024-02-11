@@ -21,13 +21,13 @@ build_template: &BUILD_TEMPLATE
   flake_check_script: cachix watch-exec $CACHIX_USER -- nix flake check -j auto --system ${ARCH//arm/aarch}-${CIRRUS_OS} --impure --show-trace --accept-flake-config
 
 build_image_template: &BUILD_IMAGE_TEMPLATE
-  name: build_image_${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}_${FORMAT}
+  name: build_image_${TARGET}@${ARCH}-${CIRRUS_OS}_${FORMAT}
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_TAG != "" || $CIRRUS_PR != "" || $CIRRUS_BUILD_SOURCE == ""
   timeout_in: 120m
   install_cachix_script: nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
   build_image_script: |
     mkdir -p build
-    cachix watch-exec $CACHIX_USER -- nix build "github:b-/system#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths "build" --show-trace
+    cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths "build" --show-trace
   binaries_artifacts:
     path: "build/*"
 
@@ -78,6 +78,7 @@ build_image_task:
         cpu: 4
         memory: 16G
       env:
+        ARCH: x86_64
         FORMAT: proxmox
         EXT: vma.zst
         TARGET: server
@@ -86,6 +87,7 @@ build_image_task:
         cpu: 4
         memory: 16G
       env:
+        ARCH: x86_64
         FORMAT: raw-efi
         EXT: img
         TARGET: server
@@ -94,6 +96,7 @@ build_image_task:
         cpu: 4
         memory: 16G
       env:
+        ARCH: x86_64
         FORMAT: iso
         EXT: iso
         TARGET: server
@@ -102,6 +105,7 @@ build_image_task:
     #     cpu: 4
     #     memory: 16G
     #   env:
+    #   ARCH: x86_64
     #   FORMAT: proxmox
     #   EXT: vma.zst
     #   TARGET: bri
@@ -110,6 +114,7 @@ build_image_task:
         cpu: 4
         memory: 16G
       env:
+        ARCH: x86_64
         FORMAT: proxmox-lxc
         EXT: tar.xz
         TARGET: server
@@ -118,6 +123,7 @@ build_image_task:
         cpu: 4
         memory: 16G
       env:
+        ARCH: x86_64
         FORMAT: raw-efi
         EXT: img
         TARGET: bri
@@ -126,6 +132,7 @@ build_image_task:
         cpu: 4
         memory: 16G
       env:
+        ARCH: x86_64
         FORMAT: iso
         EXT: iso
         TARGET: bri
