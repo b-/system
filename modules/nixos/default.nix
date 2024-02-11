@@ -25,6 +25,9 @@
           "networkmanager"
         ]; # Enable ‘sudo’ for the user.
         hashedPassword = "$6$JbbwLJPz28ot0r5z$3oq1V30xo.NQOLGoeP/5s/JRlMLvyEGcFfHU.gB.Qv29uF1y3W/hpSiI4e4K3rcJZBwaT9z/i2nF4a7Ql96nw0";
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPDx+KV/SW4RGIeKA2FHU9S7bZgnJMy77N6lBeo2n8sJ"
+        ];
       };
     };
   };
