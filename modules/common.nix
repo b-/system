@@ -71,6 +71,7 @@
       # nix stuff
       cachix
       nixfmt-rfc-style
+      home-manager
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";

@@ -39,7 +39,7 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
             mv "$i" build/"vzdump-qemu-${TARGET}_$(basename ${i})"
         done
     else
-        for i in "build/*.${EXT}" ; do
+        for i in build/*.${EXT} ; do
             mv "$i" build/"${TARGET}_$(basename ${i})"
         done
     fi

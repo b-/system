@@ -274,6 +274,7 @@
             ./profiles/personal.nix
             ./modules/nixos/desktop.nix
             ./modules/nixos/gnome.nix
+            ./modules/nixos/tailscale.nix
           ];
         };
         "server@x86_64-linux" = mkNixosConfig {
@@ -286,6 +287,7 @@
             disko.nixosModules.disko
             #./disk-config.nix
             ./profiles/personal.nix
+            ./modules/nixos/tailscale.nix
             # ./modules/nixos/desktop.nix
             # ./modules/nixos/gnome.nix
           ];
@@ -299,6 +301,7 @@
           extraModules = [
             disko.nixosModules.disko
             #./disk-config.nix
+            ./modules/nixos/tailscale.nix
             ./profiles/personal.nix
           ];
         };
