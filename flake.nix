@@ -181,7 +181,7 @@
     in
     {
       nixosModules.customFormats =
-        { }:
+        { ... }:
         {
           formatConfigs.azure =
             { ... }:
