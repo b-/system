@@ -6,7 +6,7 @@
     ./dotfiles
     ./fzf.nix
     ./git.nix
-    ./kitty.nix
+    # ./kitty.nix
     ./nushell.nix
     ./nvim
     ./shell.nix
