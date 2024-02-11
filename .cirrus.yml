@@ -31,10 +31,23 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
     mkdir -p build
     cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
   #cp -LR "$(cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
+  list_rename_build_artifacts_script: |
+    set -x
+    find build
+    if [[ "${EXT}" == "vma.zst" ]] ; then
+        for i in "build/*.${EXT}" ; do
+            mv "$i" "vzdump-qemu-${TARGET}${i}"
+        done
+    else
+        for i in "build/*.${EXT}" ; do
+            mv "$i" "${TARGET}${i}"
+        done
+    fi
   ssh_key_file:
     path: /tmp/ci-upload.key
     variable_name: UPLOAD_SSH_KEY
   upload_artifacts_script: |
+        set -x
         chmod 600 /tmp/ci-upload.key
         chmod -R 755 build
         scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
