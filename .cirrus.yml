@@ -23,6 +23,8 @@ build_template: &BUILD_TEMPLATE
   #flake_check_script: cachix watch-exec $CACHIX_USER -- nix flake check -j auto --system ${ARCH//arm/aarch}-${CIRRUS_OS} --impure --show-trace --accept-flake-config
 
 build_image_template: &BUILD_IMAGE_TEMPLATE
+  nix_store_cache:
+    folder: /nix/store
   name: build_image_${TARGET}@${ARCH}-${CIRRUS_OS}_${FORMAT}
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_TAG != "" || $CIRRUS_PR != "" || $CIRRUS_BUILD_SOURCE == ""
   timeout_in: 120m
@@ -30,6 +32,7 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
   build_image_script: |
     mkdir -p build
     cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
+  upload_caches: [ "nix_store_cache" ]
   #cp -LR "$(cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
   ssh_key_file:
     path: /tmp/ci-upload.key
