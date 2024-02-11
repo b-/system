@@ -27,7 +27,7 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
   install_cachix_script: nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
   build_image_script: |
     mkdir -p build
-    cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths "build" --show-trace
+    cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths "build" --show-trace --accept-flake-config
   binaries_artifacts:
     path: "build/*"
 
