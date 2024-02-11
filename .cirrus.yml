@@ -15,10 +15,10 @@ env:
     trusted-users = root admin @sudo @wheel
 
 build_template: &BUILD_TEMPLATE
-  name: build_${CIRRUS_OS}_${ARCH}
+  name: Check_${CIRRUS_OS}_${ARCH}
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_TAG != "" || $CIRRUS_PR != "" || $CIRRUS_BUILD_SOURCE == ""
   timeout_in: 120m
-  install_cachix_script: nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
+  # install_cachix_script: nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
   flake_check_script: nix flake check -j auto --system ${ARCH//arm/aarch}-${CIRRUS_OS} --impure --show-trace --accept-flake-config
   #flake_check_script: cachix watch-exec $CACHIX_USER -- nix flake check -j auto --system ${ARCH//arm/aarch}-${CIRRUS_OS} --impure --show-trace --accept-flake-config
 
@@ -52,12 +52,12 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
         chmod -R 755 build
         scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
     #printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
-  compress_artifacts_script: |
-        filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
-        nix-shell -p p7zip.out --run "7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=256m -ms=on nixos-${FORMAT}.7z $filepath"
-        chmod 755 nixos-${FORMAT}.7z
-  binaries_artifacts:
-    path: nixos-${FORMAT}.7z
+  # compress_artifacts_script: |
+  #       filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
+  #       nix-shell -p p7zip.out --run "7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=256m -ms=on nixos-${FORMAT}.7z $filepath"
+  #       chmod 755 nixos-${FORMAT}.7z
+  # binaries_artifacts:
+  #   path: nixos-${FORMAT}.7z
 
 specs_template: &SPECS
     image: $LINUX_BUILD_IMAGE
@@ -87,10 +87,10 @@ build_darwin_task:
 
 build_linux_task:
   matrix:
-    - <<: *ARM_CONTAINER_TEMPLATE
-      env:
-        ARCH: arm64
-        USER: root
+    # - <<: *ARM_CONTAINER_TEMPLATE
+    #   env:
+    #     ARCH: arm64
+    #     USER: root
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
@@ -106,6 +106,8 @@ build_image_task:
     #   env:
     #     ARCH: arm64
     #     USER: root
+
+    # Proxmox server image
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
@@ -113,6 +115,7 @@ build_image_task:
         DESTDIR: dump
         EXT: vma.zst
         TARGET: server
+    # raw server image
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
@@ -120,6 +123,7 @@ build_image_task:
         DESTDIR: images
         EXT: img
         TARGET: server
+    # iso server image
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
@@ -127,6 +131,7 @@ build_image_task:
         DESTDIR: template/iso
         EXT: iso
         TARGET: server
+    # bri proxmox image
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
@@ -134,13 +139,16 @@ build_image_task:
         DESTDIR: dump
         EXT: vma.zst
         TARGET: bri
-    - <<: *LINUX_CONTAINER_TEMPLATE
-      env:
-        ARCH: x86_64
-        FORMAT: proxmox-lxc
-        DESTDIR: template/cache
-        EXT: tar.xz
-        TARGET: server
+    # server lxc image (broken)
+    # - <<: *LINUX_CONTAINER_TEMPLATE
+    #   env:
+    #     ARCH: x86_64
+    #     FORMAT: proxmox-lxc
+    #     DESTDIR: template/cache
+    #     EXT: tar.xz
+    #     TARGET: server
+
+    # bri raw image
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
@@ -148,6 +156,7 @@ build_image_task:
         EXT: img
         DESTDIR: images
         TARGET: bri
+    # bri iso image
     - <<: *LINUX_CONTAINER_TEMPLATE
       env:
         ARCH: x86_64
