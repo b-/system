@@ -130,7 +130,7 @@ def bootstrap(
         flake = f"{bootstrap_flake}#{cfg.value}.{host}.config.system.build.toplevel"
         run_cmd(["nix", "build", flake] + flags)
         run_cmd(
-            f"./result/sw/bin/darwin-rebuild switch --refresh --flake {FLAKE_PATH}#{host}".split()
+            f"./result/sw/bin/darwin-rebuild switch --accept-flake-config --refresh --flake {FLAKE_PATH}#{host}".split()
         )
     elif cfg == FlakeOutputs.HOME_MANAGER:
         flake = f"{bootstrap_flake}#{host}"
@@ -174,11 +174,11 @@ def build(
     if cfg is None:
         return
     elif cfg == FlakeOutputs.NIXOS:
-        cmd = ["sudo", "nixos-rebuild", "build", "--flake"]
+        cmd = ["sudo", "nixos-rebuild", "build", "--refresh", "--flake"]
     elif cfg == FlakeOutputs.DARWIN:
-        cmd = ["darwin-rebuild", "build", "--flake"]
+        cmd = ["darwin-rebuild", "build", "--refresh", "--flake"]
     elif cfg == FlakeOutputs.HOME_MANAGER:
-        cmd = ["home-manager", "build", "--flake"]
+        cmd = ["home-manager", "build", "--refresh", "--flake"]
     else:
         typer.secho("could not infer system type.", fg=Colors.ERROR.value)
         raise typer.Abort()

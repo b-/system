@@ -27,6 +27,8 @@
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     devenv.url = "github:cachix/devenv/latest";
 
+    attic.url = "github:zhaofengli/attic";
+
     ###
     # system management
     # system-manager = {
@@ -68,6 +70,7 @@
 
   outputs =
     {
+      attic,
       darwin,
       devenv,
       disko,
@@ -269,12 +272,13 @@
             # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
           ];
           extraModules = [
-            disko.nixosModules.disko
             #./disk-config.nix
-            ./profiles/personal.nix
             ./modules/nixos/desktop.nix
             ./modules/nixos/gnome.nix
             ./modules/nixos/tailscale.nix
+            ./profiles/personal.nix
+            attic.nixosModules.atticd
+            disko.nixosModules.disko
           ];
         };
         "server@x86_64-linux" = mkNixosConfig {
@@ -284,12 +288,14 @@
             self.nixosModules.customFormats
           ];
           extraModules = [
-            disko.nixosModules.disko
-            #./disk-config.nix
-            ./profiles/personal.nix
-            ./modules/nixos/tailscale.nix
             # ./modules/nixos/desktop.nix
             # ./modules/nixos/gnome.nix
+            #./disk-config.nix
+            ./modules/nixos/attic.nix
+            ./modules/nixos/tailscale.nix
+            ./profiles/personal.nix
+            attic.nixosModules.atticd
+            disko.nixosModules.disko
           ];
         };
         "bri@aarch64-linux" = mkNixosConfig {
