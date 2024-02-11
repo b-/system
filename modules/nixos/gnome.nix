@@ -8,6 +8,7 @@
       };
     };
     desktopManager.gnome.enable = true;
+    programs.gnupg.agent.pinentryFlavor = "gnome3";
   };
 
   hm =
