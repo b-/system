@@ -206,9 +206,8 @@
             };
 
           formatConfigs.proxmox =
-            { modulesPath, ... }:
+            { ... }:
             {
-              imports = [ "${toString modulesPath}/virtualisation/oci-image.nix" ];
 
               qemuConf.bios = "ovmf";
             };
