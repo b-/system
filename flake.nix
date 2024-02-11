@@ -241,21 +241,19 @@
             ./modules/nixos/gnome.nix
           ];
         };
-        # "server@x86_64-linux" = mkNixosConfig {
-        #   # imports = [
-        #   # ];
-        #   system = "x86_64-linux";
-        #   hardwareModules = [
-        #     ./modules/hardware/hardware.nix
-        #     # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
-        #   ];
-        #   extraModules = [
-        #     disko.nixosModules.disko
-        #     #          ./profiles/personal.nix
-        #     #          ./modules/nixos/desktop.nix
-        #     #          ./modules/nixos/gnome.nix
-        #   ];
-        # };
+        "server@x86_64-linux" = mkNixosConfig {
+          system = "x86_64-linux";
+          hardwareModules = [
+            ./modules/hardware/hardware.nix
+            # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+          ];
+          extraModules = [
+            disko.nixosModules.disko
+            ./profiles/personal.nix
+            # ./modules/nixos/desktop.nix
+            # ./modules/nixos/gnome.nix
+          ];
+        };
         "bri@aarch64-linux" = mkNixosConfig {
           system = "aarch64-linux";
           hardwareModules = [
