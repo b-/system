@@ -269,7 +269,7 @@
           ];
           extraModules = [
             disko.nixosModules.disko
-            ./disk-config.nix
+            #./disk-config.nix
             ./profiles/personal.nix
             ./modules/nixos/desktop.nix
             ./modules/nixos/gnome.nix
@@ -283,7 +283,7 @@
           ];
           extraModules = [
             disko.nixosModules.disko
-            ./disk-config.nix
+            #./disk-config.nix
             self.nixosModules.customFormats
             ./profiles/personal.nix
             # ./modules/nixos/desktop.nix
@@ -298,7 +298,7 @@
           ];
           extraModules = [
             disko.nixosModules.disko
-            ./disk-config.nix
+            #./disk-config.nix
             ./profiles/personal.nix
           ];
         };
