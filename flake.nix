@@ -180,6 +180,40 @@
         };
     in
     {
+      nixosModules.customFormats =
+        { }:
+        {
+          formatConfigs.azure =
+            { ... }:
+            {
+              fileExtension = ".vhd";
+            };
+
+          formatConfigs.docker =
+            { lib, ... }:
+            {
+              services.resolved.enable = false;
+              services.qemuGuest.enable = lib.mkForce false;
+            };
+
+          formatConfigs.oracle =
+            { modulesPath, ... }:
+            {
+              imports = [ "${toString modulesPath}/virtualisation/oci-image.nix" ];
+
+              formatAttr = "OCIImage";
+              fileExtension = ".qcow2";
+            };
+
+          formatConfigs.proxmox =
+            { modulesPath, ... }:
+            {
+              imports = [ "${toString modulesPath}/virtualisation/oci-image.nix" ];
+
+              bios = "ovmf";
+            };
+        };
+
       checks =
         { }
         // (mkChecks {
@@ -249,6 +283,7 @@
           ];
           extraModules = [
             disko.nixosModules.disko
+            self.nixosModules.customFormats
             ./profiles/personal.nix
             # ./modules/nixos/desktop.nix
             # ./modules/nixos/gnome.nix
