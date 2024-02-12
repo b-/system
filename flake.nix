@@ -212,7 +212,12 @@
             { ... }:
             {
 
-              proxmox.qemuConf.bios = "ovmf";
+              proxmox.qemuConf = {
+                agent = true;
+                boot = "virtio0";
+                bios = "ovmf";
+                net0 = "virtio=00:00:00:00:00:00,bridge=BackV30";
+              };
             };
         };
 
