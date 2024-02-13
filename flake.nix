@@ -304,6 +304,7 @@
             # ./modules/nixos/gnome.nix
             #./disk-config.nix
             ./modules/nixos/attic.nix
+            ./modules/nixos/server.nix
             ./modules/nixos/tailscale.nix
             ./profiles/personal.nix
             attic.nixosModules.atticd
