@@ -136,7 +136,7 @@ def bootstrap(
         flake = f"{bootstrap_flake}#{cfg.value}.{host}.config.system.build.toplevel"
         run_cmd(["nix", "build", flake] + flags)
         run_cmd(
-            f"./result/sw/bin/darwin-rebuild switch --accept-flake-config --refresh --accept-flake-config --flake {FLAKE_PATH}#{host}".split()
+            f"./result/sw/bin/darwin-rebuild switch --refresh --flake {FLAKE_PATH}#{host}".split()
         )
     elif cfg == FlakeOutputs.HOME_MANAGER:
         flake = f"{bootstrap_flake}#{host}"
@@ -149,7 +149,6 @@ def bootstrap(
                 "--",
                 "switch",
                 "--refresh",
-                "--accept-flake-config",
                 "--flake",
                 flake,
                 "-b",
@@ -194,7 +193,6 @@ def build(
             "darwin-rebuild",
             "build",
             "--refresh",
-            "--accept-flake-config",
             "--flake",
         ]
     elif cfg == FlakeOutputs.HOME_MANAGER:
@@ -214,7 +212,7 @@ def build(
     else:
         flake = f"{FLAKE_PATH}#{host}"
 
-    flags = ["--show-trace", "--accept-flake-config"]
+    flags = ["--show-trace"]
     if remote:
         flags += "--refresh"
     run_cmd(cmd + [flake] + flags)
@@ -330,7 +328,7 @@ def switch(
     elif cfg == FlakeOutputs.NIXOS:
         cmd = "sudo nixos-rebuild switch --refresh --accept-flake-config --flake"
     elif cfg == FlakeOutputs.DARWIN:
-        cmd = "darwin-rebuild switch --refresh --accept-flake-config --flake"
+        cmd = "darwin-rebuild switch --refresh --flake"
     elif cfg == FlakeOutputs.HOME_MANAGER:
         cmd = "home-manager switch --refresh --accept-flake-config --flake"
     else:
