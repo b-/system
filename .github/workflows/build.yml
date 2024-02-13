@@ -117,7 +117,7 @@ jobs:
         with:
           name: flake_lock
       - name: Build everything
-        run: cachix watch-exec nix build .#${{ matrix.package }}
+        run: cachix watch-exec bri -- nix build .#${{ matrix.package }}
 
   build_images:
     runs-on: ubuntu-20.04
