@@ -154,7 +154,7 @@ in
     # conditionally enable vscode only on linux
     vscode = mkIf stdenv.isLinux {
       enable = true;
-      extensions = with pkgs.vscode-extensions; [ vscode-extensions.ms-vscode-remote ];
+      # extensions = with pkgs.vscode-extensions; [ vscode-extensions.ms-vscode-remote ];
       package = pkgs.vscode.fhsWithPackages (
         ps: with ps; [
           rustup
