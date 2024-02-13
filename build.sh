@@ -4,8 +4,7 @@ set -eux
 # set cachix user
 CACHIX_USER="bri"
 
-# only x86_64 for now
-ARCH=x86_64
+DEFAULT_ARCH=x86_64
 
 # only linux for now
 OS=linux
@@ -37,9 +36,41 @@ declare -A EXTENSIONS=(
 )
 
 # filename prefixes (only proxmox needs this)
-declare -A PREFIXES=(
-  [proxmox]=vzdump-qemu-
-)
+_PREFIX(){
+  case "${FORMAT}" in
+    "proxmox")
+      local PREFIX="vzdump-qemu-"
+    ;;
+    *)
+      local PREFIX="" # null
+  esac
+  printf '%s' "${PREFIX}"
+}
+
+_NAME(){
+    printf 'build_image_%s@%s-%s_%s' \
+      "$(_TARGET)" \
+      "$(_ARCH)" \
+      "$(_OS)" \
+      "$(_FORMAT)" \
+    ;
+}
+
+_TARGET(){
+  printf '%s' "${TARGET-${DEFAULT_TARGET}}"
+}
+
+_ARCH(){
+  printf '%s' "${ARCH-${DEFAULT_ARCH}}"
+}
+
+_OS(){
+  printf '%s' "${OS-${DEFAULT_OS}}"
+}
+
+_FORMAT(){
+  printf '%s' "${FORMAT-${DEFAULT_FORMAT}}"
+}
 
 _println(){
   printf "%s\n" "${*}"
@@ -66,15 +97,21 @@ WITH_CACHIX(){
 
 BUILD_IMAGE(){
     mkdir -p build
-    BUILD_FILE="$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)"
+    BUILD_FILE="$(nix build ".#nixosConfigurations.$(TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" --print-out-paths --show-trace --accept-flake-config)"
     cp "${BUILD_FILE}" "build/"
 }
 
 LIST_RENAME_BUILD_ARTIFACTS(){
     set -x
     find build
-    OUTFILE="${PREFIXES[${FORMAT}]}${NAME}.${EXTENSIONS[${FORMAT}]}"
-    for i in build/*."${EXT}" ; do
+    printf -v OUTFILE\
+      '%s%s.%s.%s"' \
+      "$(_PREFIX)" \
+      "$(NAME)" \
+      "$(date -I)" \
+      "${EXTENSIONS[$(_FORMAT)]}"
+
+    for i in build/*."${EXTENSIONS[$(_FORMAT)]}" ; do
         mv "$i" "build/${OUTFILE}"
     done
 }
@@ -87,7 +124,7 @@ UPLOAD_ARTIFACTS(){
     set -x
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
-    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no -oUser="${UPLOAD_USER}" build/*."${EXTENSIONS[${FORMAT}]}" "${UPLOAD_SERVER}":"${DESTDIRS[${FORMAT}]}"
+    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no -oUser="${UPLOAD_USER}" build/*."${EXTENSIONS[$(_FORMAT)]}" "${UPLOAD_SERVER}":"${DESTDIRS[$(_FORMAT)]}"
 }
 
 ###
@@ -99,7 +136,6 @@ CLEAN(){
 }
 # tasks to build an image
 BUILD_IMAGE_TASKS(){
-  NAME="build_image_${TARGET}@${ARCH}-${OS}_${FORMAT}"
   #INSTALL_CACHIX
   #WITH_CACHIX BUILD_IMAGE
   BUILD_IMAGE
@@ -122,8 +158,8 @@ BUILD_IMAGES(){
 for FORMAT in "${FORMATS[@]}"; do
   for TARGET in "${TARGETS[@]}"; do
     echo '{'
-    echo '"TARGET": '"${TARGET}"
-    echo '"FORMAT": '"${FORMAT}"
+    echo '"TARGET": '"$(TARGET)"
+    echo '"FORMAT": '"$(_FORMAT)"
     echo '}'
     CLEAN
     BUILD_AND_UPLOAD
