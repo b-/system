@@ -10,6 +10,10 @@ ARCH=x86_64
 # only linux for now
 OS=linux
 
+# server to scp artifacts to
+UPLOAD_SERVER=ci-upload.ibeep.com
+UPLOAD_USER=ci-upload
+
 # hashtable of destdirs
 declare -A DESTDIRS=(
   [proxmox]="dump"
@@ -82,7 +86,7 @@ UPLOAD_ARTIFACTS(){
     set -x
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
-    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:"${DESTDIRS[${FORMAT}]}"
+    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no -oUser="${UPLOAD_USER}" build/* "${UPLOAD_SERVER}":"${DESTDIRS[${FORMAT}]}"
 }
 
 ###
