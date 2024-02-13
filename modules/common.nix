@@ -72,6 +72,7 @@
       cachix
       nixfmt-rfc-style
       home-manager
+      attic-client
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";
