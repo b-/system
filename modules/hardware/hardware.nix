@@ -22,7 +22,7 @@
 
   fileSystems."/" = {
     # device = "/dev/disk/by-label/nixos";
-    device = lib.mkDefault "/dev/disk/by-label/root";
+    device = lib.mkDefault "/dev/disk/by-label/nixos";
     fsType = "ext4";
   };
 
