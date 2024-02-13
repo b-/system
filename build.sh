@@ -55,6 +55,7 @@ die(){
   exit "${exit_code}"
 }
 
+
 INSTALL_CACHIX(){
     nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
 }
@@ -79,14 +80,14 @@ LIST_RENAME_BUILD_ARTIFACTS(){
 }
 
 SAVE_SSH_KEY(){
-    printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
+    <<< "${UPLOAD_SSH_KEY_BASE64}" sed -e 's/ /\n/g' | base64 -d > /tmp/ci-upload.key
 }
 
 UPLOAD_ARTIFACTS(){
     set -x
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
-    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no -oUser="${UPLOAD_USER}" build/* "${UPLOAD_SERVER}":"${DESTDIRS[${FORMAT}]}"
+    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no -oUser="${UPLOAD_USER}" build/*."${EXTENSIONS[${FORMAT}]}" "${UPLOAD_SERVER}":"${DESTDIRS[${FORMAT}]}"
 }
 
 ###
@@ -94,8 +95,7 @@ UPLOAD_ARTIFACTS(){
 ###
 
 CLEAN(){
-  #rm -fR "${ARTIFACTS[@]}"
-  true #don't clean for now
+  rm -fR build result
 }
 # tasks to build an image
 BUILD_IMAGE_TASKS(){
@@ -121,8 +121,11 @@ BUILD_AND_UPLOAD(){
 BUILD_IMAGES(){
 for FORMAT in "${FORMATS[@]}"; do
   for TARGET in "${TARGETS[@]}"; do
-    echo "TARGET: ${TARGET}"
-    echo "FORMAT: ${FORMAT}"
+    echo '{'
+    echo '"TARGET": '"${TARGET}"
+    echo '"FORMAT": '"${FORMAT}"
+    echo '}'
+    CLEAN
     BUILD_AND_UPLOAD
   done
 done
