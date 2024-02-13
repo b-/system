@@ -118,6 +118,10 @@ for FORMAT in "${FORMATS[@]}"; do
 done
 }
 
+CI(){
+  BUILD_IMAGES
+}
+
 main(){
 "${@}"
 }
