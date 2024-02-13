@@ -1,4 +1,13 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+let
+  inherit (pkgs) stdenv;
+  inherit (lib) mkIf;
+in
 {
   imports = [
     ./bat.nix
@@ -142,7 +151,8 @@
     starship.enable = true;
     yt-dlp.enable = true;
     zoxide.enable = true;
-    vscode = {
+    # conditionally enable vscode only on linux
+    vscode = mkIf stdenv.isLinux {
       enable = true;
       extensions = with pkgs.vscode-extensions; [ vscode-extensions.ms-vscode-remote ];
       package = pkgs.vscode.fhsWithPackages (
