@@ -68,7 +68,7 @@ BUILD_IMAGE(){
 LIST_RENAME_BUILD_ARTIFACTS(){
     set -x
     find build
-    OUTFILE="${PREFIXES[FORMAT]}${NAME}.${EXTENSIONS[$FORMAT]}"
+    OUTFILE="${PREFIXES[${FORMAT}]}${NAME}.${EXTENSIONS[${FORMAT}]}"
     for i in build/*."${EXT}" ; do
         mv "$i" "build/${OUTFILE}"
     done
