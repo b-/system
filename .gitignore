@@ -6,3 +6,4 @@
 .devenv/
 .pre-commit-config.yaml
 *.code-workspace
+.env
