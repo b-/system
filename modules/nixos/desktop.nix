@@ -1,8 +1,8 @@
 { pkgs, config, ... }:
 {
-  imports = [
-    #./keybase.nix
-  ];
+  # commented out because we import it at a higher hierarchical level
+  #imports = [ ./keybase.nix ];
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -22,18 +22,22 @@
     };
 
     syncthing = {
-      enable = true;
+      enable = false;
       user = config.user.name;
       group = "users";
       openDefaultPorts = true;
       dataDir = config.user.home;
     };
   };
+
   environment.systemPackages = with pkgs; [
-    vscode
+    #vscode
     firefox
     google-chrome
     visual-studio-code
     gnome.gnome-tweaks
   ];
+
+  # Electron applications use Wayland
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 }
