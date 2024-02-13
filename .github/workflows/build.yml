@@ -1,9 +1,10 @@
-name: Updater
+name: build images
 
 on:
   schedule:
     - cron: "0 2 * * *"
   workflow_dispatch: {}
+  push: {}
 
 jobs:
   generate_matrix:
@@ -116,7 +117,7 @@ jobs:
         with:
           name: flake_lock
       - name: Build everything
-        run: nix build .#${{ matrix.package }}
+        run: cachix watch-exec nix build .#${{ matrix.package }}
 
   build_images:
     runs-on: ubuntu-20.04
