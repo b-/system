@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -eux
+set -eu
+
+###
+# settings
 
 # set cachix user
 CACHIX_USER="bri"
@@ -8,6 +11,11 @@ DEFAULT_ARCH=x86_64
 
 # only linux for now
 OS=linux
+
+# too lazy to write something better rn
+_THISFILE(){
+  printf '%s' 'build.sh'
+}
 
 # server to scp artifacts to
 UPLOAD_SERVER=ci-upload.ibeep.com
@@ -56,6 +64,9 @@ _NAME(){
     ;
 }
 
+###
+# Helper string functions
+
 _TARGET(){
   printf '%s' "${TARGET-${DEFAULT_TARGET}}"
 }
@@ -76,16 +87,21 @@ _println(){
   printf "%s\n" "${*}"
 }
 
-die(){
+_die(){
+  set +x
   exit_code=254
   if [[ "${1}" =~ ^[0-9]+$ ]] ; then
     exit_code="${1}"
     shift
   fi
-  _println "${*}"
   exit "${exit_code}"
 }
 
+_LIST(){
+  KEEP_FUNCS='/(){/!d' # bug in bash lsp syntax highlighting
+  LIST="$(<"$(_THISFILE)" sed -e '/^_/d' -e '/^ /d' -e "${KEEP_FUNCS}")"
+  _println "${LIST}"
+}
 
 INSTALL_CACHIX(){
     nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
@@ -102,7 +118,6 @@ BUILD_IMAGE(){
 }
 
 LIST_RENAME_BUILD_ARTIFACTS(){
-    set -x
     find build
     printf -v OUTFILE\
       '%s%s.%s.%s"' \
@@ -121,16 +136,22 @@ SAVE_SSH_KEY(){
 }
 
 UPLOAD_ARTIFACTS(){
-    set -x
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
-    scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no -oUser="${UPLOAD_USER}" build/*."${EXTENSIONS[$(_FORMAT)]}" "${UPLOAD_SERVER}":"${DESTDIRS[$(_FORMAT)]}"
+    scp \
+      -C \
+      -i /tmp/ci-upload.key \
+      -oStrictHostKeyChecking=no \
+      -oport=222 \
+      -oidentitiesonly=true \
+      -oPasswordAuthentication=no \
+      -oUser="${UPLOAD_USER}" \
+      build/*."${EXTENSIONS[$(_FORMAT)]}" \
+      "${UPLOAD_SERVER}":"${DESTDIRS[$(_FORMAT)]}"
 }
 
 ###
 # META TARGETS
-###
-
 CLEAN(){
   rm -fR build result
 }
@@ -170,9 +191,12 @@ done
 CI(){
   BUILD_IMAGES
 }
-
-main(){
+_main(){
+  if [[ -z "${1-}" ]] ; then
+    _LIST
+    _die ''
+  fi
 "${@}"
 }
 
-main "${@}"
+_main "${@}"
