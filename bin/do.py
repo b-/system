@@ -200,7 +200,6 @@ def build(
             "home-manager",
             "build",
             "--refresh",
-            "--accept-flake-config",
             "--flake",
         ]
     else:
@@ -330,7 +329,7 @@ def switch(
     elif cfg == FlakeOutputs.DARWIN:
         cmd = "darwin-rebuild switch --refresh --flake"
     elif cfg == FlakeOutputs.HOME_MANAGER:
-        cmd = "home-manager switch --refresh --accept-flake-config --flake"
+        cmd = "home-manager switch --refresh --flake"
     else:
         typer.secho("could not infer system type.", fg=Colors.ERROR.value)
         raise typer.Abort()
