@@ -21,7 +21,9 @@ class Colors(Enum):
     ERROR = typer.colors.RED
 
 
-check_git = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True)
+check_git = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, check=True
+)
 LOCAL_FLAKE = os.path.realpath(check_git.stdout.decode().strip())
 REMOTE_FLAKE = "github:b-/system"
 is_local = check_git.returncode == 0 and os.path.isfile(
@@ -31,10 +33,10 @@ FLAKE_PATH = LOCAL_FLAKE if is_local else REMOTE_FLAKE
 
 UNAME = platform.uname()
 check_nixos = subprocess.run(
-    ["/usr/bin/env", "type", "nixos-rebuild"], capture_output=True
+    ["/usr/bin/env", "type", "nixos-rebuild"], capture_output=True, check=False
 )
 check_darwin = subprocess.run(
-    ["/usr/bin/env", "type", "darwin-rebuild"], capture_output=True
+    ["/usr/bin/env", "type", "darwin-rebuild"], capture_output=True, check=False
 )
 if check_nixos.returncode == 0:
     # if we're on nixos, this command is built in
@@ -46,7 +48,11 @@ else:
     # in all other cases of linux
     PLATFORM = FlakeOutputs.HOME_MANAGER
 
-USERNAME = subprocess.run(["id", "-un"], capture_output=True).stdout.decode().strip()
+USERNAME = (
+    subprocess.run(["id", "-un"], capture_output=True, check=False)
+    .stdout.decode()
+    .strip()
+)
 SYSTEM_ARCH = "aarch64" if UNAME.machine == "arm64" else UNAME.machine
 SYSTEM_OS = UNAME.system.lower()
 DEFAULT_HOST = f"{USERNAME}@{SYSTEM_ARCH}-{SYSTEM_OS}"
@@ -58,15 +64,15 @@ def fmt_command(cmd: List[str]):
 
 
 def test_cmd(cmd: List[str]):
-    return subprocess.run(cmd).returncode == 0
+    return subprocess.run(cmd, check=False).returncode == 0
 
 
 def run_cmd(cmd: List[str], shell=False):
     typer.secho(fmt_command(cmd), fg=Colors.INFO.value)
     return (
-        subprocess.run(" ".join(cmd), shell=True)
+        subprocess.run(" ".join(cmd), shell=True, check=True)
         if shell
-        else subprocess.run(cmd, shell=False)
+        else subprocess.run(cmd, shell=False, check=True)
     )
 
 
@@ -192,7 +198,13 @@ def build(
             "--flake",
         ]
     elif cfg == FlakeOutputs.HOME_MANAGER:
-        cmd = ["home-manager", "build", "--refresh", "--accept-flake-config", "--flake"]
+        cmd = [
+            "home-manager",
+            "build",
+            "--refresh",
+            "--accept-flake-config",
+            "--flake",
+        ]
     else:
         typer.secho("could not infer system type.", fg=Colors.ERROR.value)
         raise typer.Abort()
