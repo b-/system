@@ -1,3 +1,4 @@
+{ lib }:
 {
   security.sudo.wheelNeedsPassword = false;
   boot = {
