@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
 # set cachix user
 CACHIX_USER="bri"
