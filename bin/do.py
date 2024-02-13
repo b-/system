@@ -22,7 +22,7 @@ class Colors(Enum):
 
 
 check_git = subprocess.run(
-    ["git", "rev-parse", "--show-toplevel"], capture_output=True, check=True
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, check=False
 )
 LOCAL_FLAKE = os.path.realpath(check_git.stdout.decode().strip())
 REMOTE_FLAKE = "github:b-/system"
