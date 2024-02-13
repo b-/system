@@ -93,8 +93,8 @@ CLEAN(){
   #rm -fR "${ARTIFACTS[@]}"
   true #don't clean for now
 }
-# build an image
-BUILD_IMAGE_TARGET(){
+# tasks to build an image
+BUILD_IMAGE_TASKS(){
   NAME="build_image_${TARGET}@${ARCH}-${OS}_${FORMAT}"
   #INSTALL_CACHIX
   #WITH_CACHIX BUILD_IMAGE
@@ -102,11 +102,16 @@ BUILD_IMAGE_TARGET(){
   LIST_RENAME_BUILD_ARTIFACTS
 }
 
-# build and upload an image
-BUILD_AND_UPLOAD(){
-  BUILD_IMAGE_TARGET
+# tasks to run for upload
+UPLOAD_TASKS(){
   SAVE_SSH_KEY
   UPLOAD_ARTIFACTS
+}
+
+# build and upload an image
+BUILD_AND_UPLOAD(){
+  BUILD_IMAGE_TASKS
+  UPLOAD_TASKS
 }
 
 BUILD_IMAGES(){
