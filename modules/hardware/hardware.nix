@@ -11,6 +11,9 @@
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot.initrd.availableKernelModules = [
+    "uas"
+    "virtio_blk"
+    "virtio_pci"
     "xhci_pci"
     "usb_storage"
     "sd_mod"
