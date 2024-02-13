@@ -31,10 +31,9 @@
   };
 
   environment.systemPackages = with pkgs; [
-    #vscode
+    vscode
     firefox
     google-chrome
-    visual-studio-code
     gnome.gnome-tweaks
   ];
 
