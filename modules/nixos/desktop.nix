@@ -10,6 +10,10 @@
   sound.enable = true;
   hardware.pulseaudio.enable = true;
 
+  security.sudo.extraConfig = ''
+    Defaults pwfeedback
+  '';
+
   services = {
     # Enable the X11 windowing system.
     xserver = {
