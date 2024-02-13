@@ -84,24 +84,42 @@ UPLOAD_ARTIFACTS(){
     scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:"${DESTDIRS[${FORMAT}]}"
 }
 
+###
+# META TARGETS
+###
+
+CLEAN(){
+  #rm -fR "${ARTIFACTS[@]}"
+  true #don't clean for now
+}
+# build an image
+BUILD_IMAGE_TARGET(){
+  NAME="build_image_${TARGET}@${ARCH}-${OS}_${FORMAT}"
+  #INSTALL_CACHIX
+  #WITH_CACHIX BUILD_IMAGE
+  BUILD_IMAGE
+  LIST_RENAME_BUILD_ARTIFACTS
+}
+
+# build and upload an image
+BUILD_AND_UPLOAD(){
+  BUILD_IMAGE_TARGET
+  SAVE_SSH_KEY
+  UPLOAD_ARTIFACTS
+}
+
 BUILD_IMAGES(){
 for FORMAT in "${FORMATS[@]}"; do
   for TARGET in "${TARGETS[@]}"; do
     echo "TARGET: ${TARGET}"
     echo "FORMAT: ${FORMAT}"
-    BUILD_IMAGE_TARGET
+    BUILD_AND_UPLOAD
   done
 done
 }
 
-BUILD_IMAGE_TARGET(){
-    NAME="build_image_${TARGET}@${ARCH}-${OS}_${FORMAT}"
-    #INSTALL_CACHIX
-    #WITH_CACHIX BUILD_IMAGE
-    BUILD_IMAGE
-    LIST_RENAME_BUILD_ARTIFACTS
-    SAVE_SSH_KEY
-    UPLOAD_ARTIFACTS
+main(){
+"${@}"
 }
 
-"${@}"
+main "${@}"
