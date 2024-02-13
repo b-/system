@@ -80,7 +80,7 @@ LIST_RENAME_BUILD_ARTIFACTS(){
 }
 
 SAVE_SSH_KEY(){
-    <<< "${UPLOAD_SSH_KEY_BASE64}" sed -e 's/ /\n/g' | base64 -d > /tmp/ci-upload.key
+    <<< "${UPLOAD_SSH_KEY_BASE64// /$'\n'}" base64 -d > /tmp/ci-upload.key
 }
 
 UPLOAD_ARTIFACTS(){
