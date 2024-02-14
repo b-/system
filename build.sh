@@ -150,7 +150,6 @@ UPLOAD_ARTIFACTS(){
     scp \
       -C \
       -v \
-      -f \
       -i /tmp/ci-upload.key \
       -oStrictHostKeyChecking=no \
       -oport=222 \
