@@ -20,7 +20,7 @@ _THISFILE(){
 # server to scp artifacts to
 UPLOAD_SERVER=ci-upload.ibeep.com
 UPLOAD_USER=ci-upload
-
+IMAGE_BUILD_FLAGS+=( --print-out-paths --show-trace --accept-flake-config )
 # hashtable of destdirs
 declare -A DESTDIRS=(
   [proxmox]="dump"
@@ -116,7 +116,7 @@ WITH_CACHIX(){
 BUILD_IMAGE(){
     mkdir -p build
     ARCH="$(_ARCH)"
-    BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" --print-out-paths --show-trace --accept-flake-config)"
+    BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" ${IMAGE_BUILD_FLAGS[@]})"
     cp "${BUILD_FILE}" "build/"
 }
 
