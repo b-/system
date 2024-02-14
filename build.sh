@@ -117,7 +117,9 @@ BUILD_IMAGE(){
     mkdir -p build
     ARCH="$(_ARCH)"
     BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" "${IMAGE_BUILD_FLAGS[@]}")"
-    cp "${BUILD_FILE}" "build/"
+    #BASE_FILE="$(basename "${BUILD_FILE}")"
+    CUT_FILE="$(cut -d- -f2- <<<"${BUILD_FILE}")"
+    cp "${BUILD_FILE}" "build/$(_PREFIX)${CUT_FILE}"
 }
 
 LIST_RENAME_BUILD_ARTIFACTS(){
