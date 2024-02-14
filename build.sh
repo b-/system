@@ -120,7 +120,7 @@ BUILD_IMAGE(){
     BASE_FILE="$(basename "${BUILD_FILE}")"
     CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
     HASH=$(cut -b-5 <<<"${BASE_FILE}")
-    OUTNAME="build/$(_PREFIX)${HASH}_${TARGET}_${CUT_FILE}"
+    OUTNAME="build/$(_PREFIX)${HASH}-$(date -I)_${TARGET}_${CUT_FILE}"
     #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
     ln -vs "${BUILD_FILE}" "${OUTNAME}"
 }
