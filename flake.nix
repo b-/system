@@ -30,6 +30,7 @@
 
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs";
+    attic.inputs.nixpkgs-stable.follows = "stable";
 
     ###
     # system management
