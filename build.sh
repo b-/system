@@ -23,9 +23,9 @@ UPLOAD_USER=ci-upload
 IMAGE_BUILD_FLAGS+=( --print-out-paths --show-trace --accept-flake-config )
 # hashtable of destdirs
 declare -A DESTDIRS=(
-  [proxmox]="dump"
-  [raw-efi]="images"
-  [iso]="template/iso"
+  [proxmox]="dump/"
+  [raw-efi]="images/"
+  [iso]="template/iso/"
 )
 
 TARGETS=(
@@ -149,7 +149,7 @@ UPLOAD_ARTIFACTS(){
     chmod -R 755 build
     scp \
       -C \
-      -f \
+      -v \
       -i /tmp/ci-upload.key \
       -oStrictHostKeyChecking=no \
       -oport=222 \
