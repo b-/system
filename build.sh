@@ -14,13 +14,12 @@ DEFAULT_OS=linux
 
 # too lazy to write something better rn
 _THISFILE(){
-  printf %s '/home/bri/system/build.sh'
+  printf %s/%s "${HOME}/system" 'build.sh'
 }
 
 # server to scp artifacts to
 UPLOAD_SERVER=ci-upload.ibeep.com
 UPLOAD_USER=ci-upload
-IMAGE_BUILD_FLAGS+=( -v --print-out-paths --show-trace --accept-flake-config )
 # hashtable of destdirs
 declare -A DESTDIRS=(
   [proxmox]="dump/"
@@ -32,13 +31,14 @@ DEFAULT_TARGETS=(
   "server"
   "bri"
 )
-TARGETS="${TARGETS-${DEFAULT_TARGETS}}"
 DEFAULT_FORMATS=(
   "proxmox"
   "raw-efi"
   "iso"
 )
-FORMATS="${FORMATS-${DEFAULT_FORMATS}}"
+
+# unused
+# shellcheck disable=SC2034
 declare -A EXTENSIONS=(
   [raw-efi]="img"
   [proxmox]="vma.zst"
@@ -57,6 +57,21 @@ _PREFIX(){
   printf '%s' "${PREFIX}"
 }
 
+###
+# Helper functions
+
+# _STDERR (command_or_function)
+# Runs (command_or_function) and redirects 1>&2
+_STDERR() {
+  1>&2 "${@}"
+}
+
+# DATE-TIME returns `(date -I)-(date +%H-%M)`
+DATE-TIME() {
+  printf %s "$(date -I)-$(date +"%H-%M")"
+}
+
+# _NAME outputs a formatted filename for (_TARGET) (_ARCH) (_OS) (_FORMAT)
 _NAME(){
     printf 'build_image_%s@%s-%s_%s' \
       "$(_TARGET)" \
@@ -66,29 +81,36 @@ _NAME(){
     ;
 }
 
-###
-# Helper string functions
-
+# _TARGET helper function to output the TARGET to build.
+# Returns either $TARGET or $DEFAULT_TARGET
 _TARGET(){
   printf '%s' "${TARGET-${DEFAULT_TARGET}}"
 }
 
+# _ARCH helper function to output the ARCH to build.
+# Returns either $ARCH or $DEFAULT_ARCH
 _ARCH(){
   printf '%s' "${ARCH-${DEFAULT_ARCH}}"
 }
 
+# _OS helper function to output the OS to build.
+# Returns either $OS or $DEFAULT_OS
 _OS(){
   printf '%s' "${OS-${DEFAULT_OS}}"
 }
 
+# _FORMAT helper function to output the FORMAT to build.
+# Returns either $FORMAT or $DEFAULT_format
 _FORMAT(){
   printf '%s' "${FORMAT-${DEFAULT_FORMAT}}"
 }
 
+# Usage: _println <message>
 _println(){
   printf "%s\n" "${*}"
 }
 
+# Usage: _die [exit code] <message>
 _die(){
   set +x
   exit_code=254
@@ -99,6 +121,7 @@ _die(){
   exit "${exit_code}"
 }
 
+# LISTs the main functions in this script
 _LIST(){
   KEEP_FUNCS='/(){/!d' # bug in bash lsp syntax highlighting
   FMT_FUNCS='s/(){//'
@@ -107,33 +130,67 @@ _LIST(){
   _println "${LIST}" | sed -e's/^/  /'
 }
 
-INSTALL_CACHIX(){ # INSTALL_CACHIX
+# Installs cachix
+INSTALL_CACHIX(){ # INSTALL_CACHIX Installs cachix
     nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
 }
 
-WITH_CACHIX(){ # Run a command with Cachix
-  cachix watch-exec "${CACHIX_USER}" -- "${@}"
+WITH_CACHIX(){ # Run a command with `cachix
+  DEFAULT_CACHIX_USER=bri
+  cachix watch-exec "${CACHIX_USER-${DEFAULT_CACHIX_USER}}" -- "${@}"
 }
 
-BUILD_IMAGE(){ # Build image
-    mkdir -p build
-    ARCH="$(_ARCH)"
-    BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-$(_OS).config.formats.$(_FORMAT)" "${IMAGE_BUILD_FLAGS[@]}")"
-    BASE_FILE="$(basename "${BUILD_FILE}")"
-    CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
-    HASH=$(cut -b-5 <<<"${BASE_FILE}")
-    OUTNAME="build/$(_PREFIX)${HASH}-$(date -I)_${TARGET}_${CUT_FILE}"
-    export OUTNAME
-    #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
-    ln -fvs "${BUILD_FILE}" "${OUTNAME}"
-    printf %s "${OUTNAME}"
+# BUILD_IMAGE
+# Builds an image $TARGET@$ARCH-linux.$FORMAT
+# Usage: BUILD_IMAGE
+# Returns the built filename to stdout and redirects
+# all other output to stderr.
+BUILD_IMAGE(){ # Build image $TARGET@$ARCH-linux.$FORMAT
+  IMAGE_BUILD_FLAGS=( -v --show-trace --accept-flake-config )
+  local NIX_BUILD_TARGET BUILT_FILE ARCH BASE_FILE HASH CUT_FILE
+  mkdir -p build
+  ARCH="$(_ARCH)"
+  # NIX_BUILD_TARGET e.g., `.#nixosConfigurations.server@x86_64-linux.config.formats.raw-efi`
+  NIX_BUILD_TARGET="$(
+    printf .#nixosConfigurations.%s@%s-%s.config.formats.%s \
+      "$(_TARGET)" \
+      "${ARCH//arm/aarch}" \
+      "$(_OS)" \
+      "$(_FORMAT)" \
+    ;
+  )"
+  # $BUILT_FILE is the path to the build artifact inside /nix store.
+  # `nix build --print-out-paths` sends all build output to stderr and outputs only the built path(s) to stdout
+  BUILT_FILE="$(nix build --print-out-paths "${NIX_BUILD_TARGET}" "${IMAGE_BUILD_FLAGS[@]}")"
+
+  # BASE_FILE basename of $BUILT_FILE
+  BASE_FILE="$(basename "${BUILT_FILE}")"
+  # HASH first five bytes of $BASE_FILE
+  # e.g., `cHaRs`
+  HASH=$(cut -b-5 <<<"${BASE_FILE}")
+  # CUT_FILE the rest of $BASE_FILE after the full $HASH
+  CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
+  # OUTNAME the final filename of our linked build artifact
+  OUTNAME="build/$(_PREFIX)${HASH}-$(DATE-TIME)_${TARGET}_${CUT_FILE}"
+  export OUTNAME
+  _STDERR ln -fvs "${BUILT_FILE}" "${OUTNAME}"
+  # return "${OUTNAME}"
+  printf %s "${OUTNAME}"
 }
 
+# SAVE_SSH_KEY
+# Usage: SAVE_SSH_KEY [var]
+# Saves the (base64-encoded) SSH private key from .env variable $UPLOAD_SSH_KEY_BASE64
 SAVE_SSH_KEY(){
     <<< "${UPLOAD_SSH_KEY_BASE64// /$'\n'}" base64 -d > /tmp/ci-upload.key
+    # ssh refuses to use a key with open permissions
+    chmod 600 /tmp/ci-upload.key
 }
 
-UPLOAD_ARTIFACTS(){
+# UPLOAD_ARTIFACT
+# Usage: UPLOAD_ARTIFACT <file> [<file> [<file>]]...
+# Saves SSH key and uploads <file>s via rsync
+UPLOAD_ARTIFACT(){
     SSH_OPTIONS=(
         "-i/tmp/ci-upload.key"
         "-oStrictHostKeyChecking=no"
@@ -143,78 +200,90 @@ UPLOAD_ARTIFACTS(){
         "-oUser=${UPLOAD_USER}"
         )
 
-    # ssh refuses to use a key with open permissions
-    chmod 600 /tmp/ci-upload.key
-    chmod -R 755 build
-
     # TODO: document what these flags do
     rsync \
       -auvLzt \
       --chmod=D2775,F664 -p \
       -e "ssh ${SSH_OPTIONS[*]}" \
       --info=progress2 \
-      "${OUTNAME}" \
+      "${@}" \
       "${UPLOAD_USER}@${UPLOAD_SERVER}:${DESTDIRS[$(_FORMAT)]}"
 }
 
 ###
 # META TARGETS
+
+# CLEAN cleans built artifacts
+# Usage: CLEAN
 CLEAN(){
+  set -x
   rm -fR build result
 }
-# tasks to build an image
+# BUILD_IMAGE_TASKS
+# Usage: BUILD_IMAGE_TASKS
+# Builds an image for $FORMAT and $TARGET
+# runs (BUILD_IMAGE)
 BUILD_IMAGE_TASKS(){
   #INSTALL_CACHIX
   #WITH_CACHIX BUILD_IMAGE
   BUILD_IMAGE
 }
 
-# tasks to run for upload
+# UPLOAD_TASKS
+# Usage: UPLOAD_TASKS
+# runs (SAVE_SSH_KEY) and (UPLOAD_ARTIFACT)
 UPLOAD_TASKS(){
   SAVE_SSH_KEY
-  UPLOAD_ARTIFACTS
+  UPLOAD_ARTIFACT "${@}"
 }
 
-# build and upload an image
+# BUILD_AND_UPLOAD
+# Usage: BUILD_AND_UPLOAD
+# runs (BUILD_IMAGE_TASKS) while saving output to "build_${INVOCATION_NAME}.log".
 BUILD_AND_UPLOAD(){
-  INVOCATION_NAME="$(_TARGET).$(_FORMAT).$(date -I).$(date +"%H-%M")"
-  time BUILD_IMAGE_TASKS 2>&1 | tee "build_${INVOCATION_NAME}.log"
-  time UPLOAD_TASKS 2>&1 | tee "upload_${INVOCATION_NAME}.log"
+  INVOCATION_NAME="${BUILD_NAME-$(_TARGET).$(_FORMAT).$(DATE-TIME)}"
+
+  # Build image, then set OUTNAME to built image name
+  # and tee to build_${INVOCATION_NAME}.log
+  OUTNAME="$(
+    BUILD_IMAGE_TASKS 2> >(
+      tee "build_${INVOCATION_NAME}.log"
+    )
+  )"
+  # upload built image, teeing all output to log
+  UPLOAD_TASKS "${OUTNAME}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
-BUILD_IMAGES(){
-for FORMAT in "${FORMATS[@]}"; do
-  for TARGET in "${TARGETS[@]}"; do
-    echo '{'
-    echo '"TARGET": "'"$(_TARGET)"'",'
-    echo '"FORMAT": "'"$(_FORMAT)"'"'
-    echo '}'
-    CLEAN
-    BUILD_AND_UPLOAD
+# BUILD_MATRIX
+# Runs (CLEAN) and (BUILD_AND_UPLOAD) for each combination of the arrays ${TARGETS[@]} and ${FORMATS[@]}.
+# If ${TARGETS[@]} or ${FORMATS[@]} are unset, the ${DEFAULT_TARGETS[@]} and ${DEFAULT_FORMATS[@]} arrays are used instead.
+BUILD_MATRIX(){
+  TARGETS="${TARGETS-${DEFAULT_TARGETS[@]}}"
+  FORMATS="${FORMATS-${DEFAULT_FORMATS[@]}}"
+
+  for FORMAT in "${FORMATS[@]}"; do
+    for TARGET in "${TARGETS[@]}"; do
+      if not [[ -z "${NOCLEAN}" ]] ; then
+        CLEAN
+      fi
+      BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
+      export BUILD_NAME
+      _println "*** Starting build ${BUILD_NAME} ***"
+      BUILD_AND_UPLOAD
+    done
   done
-done
 }
 
-CI(){
-    INVOCATION_NAME="build.$(date -I).$(date +"%H-%M")"
-    BUILD_IMAGES 2>&1 | tee "${INVOCATION_NAME}.log"
+CI_BUILD(){
+    BUILD_MATRIX 2>&1 | tee "ci-build.$(DATE-TIME).log"
 }
+
 _main(){
   if [[ -z "${1-}" ]] ; then
     _LIST
     _die ''
   fi
 "${@}"
-}
-
-DAEMON(){
-    INVOCATION_NAME="build.$(date -I).$(date +"%H-%M")"
-    DIR="$(dirname "$(_THISFILE)")"
-    local DIR
-    cd "${DIR}"
-    nix run -- nixpkgs#screen -dmS "${INVOCATION_NAME}" "$(_THISFILE)" -L -Logfile "${INVOCATION_NAME}.log" "${@}"
-    echo "${INVOCATION_NAME}"
-    echo "  tail -f ${INVOCATION_NAME}.log"
 }
 
 _main "${@}"
