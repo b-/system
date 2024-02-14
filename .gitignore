@@ -9,3 +9,4 @@
 .env
 build/
 screenlog.*
+*.log
