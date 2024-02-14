@@ -132,6 +132,7 @@ LIST_RENAME_BUILD_ARTIFACTS(){
       "${EXTENSIONS[$(_FORMAT)]}"
 
     for i in build/*."${EXTENSIONS[$(_FORMAT)]}" ; do
+      OUTFILES+="build/${OUTFILE}"
         mv "$i" "build/${OUTFILE}"
     done
 }
@@ -151,7 +152,7 @@ UPLOAD_ARTIFACTS(){
       -oidentitiesonly=true \
       -oPasswordAuthentication=no \
       -oUser="${UPLOAD_USER}" \
-      build/*."${EXTENSIONS[$(_FORMAT)]}" \
+      "${OUTFILES[@]}" \
       "${UPLOAD_SERVER}":"${DESTDIRS[$(_FORMAT)]}"
 }
 
