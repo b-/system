@@ -155,8 +155,7 @@ UPLOAD_ARTIFACTS(){
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
     rsync \
-      -auvLz \
-      --omit-link-times \
+      -auvLzt \
       -e "ssh ${SSH_OPTIONS[*]}" \
       --info=progress2 \
       "${OUTNAME}" \
