@@ -156,6 +156,7 @@ UPLOAD_ARTIFACTS(){
     chmod -R 755 build
     rsync \
       -auvLzt \
+      --chmod=D2775,F664 -p \
       -e "ssh ${SSH_OPTIONS[*]}" \
       --info=progress2 \
       "${OUTNAME}" \
