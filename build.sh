@@ -73,12 +73,12 @@ DATE-TIME() {
 
 # _NAME outputs a formatted filename for (_TARGET) (_ARCH) (_OS) (_FORMAT)
 _NAME(){
-    printf 'build_image_%s@%s-%s_%s' \
-      "$(_TARGET)" \
-      "$(_ARCH)" \
-      "$(_OS)" \
-      "$(_FORMAT)" \
-    ;
+  printf 'build_image_%s@%s-%s_%s' \
+    "$(_TARGET)" \
+    "$(_ARCH)" \
+    "$(_OS)" \
+    "$(_FORMAT)" \
+  ;
 }
 
 # _TARGET helper function to output the TARGET to build.
@@ -132,7 +132,7 @@ _LIST(){
 
 # Installs cachix
 INSTALL_CACHIX(){ # INSTALL_CACHIX Installs cachix
-    nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
+  nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
 }
 
 WITH_CACHIX(){ # Run a command with `cachix
@@ -191,23 +191,23 @@ SAVE_SSH_KEY(){
 # Usage: UPLOAD_ARTIFACT <file> [<file> [<file>]]...
 # Saves SSH key and uploads <file>s via rsync
 UPLOAD_ARTIFACT(){
-    SSH_OPTIONS=(
-        "-i/tmp/ci-upload.key"
-        "-oStrictHostKeyChecking=no"
-        "-oport=222"
-        "-oidentitiesonly=true"
-        "-oPasswordAuthentication=no"
-        "-oUser=${UPLOAD_USER}"
-        )
+  SSH_OPTIONS=(
+    "-i/tmp/ci-upload.key"
+    "-oStrictHostKeyChecking=no"
+    "-oport=222"
+    "-oidentitiesonly=true"
+    "-oPasswordAuthentication=no"
+    "-oUser=${UPLOAD_USER}"
+  )
 
-    # TODO: document what these flags do
-    rsync \
-      -auvLzt \
-      --chmod=D2775,F664 -p \
-      -e "ssh ${SSH_OPTIONS[*]}" \
-      --info=progress2 \
-      "${@}" \
-      "${UPLOAD_USER}@${UPLOAD_SERVER}:${DESTDIRS[$(_FORMAT)]}"
+  # TODO: document what these flags do
+  rsync \
+    -auvLzt \
+    --chmod=D2775,F664 -p \
+    -e "ssh ${SSH_OPTIONS[*]}" \
+    --info=progress2 \
+    "${@}" \
+    "${UPLOAD_USER}@${UPLOAD_SERVER}:${DESTDIRS[$(_FORMAT)]}"
 }
 
 ###
@@ -243,27 +243,30 @@ UPLOAD_TASKS(){
 BUILD_AND_UPLOAD(){
   INVOCATION_NAME="${BUILD_NAME-$(_TARGET).$(_FORMAT).$(DATE-TIME)}"
 
-  # Build image, then set OUTNAME to built image name
-  # and tee to build_${INVOCATION_NAME}.log
-  OUTNAME="$(
-    BUILD_IMAGE_TASKS 2> >(
-      tee "build_${INVOCATION_NAME}.log"
-    )
+  # Build image, then set BUILT_ARTIFACT to built image filename
+  BUILT_ARTIFACT="$(
+    # and tee build log (from stderr) to build_${INVOCATION_NAME}.log
+    BUILD_IMAGE_TASKS 2>&1 | # (and redirect the tee back to stderr)
+      tee "build_${INVOCATION_NAME}.log" >&2
   )"
+  if [[ -z "${BUILT_ARTIFACT}" ]] ; then
+    tail "build_${INVOCATION_NAME}.log"
+    _die "*** $OUTNAME is empty. Build failed!!"
+  fi
   # upload built image, teeing all output to log
-  UPLOAD_TASKS "${OUTNAME}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
+  UPLOAD_TASKS "${BUILT_ARTIFACT}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
 # BUILD_MATRIX
 # Runs (CLEAN) and (BUILD_AND_UPLOAD) for each combination of the arrays ${TARGETS[@]} and ${FORMATS[@]}.
 # If ${TARGETS[@]} or ${FORMATS[@]} are unset, the ${DEFAULT_TARGETS[@]} and ${DEFAULT_FORMATS[@]} arrays are used instead.
 BUILD_MATRIX(){
-  TARGETS="${TARGETS-${DEFAULT_TARGETS[@]}}"
-  FORMATS="${FORMATS-${DEFAULT_FORMATS[@]}}"
+  TARGETS=("${TARGETS[@]-${DEFAULT_TARGETS[@]}}")
+  FORMATS=("${FORMATS[@]-${DEFAULT_FORMATS[@]}}")
 
   for FORMAT in "${FORMATS[@]}"; do
     for TARGET in "${TARGETS[@]}"; do
-      if not [[ -z "${NOCLEAN}" ]] ; then
+      if [[ -n "${NOCLEAN-}" ]] ; then
         CLEAN
       fi
       BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
