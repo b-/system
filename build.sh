@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euv
+set -eu
 
 ###
 # settings
@@ -8,19 +8,19 @@ set -euv
 CACHIX_USER="bri"
 
 DEFAULT_ARCH=x86_64
-
-# only linux for now
-OS=linux
+DEFAULT_TARGET=server
+DEFAULT_FORMAT=raw-efi
+DEFAULT_OS=linux
 
 # too lazy to write something better rn
 _THISFILE(){
-  printf '%s' 'build.sh'
+  printf %s '/home/bri/system/build.sh'
 }
 
 # server to scp artifacts to
 UPLOAD_SERVER=ci-upload.ibeep.com
 UPLOAD_USER=ci-upload
-IMAGE_BUILD_FLAGS+=( --print-out-paths --show-trace --accept-flake-config )
+IMAGE_BUILD_FLAGS+=( -v --print-out-paths --show-trace --accept-flake-config )
 # hashtable of destdirs
 declare -A DESTDIRS=(
   [proxmox]="dump/"
@@ -28,15 +28,17 @@ declare -A DESTDIRS=(
   [iso]="template/iso/"
 )
 
-TARGETS=(
+DEFAULT_TARGETS=(
   "server"
   "bri"
 )
-FORMATS=(
+TARGETS="${TARGETS-${DEFAULT_TARGETS}}"
+DEFAULT_FORMATS=(
   "proxmox"
   "raw-efi"
   "iso"
 )
+FORMATS="${FORMATS-${DEFAULT_FORMATS}}"
 declare -A EXTENSIONS=(
   [raw-efi]="img"
   [proxmox]="vma.zst"
@@ -105,39 +107,25 @@ _LIST(){
   _println "${LIST}" | sed -e's/^/  /'
 }
 
-INSTALL_CACHIX(){
+INSTALL_CACHIX(){ # INSTALL_CACHIX
     nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
 }
 
-WITH_CACHIX(){
+WITH_CACHIX(){ # Run a command with Cachix
   cachix watch-exec "${CACHIX_USER}" -- "${@}"
 }
 
-BUILD_IMAGE(){
+BUILD_IMAGE(){ # Build image
     mkdir -p build
     ARCH="$(_ARCH)"
-    BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" "${IMAGE_BUILD_FLAGS[@]}")"
+    BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-$(_OS).config.formats.$(_FORMAT)" "${IMAGE_BUILD_FLAGS[@]}")"
     BASE_FILE="$(basename "${BUILD_FILE}")"
     CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
     HASH=$(cut -b-5 <<<"${BASE_FILE}")
     OUTNAME="build/$(_PREFIX)${HASH}-$(date -I)_${TARGET}_${CUT_FILE}"
     #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
-    ln -vs "${BUILD_FILE}" "${OUTNAME}"
+    ln -fvs "${BUILD_FILE}" "${OUTNAME}"
 }
-
-#LIST_RENAME_BUILD_ARTIFACTS(){
-#    find build
-#    printf -v OUTFILE\
-#      %s%s.%s.%s \
-#      "$(_PREFIX)" \
-#      "$(_NAME)" \
-#      "$(date -I)" \
-#      "${EXTENSIONS[$(_FORMAT)]}"
-#
-#    for i in build/*."${EXTENSIONS[$(_FORMAT)]}" ; do
-#        mv "$i" "build/${OUTFILE}"
-#    done
-#}
 
 SAVE_SSH_KEY(){
     <<< "${UPLOAD_SSH_KEY_BASE64// /$'\n'}" base64 -d > /tmp/ci-upload.key
@@ -152,8 +140,12 @@ UPLOAD_ARTIFACTS(){
         "-oPasswordAuthentication=no"
         "-oUser=${UPLOAD_USER}"
         )
+
+    # ssh refuses to use a key with open permissions
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
+
+    # TODO: document what these flags do
     rsync \
       -auvLzt \
       --chmod=D2775,F664 -p \
@@ -184,8 +176,9 @@ UPLOAD_TASKS(){
 
 # build and upload an image
 BUILD_AND_UPLOAD(){
-  time BUILD_IMAGE_TASKS
-  time UPLOAD_TASKS
+  INVOCATION_NAME="$(_TARGET).$(_FORMAT).$(date -I).$(date +"%H-%M")"
+  time BUILD_IMAGE_TASKS 2>&1 | tee "build_${INVOCATION_NAME}.log"
+  time UPLOAD_IMAGE_TASKS 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
 BUILD_IMAGES(){
@@ -202,7 +195,8 @@ done
 }
 
 CI(){
-  BUILD_IMAGES
+    INVOCATION_NAME="build.$(date -I).$(date +"%H-%M")"
+    BUILD_IMAGES 2>&1 | tee "${INVOCATION_NAME}.log"
 }
 _main(){
   if [[ -z "${1-}" ]] ; then
@@ -210,6 +204,16 @@ _main(){
     _die ''
   fi
 "${@}"
+}
+
+DAEMON(){
+    INVOCATION_NAME="build.$(date -I).$(date +"%H-%M")"
+    DIR="$(dirname "$(_THISFILE)")"
+    local DIR
+    cd "${DIR}"
+    nix run -- nixpkgs#screen -dmS "${INVOCATION_NAME}" "$(_THISFILE)" -L -Logfile "${INVOCATION_NAME}.log" "${@}"
+    echo "${INVOCATION_NAME}"
+    echo "  tail -f ${INVOCATION_NAME}.log"
 }
 
 _main "${@}"
