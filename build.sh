@@ -102,7 +102,7 @@ _LIST(){
   FMT_FUNCS='s/(){//'
   LIST="$(<"$(_THISFILE)" sed -e '/^_/d' -e '/^ /d' -e "${KEEP_FUNCS}" -e "${FMT_FUNCS}")"
   _println "Targets:"
-  _println "${LIST}"
+  _println "${LIST}" | sed -e's/^/  /'
 }
 
 INSTALL_CACHIX(){
