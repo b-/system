@@ -119,7 +119,7 @@ BUILD_IMAGE(){
     BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" "${IMAGE_BUILD_FLAGS[@]}")"
     BASE_FILE="$(basename "${BUILD_FILE}")"
     CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
-    HASH=$(cut -b5 <<<"${BASE_FILE}")
+    HASH=$(cut -b-5 <<<"${BASE_FILE}")
     OUTNAME="build/$(_PREFIX)${HASH}_${TARGET}_${CUT_FILE}"
     #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
     ln -vs "${BUILD_FILE}" "${OUTNAME}"
@@ -157,8 +157,8 @@ UPLOAD_ARTIFACTS(){
     rsync \
       -auvLz \
       -e "ssh ${SSH_OPTIONS[*]}" \
-      "build/${OUTNAME}"
-      "${UPLOAD_SERVER}":"${DESTDIRS[$(_FORMAT)]}"
+      "${OUTNAME}" \
+      "${UPLOAD_USER}@${UPLOAD_SERVER}:${DESTDIRS[$(_FORMAT)]}"
 }
 
 ###
