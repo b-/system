@@ -127,7 +127,7 @@ LIST_RENAME_BUILD_ARTIFACTS(){
     printf -v OUTFILE\
       '%s%s.%s.%s"' \
       "$(_PREFIX)" \
-      "$(NAME)" \
+      "$(_NAME)" \
       "$(date -I)" \
       "${EXTENSIONS[$(_FORMAT)]}"
 
