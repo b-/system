@@ -178,7 +178,7 @@ UPLOAD_TASKS(){
 BUILD_AND_UPLOAD(){
   INVOCATION_NAME="$(_TARGET).$(_FORMAT).$(date -I).$(date +"%H-%M")"
   time BUILD_IMAGE_TASKS 2>&1 | tee "build_${INVOCATION_NAME}.log"
-  time UPLOAD_IMAGE_TASKS 2>&1 | tee "upload_${INVOCATION_NAME}.log"
+  time UPLOAD_TASKS 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
 BUILD_IMAGES(){
