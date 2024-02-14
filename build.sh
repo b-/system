@@ -182,8 +182,8 @@ BUILD_IMAGES(){
 for FORMAT in "${FORMATS[@]}"; do
   for TARGET in "${TARGETS[@]}"; do
     echo '{'
-    echo '"TARGET": '"$(_TARGET)"
-    echo '"FORMAT": '"$(_FORMAT)"
+    echo '"TARGET": "'"$(_TARGET)",'"'
+    echo '"FORMAT": "'"$(_FORMAT)"'"'
     echo '}'
     CLEAN
     BUILD_AND_UPLOAD
