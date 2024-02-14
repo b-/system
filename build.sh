@@ -120,7 +120,9 @@ BUILD_IMAGE(){
     BASE_FILE="$(basename "${BUILD_FILE}")"
     CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
     HASH=$(cut -b5 <<<"${BASE_FILE}")
-    cp --sparse "${BUILD_FILE}" "build/$(_PREFIX)${HASH}${CUT_FILE}"
+    OUTNAME="build/$(_PREFIX)${HASH}${CUT_FILE}"
+    #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
+    ln -s "${BUILD_FILE}" "${OUTNAME}"
 }
 
 LIST_RENAME_BUILD_ARTIFACTS(){
