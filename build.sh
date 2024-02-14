@@ -115,6 +115,7 @@ WITH_CACHIX(){
 
 BUILD_IMAGE(){
     mkdir -p build
+    ARCH="$(_ARCH)"
     BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" --print-out-paths --show-trace --accept-flake-config)"
     cp "${BUILD_FILE}" "build/"
 }
