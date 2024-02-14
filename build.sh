@@ -123,8 +123,10 @@ BUILD_IMAGE(){ # Build image
     CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
     HASH=$(cut -b-5 <<<"${BASE_FILE}")
     OUTNAME="build/$(_PREFIX)${HASH}-$(date -I)_${TARGET}_${CUT_FILE}"
+    export OUTNAME
     #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
     ln -fvs "${BUILD_FILE}" "${OUTNAME}"
+    printf %s "${OUTNAME}"
 }
 
 SAVE_SSH_KEY(){
@@ -165,7 +167,6 @@ BUILD_IMAGE_TASKS(){
   #INSTALL_CACHIX
   #WITH_CACHIX BUILD_IMAGE
   BUILD_IMAGE
-  #LIST_RENAME_BUILD_ARTIFACTS
 }
 
 # tasks to run for upload
