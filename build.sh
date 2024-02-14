@@ -99,7 +99,9 @@ _die(){
 
 _LIST(){
   KEEP_FUNCS='/(){/!d' # bug in bash lsp syntax highlighting
-  LIST="$(<"$(_THISFILE)" sed -e '/^_/d' -e '/^ /d' -e "${KEEP_FUNCS}")"
+  FMT_FUNCS='s/(){//'
+  LIST="$(<"$(_THISFILE)" sed -e '/^_/d' -e '/^ /d' -e "${KEEP_FUNCS}" -e "${FMT_FUNCS}")"
+  _println "Targets:"
   _println "${LIST}"
 }
 
