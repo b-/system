@@ -120,43 +120,44 @@ BUILD_IMAGE(){
     BASE_FILE="$(basename "${BUILD_FILE}")"
     CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
     HASH=$(cut -b5 <<<"${BASE_FILE}")
-    OUTNAME="build/$(_PREFIX)${HASH}${CUT_FILE}"
+    OUTNAME="build/$(_PREFIX)${HASH}_${TARGET}_${CUT_FILE}"
     #cp --sparse "${BUILD_FILE}" "${OUTNAME}"
-    ln -s "${BUILD_FILE}" "${OUTNAME}"
+    ln -vs "${BUILD_FILE}" "${OUTNAME}"
 }
 
-LIST_RENAME_BUILD_ARTIFACTS(){
-    find build
-    printf -v OUTFILE\
-      '%s%s.%s.%s"' \
-      "$(_PREFIX)" \
-      "$(_NAME)" \
-      "$(date -I)" \
-      "${EXTENSIONS[$(_FORMAT)]}"
-
-    for i in build/*."${EXTENSIONS[$(_FORMAT)]}" ; do
-      OUTFILES+="build/${OUTFILE}"
-        mv "$i" "build/${OUTFILE}"
-    done
-}
+#LIST_RENAME_BUILD_ARTIFACTS(){
+#    find build
+#    printf -v OUTFILE\
+#      %s%s.%s.%s \
+#      "$(_PREFIX)" \
+#      "$(_NAME)" \
+#      "$(date -I)" \
+#      "${EXTENSIONS[$(_FORMAT)]}"
+#
+#    for i in build/*."${EXTENSIONS[$(_FORMAT)]}" ; do
+#        mv "$i" "build/${OUTFILE}"
+#    done
+#}
 
 SAVE_SSH_KEY(){
     <<< "${UPLOAD_SSH_KEY_BASE64// /$'\n'}" base64 -d > /tmp/ci-upload.key
 }
 
 UPLOAD_ARTIFACTS(){
+    SSH_OPTIONS=(
+        "-i/tmp/ci-upload.key"
+        "-oStrictHostKeyChecking=no"
+        "-oport=222"
+        "-oidentitiesonly=true"
+        "-oPasswordAuthentication=no"
+        "-oUser=${UPLOAD_USER}"
+        )
     chmod 600 /tmp/ci-upload.key
     chmod -R 755 build
-    scp \
-      -C \
-      -v \
-      -i /tmp/ci-upload.key \
-      -oStrictHostKeyChecking=no \
-      -oport=222 \
-      -oidentitiesonly=true \
-      -oPasswordAuthentication=no \
-      -oUser="${UPLOAD_USER}" \
-      "${OUTFILES[@]}" \
+    rsync \
+      -auvLz \
+      -e "ssh ${SSH_OPTIONS[*]}" \
+      "build/${OUTNAME}"
       "${UPLOAD_SERVER}":"${DESTDIRS[$(_FORMAT)]}"
 }
 
@@ -170,7 +171,7 @@ BUILD_IMAGE_TASKS(){
   #INSTALL_CACHIX
   #WITH_CACHIX BUILD_IMAGE
   BUILD_IMAGE
-  LIST_RENAME_BUILD_ARTIFACTS
+  #LIST_RENAME_BUILD_ARTIFACTS
 }
 
 # tasks to run for upload
