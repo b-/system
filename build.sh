@@ -157,6 +157,7 @@ UPLOAD_ARTIFACTS(){
     rsync \
       -auvLz \
       -e "ssh ${SSH_OPTIONS[*]}" \
+      --info=progress2 \
       "${OUTNAME}" \
       "${UPLOAD_USER}@${UPLOAD_SERVER}:${DESTDIRS[$(_FORMAT)]}"
 }
