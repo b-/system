@@ -117,9 +117,10 @@ BUILD_IMAGE(){
     mkdir -p build
     ARCH="$(_ARCH)"
     BUILD_FILE="$(nix build ".#nixosConfigurations.$(_TARGET)@${ARCH//arm/aarch}-${OS}.config.formats.$(_FORMAT)" "${IMAGE_BUILD_FLAGS[@]}")"
-    #BASE_FILE="$(basename "${BUILD_FILE}")"
-    CUT_FILE="$(cut -d- -f2- <<<"${BUILD_FILE}")"
-    cp "${BUILD_FILE}" "build/$(_PREFIX)${CUT_FILE}"
+    BASE_FILE="$(basename "${BUILD_FILE}")"
+    CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
+    HASH=$(cut -b5 <<<"${BASE_FILE}")
+    cp --sparse "${BUILD_FILE}" "build/$(_PREFIX)${HASH}${CUT_FILE}"
 }
 
 LIST_RENAME_BUILD_ARTIFACTS(){
@@ -146,6 +147,7 @@ UPLOAD_ARTIFACTS(){
     chmod -R 755 build
     scp \
       -C \
+      -f \
       -i /tmp/ci-upload.key \
       -oStrictHostKeyChecking=no \
       -oport=222 \
