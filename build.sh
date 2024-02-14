@@ -181,8 +181,8 @@ UPLOAD_TASKS(){
 
 # build and upload an image
 BUILD_AND_UPLOAD(){
-  BUILD_IMAGE_TASKS
-  UPLOAD_TASKS
+  time BUILD_IMAGE_TASKS
+  time UPLOAD_TASKS
 }
 
 BUILD_IMAGES(){
