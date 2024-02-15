@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-TAIL=(
-    "less"
-    "+F"
-    )
+TAIL=("tail" "-f")
 rm -f ci.log
-screen -d -m -S build -L -Logfile ci.log bash -x ./build.sh CI_BUILD
+screen -d -m -S build -L -Logfile ci.log bash ./build.sh CI_BUILD
 "${TAIL[@]}" ci.log

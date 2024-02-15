@@ -161,7 +161,13 @@ BUILD_IMAGE(){ # Build image $TARGET@$ARCH-linux.$FORMAT
   )"
   # $BUILT_FILE is the path to the build artifact inside /nix store.
   # `nix build --print-out-paths` sends all build output to stderr and outputs only the built path(s) to stdout
-  BUILT_FILE="$(nix build --print-out-paths "${NIX_BUILD_TARGET}" "${IMAGE_BUILD_FLAGS[@]}")"
+  if [[ -n "${DRY_RUN-}" ]] ; then
+    _STDERR _println "Blah blah blah sample build output..."
+    BUILT_FILE="/tmp/x9s4kb8sip304fbggdbf9ibjqmdz9c6l-proxmox-nixos-24.05.20240211.f9d39fb.vma.zst"
+    touch "${BUILT_FILE}"
+  else
+    BUILT_FILE="$(nix build --print-out-paths "${NIX_BUILD_TARGET}" "${IMAGE_BUILD_FLAGS[@]}")"
+  fi
 
   # BASE_FILE basename of $BUILT_FILE
   BASE_FILE="$(basename "${BUILT_FILE}")"
@@ -199,13 +205,15 @@ UPLOAD_ARTIFACT(){
     "-oPasswordAuthentication=no"
     "-oUser=${UPLOAD_USER}"
   )
-
-  # TODO: document what these flags do
+  RSYNC_OPTIONS=(
+    "-auvLzt" # TODO: document what these flags do
+    "--chmod=D2775,F664" "-p" # file modes
+    "-e" "ssh ${SSH_OPTIONS[*]}" # ssh flags
+    "--info=progress2" # show progress
+  )
+  [[ -n "${DRY_RUN-}" ]] && RSYNC_OPTIONS+=("--dry-run")
   rsync \
-    -auvLzt \
-    --chmod=D2775,F664 -p \
-    -e "ssh ${SSH_OPTIONS[*]}" \
-    --info=progress2 \
+    "${RSYNC_OPTIONS[@]}" \
     "${@}" \
     "${UPLOAD_USER}@${UPLOAD_SERVER}:${DESTDIRS[$(_FORMAT)]}"
 }
@@ -246,14 +254,9 @@ BUILD_AND_UPLOAD(){
   # Build image, then set BUILT_ARTIFACT to built image filename
   BUILT_ARTIFACT="$(
     # and tee build log (from stderr) to build_${INVOCATION_NAME}.log
-    BUILD_IMAGE_TASKS 2>&1 | # (and redirect the tee back to stderr)
-      tee "build_${INVOCATION_NAME}.log" >&2
-  )"
-  if [[ -z "${BUILT_ARTIFACT}" ]] ; then
-    tail "build_${INVOCATION_NAME}.log"
-    _die "*** $OUTNAME is empty. Build failed!!"
-  fi
-  # upload built image, teeing all output to log
+     BUILD_IMAGE_TASKS
+     )" 2> >(tee "build_${INVOCATION_NAME}.log")
+  # upload built image
   UPLOAD_TASKS "${BUILT_ARTIFACT}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
@@ -275,6 +278,7 @@ BUILD_MATRIX(){
       BUILD_AND_UPLOAD
     done
   done
+  _println "*** DONE! ***"
 }
 
 CI_BUILD(){
