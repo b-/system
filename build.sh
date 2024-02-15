@@ -151,14 +151,7 @@ BUILD_IMAGE(){ # Build image $TARGET@$ARCH-linux.$FORMAT
   mkdir -p build
   ARCH="$(_ARCH)"
   # NIX_BUILD_TARGET e.g., `.#nixosConfigurations.server@x86_64-linux.config.formats.raw-efi`
-  NIX_BUILD_TARGET="$(
-    printf .#nixosConfigurations.%s@%s-%s.config.formats.%s \
-      "$(_TARGET)" \
-      "${ARCH//arm/aarch}" \
-      "$(_OS)" \
-      "$(_FORMAT)" \
-    ;
-  )"
+  NIX_BUILD_TARGETS="${MATRIX[@]}"
   # $BUILT_FILE is the path to the build artifact inside /nix store.
   # `nix build --print-out-paths` sends all build output to stderr and outputs only the built path(s) to stdout
   if [[ -n "${DRY_RUN-}" ]] ; then
@@ -209,7 +202,16 @@ UPLOAD_ARTIFACT(){
     "-oUser=${UPLOAD_USER}"
   )
   RSYNC_OPTIONS=(
-    "-auvLzt" # TODO: document what these flags do
+    "-r" # recursive
+    "-l" # links
+    #"-t" # timestamps
+    "-g"
+    "-o"
+    "-D"
+    "-u"
+    "-v"
+    "-L"
+    "-z"
     "--chmod=D2775,F664" "-p" # file modes
     "-e" "ssh ${SSH_OPTIONS[*]}" # ssh flags
     "--info=progress2" # show progress
@@ -257,8 +259,8 @@ BUILD_AND_UPLOAD(){
   # Build image, then set BUILT_ARTIFACT to built image filename
   BUILT_ARTIFACT="$(
     # and tee build log (from stderr) to build_${INVOCATION_NAME}.log
-     BUILD_IMAGE_TASKS
-     )" 2> >(tee "build_${INVOCATION_NAME}.log")
+    BUILD_IMAGE_TASKS
+  )" 2> >(tee "build_${INVOCATION_NAME}.log")
   # upload built image
   UPLOAD_TASKS "${BUILT_ARTIFACT}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
@@ -269,6 +271,7 @@ BUILD_AND_UPLOAD(){
 BUILD_MATRIX(){
   TARGETS=("${TARGETS[@]-${DEFAULT_TARGETS[@]}}")
   FORMATS=("${FORMATS[@]-${DEFAULT_FORMATS[@]}}")
+  declare -A MATRIX
 
   for FORMAT in "${FORMATS[@]}"; do
     for TARGET in "${TARGETS[@]}"; do
@@ -276,12 +279,25 @@ BUILD_MATRIX(){
         CLEAN
       fi
       BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
-      export BUILD_NAME
-      _println; _println "  *** Starting build ${BUILD_NAME} ***"
-      BUILD_AND_UPLOAD
-      _println "  *** Finished build ${BUILD_NAME} ***"
+      export BUILD_NAME MATRIX
+      IMAGE_BUILD_FLAGS=( -v --show-trace --accept-flake-config )
+      local NIX_BUILD_TARGET BUILT_FILE ARCH BASE_FILE HASH CUT_FILE
+      mkdir -p build
+      ARCH="$(_ARCH)"
+      # NIX_BUILD_TARGET e.g., `.#nixosConfigurations.server@x86_64-linux.config.formats.raw-efi`
+      NIX_BUILD_TARGET="$(
+        printf .#nixosConfigurations.%s@%s-%s.config.formats.%s \
+          "$(_TARGET)" \
+          "${ARCH//arm/aarch}" \
+          "$(_OS)" \
+          "$(_FORMAT)" \
+        ;
+      )"
+      MATRIX["${NIX_BUILD_TARGET}"]="${BUILD_NAME}"
+      _println "  *** ${BUILD_NAME} ***"
     done
   done
+  BUILD_AND_UPLOAD "${MATRIX[@]}"
   _println "  *** DONE! ***"
 }
 
