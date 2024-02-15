@@ -162,7 +162,10 @@ BUILD_IMAGE(){ # Build image $TARGET@$ARCH-linux.$FORMAT
   # $BUILT_FILE is the path to the build artifact inside /nix store.
   # `nix build --print-out-paths` sends all build output to stderr and outputs only the built path(s) to stdout
   if [[ -n "${DRY_RUN-}" ]] ; then
-    _STDERR _println "Blah blah blah sample build output..."
+    for _ in {1..10}; do
+      sleep 0.05s
+      _STDERR _println "Blah blah blah sample build output..."
+    done
     BUILT_FILE="/tmp/x9s4kb8sip304fbggdbf9ibjqmdz9c6l-proxmox-nixos-24.05.20240211.f9d39fb.vma.zst"
     touch "${BUILT_FILE}"
   else
@@ -274,11 +277,12 @@ BUILD_MATRIX(){
       fi
       BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
       export BUILD_NAME
-      _println "*** Starting build ${BUILD_NAME} ***"
+      _println; _println "  *** Starting build ${BUILD_NAME} ***"
       BUILD_AND_UPLOAD
+      _println "  *** Finished build ${BUILD_NAME} ***"
     done
   done
-  _println "*** DONE! ***"
+  _println "  *** DONE! ***"
 }
 
 CI_BUILD(){
