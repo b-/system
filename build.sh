@@ -201,15 +201,19 @@ SAVE_SSH_KEY(){
 # Saves SSH key and uploads <file>s via rsync
 UPLOAD_ARTIFACT(){
   SSH_OPTIONS=(
-    "-i/tmp/ci-upload.key"
-    "-oStrictHostKeyChecking=no"
-    "-oport=222"
-    "-oidentitiesonly=true"
-    "-oPasswordAuthentication=no"
-    "-oUser=${UPLOAD_USER}"
+    "-oIdentityFile=/tmp/ci-upload.key" # private key
+    "-oStrictHostKeyChecking=no" # Disable prompting on unknown host key TODO: add host public key instead
+    "-oPort=222"
+    "-oIdentitiesOnly=true" # Don't use any other private keys.
+    "-oPasswordAuthentication=no" # Don't attempt password authentication.
+    "-oUser=${UPLOAD_USER}" # Probably not necessary unless you use a bastion host
   )
   RSYNC_OPTIONS=(
-    "-auvLzt" # TODO: document what these flags do
+    #"-t" # timestamps
+    "-u" # update (skip newer files)
+    #"-v" # verbose
+    "-L" # traverse symlinks
+    "-z" # compress data during transfer
     "--chmod=D2775,F664" "-p" # file modes
     "-e" "ssh ${SSH_OPTIONS[*]}" # ssh flags
     "--info=progress2" # show progress
