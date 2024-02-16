@@ -67,6 +67,7 @@
       # languages
       python3
       ruby
+      shfmt
 
       # nix stuff
       cachix
