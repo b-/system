@@ -3,6 +3,9 @@
   # commented out because we import it at a higher hierarchical level
   #imports = [ ./keybase.nix ];
 
+  # boot splash
+  boot.plymouth.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
