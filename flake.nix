@@ -291,7 +291,8 @@
             #./disk-config.nix
             ./modules/nixos/keybase.nix
             ./modules/nixos/desktop.nix
-            ./modules/nixos/gnome.nix
+            #./modules/nixos/gnome.nix
+            ./modules/nixos/plasma5.nix
             ./modules/nixos/tailscale.nix
             ./profiles/personal.nix
             attic.nixosModules.atticd
