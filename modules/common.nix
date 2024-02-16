@@ -46,34 +46,35 @@
 
   # environment setup
   environment = {
-    systemPackages = with pkgs; [
+    systemPackages = [
       # editors
-      neovim
+      pkgs.neovim
 
       # standard toolset
-      coreutils-full
-      findutils
-      diffutils
-      curl
-      wget
-      git
-      jq
+      pkgs.coreutils-full
+      pkgs.findutils
+      pkgs.diffutils
+      pkgs.curl
+      pkgs.wget
+      pkgs.git
+      pkgs.jq
 
       # helpful shell stuff
-      bat
-      fzf
-      ripgrep
+      pkgs.bat
+      pkgs.fzf
+      pkgs.ripgrep
 
       # languages
-      python3
-      ruby
-      shfmt
+      pkgs.python3
+      pkgs.ruby
+      pkgs.shfmt
 
       # nix stuff
-      cachix
-      nixfmt-rfc-style
-      home-manager
-      inputs.attic.packages.x86_64-linux.attic-client
+      pkgs.cachix
+      pkgs.nil
+      pkgs.nixfmt-rfc-style
+      pkgs.home-manager
+      inputs.attic.packages.${pkgs.system}.attic-client
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";
@@ -81,15 +82,15 @@
       stable.source = "${inputs.stable}";
     };
     # list of acceptable shells in /etc/shells
-    shells = with pkgs; [
-      bash
-      zsh
-      fish
+    shells = [
+      pkgs.bash
+      pkgs.zsh
+      pkgs.fish
     ];
   };
 
   fonts = {
     fontDir.enable = true;
-    fonts = with pkgs; [ jetbrains-mono ];
+    fonts = [ pkgs.jetbrains-mono ]; # fonts.fonts was _not_ renamed to fonts.packages in nix-darwin
   };
 }

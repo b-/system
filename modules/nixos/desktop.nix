@@ -34,11 +34,11 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    vscode
-    firefox
-    google-chrome
-    gnome.gnome-tweaks
+  environment.systemPackages = [
+    pkgs.vscode
+    pkgs.firefox
+    pkgs.google-chrome
+    pkgs.gnome.gnome-tweaks
   ];
 
   # Electron applications use Wayland

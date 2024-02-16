@@ -6,9 +6,9 @@
 }:
 {
   programs.neovim = {
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = awesome-vim-colorschemes;
+        plugin = pkgs.vimPlugins.awesome-vim-colorschemes;
         file = ./awesome-vim-colorschemes.lua;
       })
     ];

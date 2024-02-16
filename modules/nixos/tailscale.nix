@@ -4,5 +4,5 @@
     enable = true;
     useRoutingFeatures = "both";
   };
-  environment.systemPackages = with pkgs; [ tailscale ];
+  environment.systemPackages = [ pkgs.tailscale ];
 }

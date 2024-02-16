@@ -6,13 +6,13 @@
 }:
 {
   programs.neovim = {
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = telescope-nvim;
+        plugin = pkgs.vimPlugins.telescope-nvim;
         file = ./telescope-nvim.lua;
       })
-      telescope-fzf-native-nvim
-      plenary-nvim
+      pkgs.vimPlugins.telescope-fzf-native-nvim
+      pkgs.vimPlugins.plenary-nvim
     ];
     extraPackages = [ pkgs.ripgrep ];
   };

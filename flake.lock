@@ -56,13 +56,13 @@
       "locked": {
         "lastModified": 1707707289,
         "narHash": "sha256-YuDt/eSTXMEHv8jS8BEZJgqCcG8Tr3cyqaZjJFXZHsw=",
-        "owner": "lnl7",
+        "owner": "b-",
         "repo": "nix-darwin",
         "rev": "44f50a5ecaab72a61d5fd8e5c5717bc4bf9c25dd",
         "type": "github"
       },
       "original": {
-        "owner": "lnl7",
+        "owner": "b-",
         "repo": "nix-darwin",
         "type": "github"
       }

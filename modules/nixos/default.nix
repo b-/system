@@ -123,9 +123,9 @@
       };
       aggregatedIcons = pkgs.buildEnv {
         name = "system-icons";
-        paths = with pkgs; [
-          libsForQt5.breeze-qt5 # for plasma
-          gnome.gnome-themes-extra
+        paths = [
+          pkgs.libsForQt5.breeze-qt5 # for plasma
+          pkgs.gnome.gnome-themes-extra
         ];
         pathsToLink = [ "/share/icons" ];
       };
@@ -142,10 +142,10 @@
 
   fonts = {
     fontDir.enable = true;
-    fonts = with pkgs; [
-      noto-fonts
-      noto-fonts-emoji
-      noto-fonts-cjk
+    packages = [
+      pkgs.noto-fonts
+      pkgs.noto-fonts-emoji
+      pkgs.noto-fonts-cjk
     ];
   };
 

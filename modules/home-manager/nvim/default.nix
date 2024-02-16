@@ -45,21 +45,21 @@
     withPython3 = true;
 
     # share vim plugins since nothing is specific to nvim
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       # basics
-      vim-commentary
+      pkgs.vimPlugins.vim-commentary
 
-      vim-fugitive
-      vim-nix
+      pkgs.vimPlugins.vim-fugitive
+      pkgs.vimPlugins.vim-nix
 
-      vim-sandwich
-      vim-sensible
+      pkgs.vimPlugins.vim-sandwich
+      pkgs.vimPlugins.vim-sensible
 
       # vim addon utilities
-      direnv-vim
-      ranger-vim
-      nvim-lspconfig
-      mason-lspconfig-nvim
+      pkgs.vimPlugins.direnv-vim
+      pkgs.vimPlugins.ranger-vim
+      pkgs.vimPlugins.nvim-lspconfig
+      pkgs.vimPlugins.mason-lspconfig-nvim
     ];
     extraConfig = ''
       ${config.lib.vimUtils.readVimConfig ./settings.lua}

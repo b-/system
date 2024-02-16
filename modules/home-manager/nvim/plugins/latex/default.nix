@@ -7,14 +7,14 @@
 {
   programs.neovim = {
     # vimtex config
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = vimtex;
+        plugin = pkgs.vimPlugins.vimtex;
         file = ./vimtex.lua;
       })
     ];
 
     # LSP config
-    extraPackages = with pkgs; with nodePackages; [ texlab ];
+    extraPackages = [ pkgs.texlab ];
   };
 }

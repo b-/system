@@ -6,9 +6,9 @@
 }:
 {
   programs.neovim = {
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = vim-closetag;
+        plugin = pkgs.vimPlugins.vim-closetag;
         file = ./vim-closetag.lua;
       })
     ];

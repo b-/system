@@ -40,7 +40,8 @@
     # };
     nixos-hardware.url = "github:nixos/nixos-hardware";
     darwin = {
-      url = "github:lnl7/nix-darwin";
+      #url = "github:lnl7/nix-darwin";
+      url = "github:b-/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -384,11 +385,11 @@
         in
         rec {
           pyEnv = pkgs.python3.withPackages (
-            ps: with ps; [
-              black
-              typer
-              colorama
-              shellingham
+            ps: [
+              ps.black
+              ps.typer
+              ps.colorama
+              ps.shellingham
             ]
           );
           sysdo = pkgs.writeScriptBin "sysdo" ''

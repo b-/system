@@ -7,14 +7,14 @@
 {
   home.packages = [ pkgs.tree-sitter ];
   programs.neovim = {
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       # new neovim stuff
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = nvim-treesitter.withAllGrammars;
+        plugin = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
         file = ./nvim-treesitter.lua;
       })
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = nvim-treesitter-textobjects;
+        plugin = pkgs.vimPlugins.nvim-treesitter-textobjects;
         file = ./nvim-treesitter-textobjects.lua;
       })
     ];

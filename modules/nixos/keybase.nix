@@ -1,9 +1,9 @@
 { pkgs, ... }:
 {
-  environment.systemPackages = with pkgs; [
-    kbfs
-    keybase
-    keybase-gui
+  environment.systemPackages = [
+    pkgs.kbfs
+    pkgs.keybase
+    pkgs.keybase-gui
   ];
   services.keybase.enable = true;
   services.kbfs = {

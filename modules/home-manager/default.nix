@@ -58,73 +58,73 @@ in
       ];
 
       # define package definitions for current user environment
-      packages = with pkgs; [
-        age
+      packages = [
+        pkgs.age
 
-        alejandra
-        atuin
-        # autojump
-        cachix
-        cb
-        cirrus-cli
-        comma
-        coreutils-full
-        curl
-        diffutils
-        fd
-        ffmpeg
-        findutils
-        gawk
-        gnugrep
-        gnupg
-        gnused
-        grype
-        helm-docs
-        httpie
-        hurl
-        kotlin
-        kubectl
-        kubectx
-        kubernetes-helm
-        kustomize
-        lazydocker
-        luajit
-        mmv
-        ncdu
-        neofetch
-        nil
-        nix
-        #nixfmt
-        nixfmt-rfc-style
-        nixpkgs-fmt
-        nmap
-        nodejs_20
-        parallel
-        poetry
-        pre-commit
+        pkgs.alejandra
+        pkgs.atuin
+        # pkgs.autojump
+        pkgs.cachix
+        pkgs.cb
+        pkgs.cirrus-cli
+        pkgs.comma
+        pkgs.coreutils-full
+        pkgs.curl
+        pkgs.diffutils
+        pkgs.fd
+        pkgs.ffmpeg
+        pkgs.findutils
+        pkgs.gawk
+        pkgs.gnugrep
+        pkgs.gnupg
+        pkgs.gnused
+        pkgs.grype
+        pkgs.helm-docs
+        pkgs.httpie
+        pkgs.hurl
+        pkgs.kotlin
+        pkgs.kubectl
+        pkgs.kubectx
+        pkgs.kubernetes-helm
+        pkgs.kustomize
+        pkgs.lazydocker
+        pkgs.luajit
+        pkgs.mmv
+        pkgs.ncdu
+        pkgs.neofetch
+        pkgs.nil
+        pkgs.nix
+        #pkgs.nixfmt
+        pkgs.nixfmt-rfc-style
+        pkgs.nixpkgs-fmt
+        pkgs.nmap
+        pkgs.nodejs_20
+        pkgs.parallel
+        pkgs.poetry
+        pkgs.pre-commit
         # python with default packages
-        (python3.withPackages (
-          ps: with ps; [
-            numpy
-            scipy
-            matplotlib
-            networkx
+        (pkgs.python3.withPackages (
+          ps: [
+            ps.numpy
+            ps.scipy
+            ps.matplotlib
+            ps.networkx
           ]
         ))
-        ranger
-        rclone
-        restic
-        rnix-lsp
-        rsync
-        ruff
-        shellcheck
-        starship
-        stylua
-        sysdo
-        tree
-        treefmt
-        trivy
-        yq-go
+        pkgs.ranger
+        pkgs.rclone
+        pkgs.restic
+        pkgs.rnix-lsp
+        pkgs.rsync
+        pkgs.ruff
+        pkgs.shellcheck
+        pkgs.starship
+        pkgs.stylua
+        pkgs.sysdo
+        pkgs.tree
+        pkgs.treefmt
+        pkgs.trivy
+        pkgs.yq-go
       ];
     };
 
@@ -154,13 +154,13 @@ in
     # conditionally enable vscode only on linux
     vscode = mkIf stdenv.isLinux {
       enable = true;
-      # extensions = with pkgs.vscode-extensions; [ vscode-extensions.ms-vscode-remote ];
+      # extensions = [ pkgs.vscode-extensions.ms-vscode-remote ];
       package = pkgs.vscode.fhsWithPackages (
-        ps: with ps; [
-          rustup
-          zlib
-          openssl.dev
-          pkg-config
+        ps: [
+          ps.rustup
+          ps.zlib
+          ps.openssl.dev
+          ps.pkg-config
         ]
       );
     };

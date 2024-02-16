@@ -61,15 +61,15 @@ in
       profileExtra = ''
         ${lib.optionalString pkgs.stdenvNoCC.isLinux "[[ -e /etc/profile ]] && source /etc/profile"}
       '';
-      plugins = with pkgs; [
-        (mkZshPlugin { pkg = zsh-autopair; })
-        (mkZshPlugin { pkg = zsh-completions; })
-        (mkZshPlugin { pkg = zsh-autosuggestions; })
+      plugins = [
+        (mkZshPlugin { pkg = pkgs.zsh-autopair; })
+        (mkZshPlugin { pkg = pkgs.zsh-completions; })
+        (mkZshPlugin { pkg = pkgs.zsh-autosuggestions; })
         (mkZshPlugin {
-          pkg = zsh-fast-syntax-highlighting;
+          pkg = pkgs.zsh-fast-syntax-highlighting;
           file = "fast-syntax-highlighting.plugin.zsh";
         })
-        (mkZshPlugin { pkg = zsh-history-substring-search; })
+        (mkZshPlugin { pkg = pkgs.zsh-history-substring-search; })
       ];
       oh-my-zsh = {
         enable = true;
@@ -101,7 +101,7 @@ in
       add_newline = false;
       aws.disabled = true;
       gcloud.disabled = true;
-      line_break.disabled = true;
+      line_break.disabled = false;
     };
   };
 

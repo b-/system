@@ -4,20 +4,19 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.services.syncthing;
 in
 {
   options = {
     services.syncthing = {
-      enable = mkOption {
+      enable = lib.mkOption {
         type = types.bool;
         default = false;
         description = "Whether to enable the Syncthing service.";
       };
 
-      homeDir = mkOption {
+      homeDir = lib.mkOption {
         type = types.nullOr types.path;
         default = "~";
         example = "/Users/bri";
@@ -26,7 +25,7 @@ in
         '';
       };
 
-      logDir = mkOption {
+      logDir = lib.mkOption {
         type = types.nullOr types.path;
         default = "~/Library/Logs";
         example = "~/Library/Logs";
@@ -37,7 +36,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = [ pkgs.syncthing ];
     launchd.user.agents.syncthing = {
       command = "${lib.getExe pkgs.syncthing}";

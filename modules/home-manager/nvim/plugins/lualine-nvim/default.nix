@@ -6,9 +6,9 @@
 }:
 {
   programs.neovim = {
-    plugins = with pkgs.vimPlugins; [
+    plugins = [
       (config.lib.vimUtils.pluginWithCfg {
-        plugin = lualine-nvim;
+        plugin = pkgs.vimPlugins.lualine-nvim;
         file = ./lualine-nvim.lua;
       })
     ];

@@ -26,10 +26,9 @@ in
 {
   services.xserver.desktopManager.cde.enable = true;
   services.xserver.desktopManager.cde.extraPackages =
-    with pkgs;
     options.services.xserver.desktopManager.cde.extraPackages.default
     ++ [
-      fsv
+      pkgs.fsv
       cde-icons
       #cde-gtk-theme # not working
       cde-battery
