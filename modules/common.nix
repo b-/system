@@ -91,6 +91,6 @@
 
   fonts = {
     fontDir.enable = true;
-    fonts = [ pkgs.jetbrains-mono ]; # fonts.fonts was _not_ renamed to fonts.packages in nix-darwin
+    packages = [ pkgs.jetbrains-mono ]; # fonts.fonts was _not_ renamed to fonts.packages in nix-darwin
   };
 }
