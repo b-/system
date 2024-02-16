@@ -4,7 +4,7 @@
     displayManager = {
       sddm = {
         enable = true;
-        wayland = true;
+        wayland.enable = true;
       };
     };
     desktopManager.plasma5.enable = true;
