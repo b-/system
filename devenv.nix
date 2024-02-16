@@ -8,6 +8,7 @@
   packages = [
     #pkgs.rnix-lsp
     pkgs.screen # to run disconnected
+    pkgs.shfmt
     pkgs.nil
     pkgs.nixfmt-rfc-style
     self.packages.${pkgs.system}.pyEnv
