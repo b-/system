@@ -23,7 +23,7 @@
       nixfmt.entry = pkgs.lib.mkForce "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
       alejandra.enable = false;
       deadnix.enable = true;
-      shfmt.enable = false;
+      shfmt.enable = true;
       stylua.enable = true;
     };
 
