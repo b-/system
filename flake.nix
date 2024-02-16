@@ -25,6 +25,7 @@
     stable.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    deploy-rs.url = "github:serokell/deploy-rs";
     devenv.url = "github:cachix/devenv/latest";
     devenv.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -78,6 +79,7 @@
     {
       attic,
       darwin,
+      deploy-rs,
       devenv,
       disko,
       flake-utils,
@@ -88,6 +90,18 @@
     }@inputs:
     let
       inherit (flake-utils.lib) eachSystemMap;
+      deployPkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          deploy-rs.overlay
+          (self: super: {
+            deploy-rs = {
+              inherit (pkgs) deploy-rs;
+              lib = super.deploy-rs.lib;
+            };
+          })
+        ];
+      };
 
       isDarwin = system: (builtins.elem system inputs.nixpkgs.lib.platforms.darwin);
       homePrefix = system: if isDarwin system then "/Users" else "/home";
@@ -189,6 +203,12 @@
         };
     in
     {
+      deploy.nodes.nixos-chromebook.profiles.system = {
+        user = "root";
+        path =
+          deployPkgs.deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations."bri@x86_64-linux";
+      };
       nixosModules.customFormats =
         { ... }:
         {
