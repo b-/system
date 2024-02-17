@@ -75,6 +75,7 @@
       pkgs.nixfmt-rfc-style
       pkgs.home-manager
       inputs.attic.packages.${pkgs.system}.attic-client
+      inputs.deploy-rs.packages.${pkgs.system}.deploy-rs
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";
