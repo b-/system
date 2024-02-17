@@ -11,7 +11,8 @@ in
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
     enable = true;
-    hydraURL = "http://localhost:3030";
+    port = 3030;
+    hydraURL = "http://${domain}:3030";
     notificationSender = "hydra@localhost";
     buildMachinesFiles = [ ];
     useSubstitutes = true;
