@@ -5,11 +5,13 @@
   ...
 }:
 {
+
   # bundles essential nixos modules
   imports = [
     #    ./desktop.nix
     #    ./gnome.nix
     ../common.nix
+    ./deploy.nix
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
