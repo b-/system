@@ -1,8 +1,12 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   domain = "192.168.30.40";
 in
 {
+  environment.systemPackages = [
+    pkgs.hydra-cli
+    pkgs.forgejo
+  ];
   security.sudo.wheelNeedsPassword = false;
   boot = {
     growPartition = true;
