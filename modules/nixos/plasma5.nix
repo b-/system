@@ -5,8 +5,8 @@
       sddm = {
         enable = true;
         wayland.enable = true;
-        defaultSession = "plasmawayland";
       };
+      defaultSession = "plasmawayland";
     };
 
     desktopManager.plasma5.enable = true;
