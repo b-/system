@@ -11,7 +11,7 @@ in
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
     enable = true;
-    hydraURL = "http://localhost:3000";
+    hydraURL = "http://localhost:3030";
     notificationSender = "hydra@localhost";
     buildMachinesFiles = [ ];
     useSubstitutes = true;
@@ -23,7 +23,7 @@ in
         DISABLE_REGISTRATION = true;
       };
       server = {
-        ROOT_URL = "https://${domain}";
+        ROOT_URL = "https://${domain}:3000";
         LANDING_PAGE = "explore";
       };
     };
