@@ -22,6 +22,8 @@
     Defaults pwfeedback
   '';
 
+
+
   services = {
     # Enable the X11 windowing system.
     xserver = {
@@ -29,8 +31,12 @@
       xkb.layout = "us";
       # services.xserver.xkbOptions = "eurosign:e";
 
-      # Enable touchpad support.
-      libinput.enable = true;
+      libinput = lib.mkDefault {
+        # Enable touchpad support.
+        enable = true;
+        naturalScrolling = true;
+        tapping = true;
+      }
     };
 
     syncthing = {
