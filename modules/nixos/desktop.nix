@@ -36,7 +36,7 @@
         enable = true;
         naturalScrolling = true;
         tapping = true;
-      }
+      };
     };
 
     syncthing = {
