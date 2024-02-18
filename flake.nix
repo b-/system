@@ -241,7 +241,7 @@
           formatConfigs.proxmox =
             { ... }:
             {
-
+              boot.kernelParams = [ "console=ttyS0" ];
               proxmox = {
                 qemuConf = {
                   agent = true;
@@ -253,6 +253,11 @@
                   cpu = "host";
                 };
               };
+            };
+          formatConfigs.proxmox-lxc =
+            { lib, ... }:
+            {
+              boot.loader.systemd-boot.enable = lib.mkForce false;
             };
         };
 
@@ -503,7 +508,8 @@
       hydraJobs = {
         #serverRawEfi = self.nixosConfigurations."server@x86_64-linux".config.formats.raw-efi;
         serverProxmox = self.nixosConfigurations."server@x86_64-linux".config.formats.proxmox;
-        briProxmox = self.nixosConfigurations."bri@x86_64-linux".config.formats.proxmox;
+        serverProxmoxLxc = self.nixosConfigurations."server@x86_64-linux".config.formats.proxmox-lxc;
+        #briProxmox = self.nixosConfigurations."bri@x86_64-linux".config.formats.proxmox;
         briRawEfi = self.nixosConfigurations."bri@x86_64-linux".config.formats.raw-efi;
       };
     };
