@@ -1,0 +1,13 @@
+diff --git a/src/hydra-eval-jobs/hydra-eval-jobs.cc b/src/hydra-eval-jobs/hydra-eval-jobs.cc
+index 2794cc62..bd6416e9 100644
+--- a/src/hydra-eval-jobs/hydra-eval-jobs.cc
++++ b/src/hydra-eval-jobs/hydra-eval-jobs.cc
+@@ -327,7 +327,7 @@ int main(int argc, char * * argv)
+ 
+         /* Prevent access to paths outside of the Nix search path and
+            to the environment. */
+-        evalSettings.restrictEval = true;
++        evalSettings.restrictEval = config->getBoolOption("evaluator_restrict_eval", true);
+ 
+         /* When building a flake, use pure evaluation (no access to
+            'getEnv', 'currentSystem' etc. */

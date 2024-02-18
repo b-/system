@@ -20,6 +20,16 @@ in
     notificationSender = "hydra@localhost";
     buildMachinesFiles = [ ];
     useSubstitutes = true;
+    package = pkgs.hydra.overrideAttrs (
+      old: {
+        patches = (if old ? patches then old.patches else [ ]) ++ [
+          ./hydra.patch # https://github.com/NixOS/nix/issues/7098#issuecomment-1910017187
+        ];
+      }
+    );
+    extraConfig = ''
+      evaluator_restrict_eval = false
+    '';
   };
   services.forgejo = lib.mkDefault {
     enable = true;
