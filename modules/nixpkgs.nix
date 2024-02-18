@@ -34,7 +34,7 @@
         "https://perchnet.cachix.org"
         "https://devenv.cachix.org"
         "https://cache.nixos.org"
-        "nix-community.cachix.org"
+        "https://nix-community.cachix.org"
       ];
 
       trusted-public-keys = [
