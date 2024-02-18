@@ -9,7 +9,20 @@
       "https://cache.nixos.org"
     ];
     allowed-uris = [
-      "github:"
+      "github:hercules-ci/" # flake-parts
+      "github:serokell/" # deploy-rs
+      "github:cachix/" # cachix & devenv
+      "github:nix-community/"
+      "github:nixos/"
+      "github:Mic92/" # nix-index-database
+      "github:numtide/" # nixos-anywhere
+      "github:lnl7/" # nix-darwin
+      "github:zhaofengli/" # attic
+
+      # me
+      "github:b-/"
+      "github:briorg/"
+      "github:perchnet/"
       "git+https://github.com/"
       "git+ssh://github.com/"
     ];
