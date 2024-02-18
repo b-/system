@@ -23,6 +23,7 @@ UPLOAD_USER=ci-upload
 # hashtable of destdirs
 declare -A DESTDIRS=(
 	["proxmox"]="dump/"
+	["proxmox-lxc"]="template/cache/"
 	["raw-efi"]="images/"
 	["iso"]="template/iso/"
 )
