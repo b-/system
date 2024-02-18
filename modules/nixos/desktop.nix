@@ -22,8 +22,6 @@
     Defaults pwfeedback
   '';
 
-
-
   services = {
     # Enable the X11 windowing system.
     xserver = {
@@ -34,8 +32,10 @@
       libinput = lib.mkDefault {
         # Enable touchpad support.
         enable = true;
-        naturalScrolling = true;
-        tapping = true;
+        touchpad = {
+          naturalScrolling = true;
+          tapping = true;
+        };
       };
     };
 
