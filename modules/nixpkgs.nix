@@ -17,7 +17,12 @@
       experimental-features = nix-command flakes
     '';
     settings = {
-      max-jobs = 8;
+      max-jobs = auto;
+      allowed-uris = [
+        "github:"
+        "git+https://github.com/"
+        "git+ssh://github.com/"
+      ];
       trusted-users = [
         "${config.user.name}"
         "root"
@@ -29,6 +34,7 @@
         "https://perchnet.cachix.org"
         "https://devenv.cachix.org"
         "https://cache.nixos.org"
+        "nix-community.cachix.org"
       ];
 
       trusted-public-keys = [
@@ -36,6 +42,7 @@
         "perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc="
         "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
     };
     gc = {
