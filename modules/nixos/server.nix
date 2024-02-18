@@ -10,7 +10,6 @@ in
   security.sudo.wheelNeedsPassword = false;
   boot = {
     growPartition = true;
-    kernelParams = [ "console=ttyS0" ];
   };
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
@@ -20,6 +19,21 @@ in
     notificationSender = "hydra@localhost";
     buildMachinesFiles = [ ];
     useSubstitutes = true;
+    package = pkgs.hydra_unstable.overrideAttrs (
+      old: {
+        patches = (if old ? patches then old.patches else [ ]) ++ [
+          ./hydra.patch # https://github.com/NixOS/nix/issues/7098#issuecomment-1910017187
+        ];
+      }
+    );
+    extraConfig = ''
+      <dynamicruncommand>
+        enable = 1
+      </dynamicruncommand>
+      <runcommand>
+        command = cat $HYDRA_JSON > /tmp/hydra-output
+      </runcommand>
+    '';
   };
   services.forgejo = lib.mkDefault {
     enable = true;
