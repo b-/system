@@ -17,7 +17,7 @@
       experimental-features = nix-command flakes
     '';
     settings = {
-      max-jobs = auto;
+      max-jobs = "auto";
       allowed-uris = [
         "github:"
         "git+https://github.com/"
