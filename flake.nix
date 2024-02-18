@@ -482,5 +482,11 @@
           devenv = self.packages.${prev.system}.devenv;
         };
       };
+      hydraJobs = {
+        #serverRawEfi = self.nixosConfigurations."server@x86_64-linux".config.formats.raw-efi;
+        serverProxmox = self.nixosConfigurations."server@x86_64-linux".config.formats.proxmox;
+        briProxmox = self.nixosConfigurations."bri@x86_64-linux".config.formats.proxmox;
+        briRawEfi = self.nixosConfigurations."bri@x86_64-linux".config.formats.raw-efi;
+      };
     };
 }
