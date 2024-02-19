@@ -302,7 +302,7 @@ BUILD_MATRIX() {
 				export BUILD_NAME
 				_println ""
 				_println "  *** Starting build ${BUILD_NAME} ***"
-				BUILD_AND_UPLOAD
+				time BUILD_AND_UPLOAD
 				_println "  *** Finished build ${BUILD_NAME} ***"
 			else
 				_println "  *** Skipping excluded TARGET.FORMAT ${TARGET}.${FORMAT} ***"
@@ -313,7 +313,9 @@ BUILD_MATRIX() {
 }
 
 CI_BUILD() {
-	BUILD_MATRIX 2>&1 | tee "ci-build.$(DATE-TIME).log"
+	DATE_TIME="$(DATE-TIME)" # save the DATE-TIME so we can upload it
+	time BUILD_MATRIX 2>&1 | tee "ci-build.${DATE_TIME}.log"
+	UPLOAD_ARTIFACT "ci-build.${DATE_TIME}.log"
 }
 
 _main() {

@@ -31,7 +31,7 @@
 
       # define package definitions for current user environment
       packages = [
-        #(pkgs.uutils-coreutils.override { prefix = ""; })
+        (pkgs.uutils-coreutils.override { prefix = "u"; })
         pkgs.age
         pkgs.alejandra
         pkgs.aria2 # A lightweight multi-protocol & multi-source command-line download utility
@@ -91,7 +91,7 @@
         pkgs.nixpkgs-fmt
         pkgs.nmap # A utility for network discovery and security auditing
         pkgs.nnn # terminal file manager
-        pkgs.nodejs_20
+        # pkgs.nodejs_20
         pkgs.p7zip
         pkgs.parallel
         pkgs.pciutils # lspci
@@ -137,10 +137,10 @@
     gpg.enable = true;
     htop.enable = true;
     jq.enable = true;
-    java = {
-      enable = true;
-      package = pkgs.jdk21;
-    };
+    # java = {
+    #   enable = false;
+    #   package = pkgs.jdk21;
+    # };
     k9s.enable = true;
     lazygit.enable = true;
     less.enable = true;
