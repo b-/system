@@ -19,13 +19,13 @@ in
     notificationSender = "hydra@localhost";
     buildMachinesFiles = [ ];
     useSubstitutes = true;
-    package = pkgs.hydra_unstable.overrideAttrs (
-      old: {
-        patches = (if old ? patches then old.patches else [ ]) ++ [
-          ./hydra.patch # https://github.com/NixOS/nix/issues/7098#issuecomment-1910017187
-        ];
-      }
-    );
+    #package = pkgs.hydra_unstable.overrideAttrs (
+    #  old: {
+    #    patches = (if old ? patches then old.patches else [ ]) ++ [
+    #      ./hydra.patch # https://github.com/NixOS/nix/issues/7098#issuecomment-1910017187
+    #    ];
+    #  }
+    #);
     extraConfig = ''
       <dynamicruncommand>
         enable = 1
