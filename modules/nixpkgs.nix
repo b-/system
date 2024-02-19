@@ -40,16 +40,16 @@
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
       allowed-uris = [
-        "github:hercules-ci/" # flake-parts
-        "github:serokell/" # deploy-rs
-        "github:cachix/" # cachix & devenv
-        "github:nix-community/"
-        "github:nixos/"
-        "github:Mic92/" # nix-index-database
-        "github:numtide/" # nixos-anywhere
-        "github:lnl7/" # nix-darwin
-        "github:zhaofengli/" # attic
-        "github:ipetkov/crane/"
+        # "github:hercules-ci/" # flake-parts
+        # "github:serokell/" # deploy-rs
+        # "github:cachix/" # cachix & devenv
+        # "github:nix-community/"
+        # "github:nixos/"
+        # "github:Mic92/" # nix-index-database
+        # "github:numtide/" # nixos-anywhere
+        # "github:lnl7/" # nix-darwin
+        # "github:zhaofengli/" # attic
+        # "github:ipetkov/crane/"
 
         # me
         "github:b-/"
