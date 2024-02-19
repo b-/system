@@ -34,10 +34,17 @@ DEFAULT_TARGETS=(
 )
 DEFAULT_FORMATS=(
 	"proxmox"
+	"proxmox-lxc"
 	"raw-efi"
-	"iso"
+	# "iso"
 )
 
+# DEFAULT_EXCLUDES contains pairs of "TARGET.FORMAT" to exclude from builds
+DEFAULT_EXCLUDES=(
+	"bri.proxmox-lxc"
+	"bri.proxmox"
+	"server.raw-efi"
+)
 # unused
 # shellcheck disable=SC2034
 declare -A EXTENSIONS=(
@@ -275,18 +282,31 @@ BUILD_AND_UPLOAD() {
 BUILD_MATRIX() {
 	TARGETS=("${TARGETS[@]-${DEFAULT_TARGETS[@]}}")
 	FORMATS=("${FORMATS[@]-${DEFAULT_FORMATS[@]}}")
+	EXCLUDES=("${EXCLUDES[@]-${DEFAULT_EXCLUDES[@]}}")
 
 	for FORMAT in "${FORMATS[@]}"; do
 		for TARGET in "${TARGETS[@]}"; do
-			if [[ -n ${NOCLEAN-} ]]; then
-				CLEAN
+			EXCLUDING=0
+			for EXCLUDE in "${EXCLUDES[@]}"; do
+				if [[ "${TARGET}.${FORMAT}" == "${EXCLUDE}" ]]; then
+					EXCLUDING=1
+					break
+				fi
+			done
+			if [[ ${EXCLUDING} -eq 0 ]]; then
+				# not excluding
+				if [[ -n ${NOCLEAN-} ]]; then
+					CLEAN
+				fi
+				BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
+				export BUILD_NAME
+				_println ""
+				_println "  *** Starting build ${BUILD_NAME} ***"
+				BUILD_AND_UPLOAD
+				_println "  *** Finished build ${BUILD_NAME} ***"
+			else
+				_println "  *** Skipping excluded TARGET.FORMAT ${TARGET}.${FORMAT} ***"
 			fi
-			BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
-			export BUILD_NAME
-			_println ""
-			_println "  *** Starting build ${BUILD_NAME} ***"
-			BUILD_AND_UPLOAD
-			_println "  *** Finished build ${BUILD_NAME} ***"
 		done
 	done
 	_println "  *** DONE! ***"
