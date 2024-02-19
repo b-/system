@@ -25,9 +25,10 @@
       "github:briorg/"
       "github:perchnet/"
 
-      #"github:"
-      #"git+https://github.com/"
-      #"git+ssh://github.com/"
+      "github:"
+      "git+https://github.com/"
+      "git+ssh://github.com/"
+      "https://github.com/"
     ];
 
     trusted-public-keys = [
