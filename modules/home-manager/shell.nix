@@ -12,6 +12,14 @@ let
       la = "${ls} -a";
       ll = "${ls} -la";
       lt = "${ls} -lat";
+      ga = "git add";
+      "ga." = "git add .";
+      "-" = "cd -";
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      "...." = "cd ../../..";
+      "....." = "cd ../../../..";
+      "......" = "cd ../../../../..";
     }
     // lib.optionalAttrs pkgs.stdenvNoCC.isDarwin rec {
       # darwin specific aliases
