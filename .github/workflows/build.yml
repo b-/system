@@ -122,19 +122,19 @@ jobs:
   build_images:
     runs-on: ubuntu-20.04
     needs: [update_flake]
-    strategy:
-      fail-fast: false
-      max-parallel: 5
-      matrix:
-        ARCH: [ "x86_64" ]
-        OS: [ "linux" ]
-        TARGET:
-          - "server"
-          - "bri"
-        FORMAT:
-          - "proxmox"
-          - "raw-efi"
-          - "iso"
+    # strategy:
+    #   fail-fast: false
+    #   max-parallel: 5
+    #   matrix:
+    #     ARCH: [ "x86_64" ]
+    #     OS: [ "linux" ]
+    #     TARGET:
+    #       - "server"
+    #       - "bri"
+    #     FORMAT:
+    #       - "proxmox"
+    #       - "raw-efi"
+    #       - "iso"
     steps:
       # - name: Prepare store folder
       #   run: sudo mkdir -p /nix
@@ -175,50 +175,51 @@ jobs:
         run: |
           set -x
           mkdir -p build
-          cp -LR "$(cachix watch-exec bri -- nix build ".#nixosConfigurations.${{matrix.TARGET}}@${{matrix.ARCH}}-${{matrix.OS}}.config.formats.${{matrix.FORMAT}}" --print-out-paths --show-trace --accept-flake-config)" build/
-      - name: list outputs
-        run: |
-          find build
-      - name: rename build
-        run: |
-          case "${{matrix.FORMAT}}" in
-            "proxmox")
-              EXT="vma.zst"
-              ;;
-            "raw-efi")
-              EXT="img"
-              ;;
-            "iso")
-              EXT="iso"
-              ;;
-          esac
-          if [[ "${EXT}" == "vma.zst" ]] ; then
-              for i in build/*.${EXT} ; do
-                  mv "$i" build/"vzdump-qemu-${{matrix.TARGET}}_$(basename ${i})"
-              done
-          else
-              for i in build/*.${EXT} ; do
-                  mv "$i" build/"${{matrix.TARGET}}_$(basename ${i})"
-              done
-          fi
-      - run: |
-          case "${{matrix.FORMAT}}" in
-            "proxmox")
-              DESTDIR="dump"
-              ;;
-            "raw-efi")
-              DESTDIR="images"
-              ;;
-            "iso")
-              DESTDIR="template/iso"
-              ;;
-          esac
-          printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
-          chmod 600 /tmp/ci-upload.key
-          chmod -R 755 build
-          scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
+          cachix watch-exec bri -- nix build ".#nixosConfigurations.server@x86_64-linux.config.system.build.toplevel" --accept-flake-config
+          # cp -LR "$(cachix watch-exec bri -- nix build ".#nixosConfigurations.${{matrix.TARGET}}@${{matrix.ARCH}}-${{matrix.OS}}.config.formats.${{matrix.FORMAT}}" --print-out-paths --show-trace --accept-flake-config)" build/
+      # - name: list outputs
+      #   run: |
+      #     find build
+      # - name: rename build
+      #   run: |
+      #     case "${{matrix.FORMAT}}" in
+      #       "proxmox")
+      #         EXT="vma.zst"
+      #         ;;
+      #       "raw-efi")
+      #         EXT="img"
+      #         ;;
+      #       "iso")
+      #         EXT="iso"
+      #         ;;
+      #     esac
+      #     if [[ "${EXT}" == "vma.zst" ]] ; then
+      #         for i in build/*.${EXT} ; do
+      #             mv "$i" build/"vzdump-qemu-${{matrix.TARGET}}_$(basename ${i})"
+      #         done
+      #     else
+      #         for i in build/*.${EXT} ; do
+      #             mv "$i" build/"${{matrix.TARGET}}_$(basename ${i})"
+      #         done
+      #     fi
+      # - run: |
+      #     case "${{matrix.FORMAT}}" in
+      #       "proxmox")
+      #         DESTDIR="dump"
+      #         ;;
+      #       "raw-efi")
+      #         DESTDIR="images"
+      #         ;;
+      #       "iso")
+      #         DESTDIR="template/iso"
+      #         ;;
+      #     esac
+      #     printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
+      #     chmod 600 /tmp/ci-upload.key
+      #     chmod -R 755 build
+      #     scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
 
-        # nix build .#${{ matrix.package }}
+      #   # nix build .#${{ matrix.package }}
 
 
 
