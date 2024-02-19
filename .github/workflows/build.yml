@@ -289,37 +289,37 @@ jobs:
           name: flake_lock
       - name: Build everything
         run: |
-          nix flake check --keep-going
+          nix flake check --keep-going --impure
 
-  push_update:
-    runs-on: ubuntu-20.04
-    permissions: write-all
-    needs: [update_flake, build_flake, check_flake]
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Restore flake.lock
-        uses: actions/download-artifact@v4
-        with:
-          name: flake_lock
-      - name: Set up git
-        run: |
-          git config user.email gitbot@nobbz.dev
-          git config user.name "Git Bot"
-      - name: Create and merge PR
-        run: |
-          git switch -c updates-${{ github.run_id }}
-          git commit -am "flake.lock: Update"
-          git push -u origin updates-${{ github.run_id }}
-          PR=$(gh pr create \
-            --assignee b- \
-            --base main \
-            --body "Automatic flake update on $(date -I)" \
-            --fill \
-            --label bot \
-            --title "Auto update $(date -I)")
-          gh pr merge $PR --merge --delete-branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # push_update:
+  #   runs-on: ubuntu-20.04
+  #   permissions: write-all
+  #   needs: [update_flake, build_flake, check_flake]
+  #   steps:
+  #     - name: Clone repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: "${{ secrets.GITHUB_TOKEN }}"
+  #     - name: Restore flake.lock
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: flake_lock
+  #     - name: Set up git
+  #       run: |
+  #         git config user.email gitbot@nobbz.dev
+  #         git config user.name "Git Bot"
+  #     - name: Create and merge PR
+  #       run: |
+  #         git switch -c updates-${{ github.run_id }}
+  #         git commit -am "flake.lock: Update"
+  #         git push -u origin updates-${{ github.run_id }}
+  #         PR=$(gh pr create \
+  #           --assignee b- \
+  #           --base main \
+  #           --body "Automatic flake update on $(date -I)" \
+  #           --fill \
+  #           --label bot \
+  #           --title "Auto update $(date -I)")
+  #         gh pr merge $PR --merge --delete-branch
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
