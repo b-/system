@@ -18,11 +18,6 @@
     '';
     settings = {
       max-jobs = "auto";
-      allowed-uris = [
-        "github:"
-        "git+https://github.com/"
-        "git+ssh://github.com/"
-      ];
       trusted-users = [
         "${config.user.name}"
         "root"
@@ -43,6 +38,28 @@
         "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
+      allowed-uris = [
+        "github:hercules-ci/" # flake-parts
+        "github:serokell/" # deploy-rs
+        "github:cachix/" # cachix & devenv
+        "github:nix-community/"
+        "github:nixos/"
+        "github:Mic92/" # nix-index-database
+        "github:numtide/" # nixos-anywhere
+        "github:lnl7/" # nix-darwin
+        "github:zhaofengli/" # attic
+        "github:ipetkov/crane/"
+
+        # me
+        "github:b-/"
+        "github:briorg/"
+        "github:perchnet/"
+
+        "github:"
+        "git+https://github.com/"
+        "git+ssh://github.com/"
+        "https://github.com/"
       ];
     };
     gc = {
