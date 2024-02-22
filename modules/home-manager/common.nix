@@ -62,6 +62,7 @@
         pkgs.gnupg
         pkgs.gnused
         pkgs.gnutar
+        pkgs.graphviz
         pkgs.grype
         pkgs.helm-docs
         pkgs.httpie
@@ -86,6 +87,7 @@
         pkgs.neofetch
         pkgs.nil
         #pkgs.nix
+        pkgs.nix-du
         pkgs.nix-output-monitor
         pkgs.nixfmt-rfc-style
         pkgs.nixpkgs-fmt

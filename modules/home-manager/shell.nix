@@ -12,8 +12,18 @@ let
       la = "${ls} -a";
       ll = "${ls} -la";
       lt = "${ls} -lat";
+
       ga = "git add";
       "ga." = "git add .";
+      "gs" = "git status";
+      "gc" = "git commit";
+      "gcp" = "git commit && git push";
+      "gp" = "git pull --ff-only";
+      "gpr" = "git pull --rebase";
+      "gP" = "git push";
+      "gPf" = "git push --force-with-lease";
+      "gPFF" = "git push --force";
+
       "-" = "cd -";
       ".." = "cd ..";
       "..." = "cd ../..";
