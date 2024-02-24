@@ -10,7 +10,10 @@ in
   security.sudo.wheelNeedsPassword = false;
   boot = {
     growPartition = true;
-    kernelParams = [ "console=ttyS0" ];
+    kernelParams = [
+      "console=ttyS0,115200"
+      "console=tty1"
+    ];
   };
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
