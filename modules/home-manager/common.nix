@@ -31,9 +31,28 @@
 
       # define package definitions for current user environment
       packages = [
-        (pkgs.uutils-coreutils.override { prefix = "u"; })
+        # (pkgs.uutils-coreutils.override { prefix = "u"; })
+        # pkgs.alejandra
+        # pkgs.cowsay
+        # pkgs.fd
+        # pkgs.ffmpeg
+        # pkgs.glow # markdown previewer in terminal
+        # pkgs.grype
+        # pkgs.httpie
+        # pkgs.hugo # static site generator
+        # pkgs.kotlin
+        # pkgs.lazydocker
+        # pkgs.ldns # replacement of `dig`, it provide the command `drill`
+        # pkgs.nix
+        # pkgs.nixfmt-rfc-style
+        # pkgs.nixpkgs-fmt
+        # pkgs.nodejs_20
+        # pkgs.poetry
+        # pkgs.rnix-lsp
+        # pkgs.ruff
+        # pkgs.stylua
+        # pkgs.treefmt
         pkgs.age
-        pkgs.alejandra
         pkgs.aria2 # A lightweight multi-protocol & multi-source command-line download utility
         pkgs.atuin
         pkgs.autojump
@@ -44,40 +63,30 @@
         pkgs.cirrus-cli
         pkgs.comma
         pkgs.coreutils-full
-        pkgs.cowsay
         pkgs.curl
         pkgs.diffutils
         pkgs.direnv
         pkgs.dnsutils # `dig` + `nslookup`
         pkgs.eza # A modern replacement for ‘ls’
-        pkgs.fd
-        pkgs.ffmpeg
         pkgs.file
         pkgs.findutils
         pkgs.fzf # A command-line fuzzy finder
         pkgs.gawk
         pkgs.gh
-        pkgs.glow # markdown previewer in terminal
         pkgs.gnugrep
         pkgs.gnupg
         pkgs.gnused
         pkgs.gnutar
-        pkgs.grype
         pkgs.helm-docs
-        pkgs.httpie
-        pkgs.hugo # static site generator
         pkgs.hurl
         pkgs.iftop # network monitoring
         pkgs.ipcalc # it is a calculator for the IPv4/v6 addresses
         pkgs.iperf3
         pkgs.jq # A lightweight and flexible command-line JSON processor
-        pkgs.kotlin
         pkgs.kubectl
         pkgs.kubectx
         pkgs.kubernetes-helm
         pkgs.kustomize
-        pkgs.lazydocker
-        pkgs.ldns # replacement of `dig`, it provide the command `drill`
         pkgs.lsof # list open files
         pkgs.luajit
         pkgs.mmv
@@ -85,33 +94,23 @@
         pkgs.ncdu
         pkgs.neofetch
         pkgs.nil
-        #pkgs.nix
         pkgs.nix-output-monitor
-        pkgs.nixfmt-rfc-style
-        pkgs.nixpkgs-fmt
         pkgs.nmap # A utility for network discovery and security auditing
         pkgs.nnn # terminal file manager
-        # pkgs.nodejs_20
         pkgs.p7zip
         pkgs.parallel
         pkgs.pciutils # lspci
-        pkgs.poetry
         pkgs.pre-commit
         pkgs.ranger
         pkgs.rclone
         pkgs.restic
         pkgs.ripgrep # recursively searches directories for a regex pattern
-        pkgs.rnix-lsp
         pkgs.rsync
-        pkgs.ruff
         pkgs.shellcheck
         pkgs.socat # replacement of openbsd-netcat
         pkgs.starship
-        pkgs.stylua
         pkgs.sysdo # defined in flake.nix
         pkgs.tree
-        pkgs.treefmt
-        pkgs.trivy
         pkgs.which
         pkgs.xz
         pkgs.yq-go # yaml processer https://github.com/mikefarah/yq
@@ -119,10 +118,10 @@
         # python with default packages
         (pkgs.python3.withPackages (
           ps: [
-            ps.numpy
-            ps.scipy
-            ps.matplotlib
-            ps.networkx
+            #ps.numpy
+            #ps.scipy
+            #ps.matplotlib
+            #ps.networkx
           ]
         ))
       ];
@@ -146,10 +145,10 @@
     less.enable = true;
     man.enable = true;
     nix-index.enable = true;
-    pandoc.enable = true;
+    # pandoc.enable = true;
     ripgrep.enable = true;
     starship.enable = true;
-    yt-dlp.enable = true;
+    # yt-dlp.enable = true;
     zoxide.enable = true;
   };
 }
