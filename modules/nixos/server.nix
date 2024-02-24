@@ -6,6 +6,8 @@ in
   environment.systemPackages = [
     pkgs.hydra-cli
     pkgs.forgejo
+    pkgs.gocd-agent
+    pkgs.gocd-server
   ];
   security.sudo.wheelNeedsPassword = false;
   boot = {
