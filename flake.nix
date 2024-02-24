@@ -68,8 +68,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      # url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+      type = "github";
+      owner = "b-";
+      repo = "home-manager";
+      ref = "zsh-aliases";
     };
     nix-index-database = {
       url = "github:Mic92/nix-index-database";

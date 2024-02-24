@@ -23,6 +23,7 @@
       "neovim"
       "stow"
       "thefuck"
+      #"quartz-wm"
     ];
 
     taps = [
@@ -39,6 +40,7 @@
     casks = [
       "1password"
       "1password-cli"
+      "anydesk"
       "appcleaner"
       "firefox-developer-edition"
       "fork"
@@ -55,6 +57,9 @@
       "stats"
       "utm"
       "visual-studio-code"
+      "tigervnc-viewer"
+      "wine-stable"
+      "xquartz"
       "zotero"
     ];
   };
