@@ -273,8 +273,8 @@ BUILD_AND_UPLOAD() {
 		BUILD_IMAGE_TASKS
 	)" 2> >(tee "build_${INVOCATION_NAME}.log")
 	# upload built image
-	UPLOAD_TASKS "${BUILT_ARTIFACT}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
-	UPLOAD_TASKS "build_${INVOCATION_NAME}.log" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
+	cp "build_${INVOCATION_NAME}.log" "${BUILT_ARTIFACT}.log"
+	UPLOAD_TASKS "${BUILT_ARTIFACT}"{,.log} 2>&1
 }
 
 # BUILD_MATRIX
