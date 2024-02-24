@@ -15,6 +15,8 @@ in
       "console=tty1"
     ];
   };
+  services.gocd-server.enable = true;
+  services.gocd-agent.enable = true;
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
     enable = true;
