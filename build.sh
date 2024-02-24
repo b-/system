@@ -271,7 +271,7 @@ BUILD_AND_UPLOAD() {
 	BUILT_ARTIFACT="$(
 		# and tee build log (from stderr) to build_${INVOCATION_NAME}.log
 		BUILD_IMAGE_TASKS
-	)" 2> >(tee "build_${INVOCATION_NAME}.log")
+	)" 2>&1 >(tee "build_${INVOCATION_NAME}.log")
 	# upload built image
 	cp "build_${INVOCATION_NAME}.log" "${BUILT_ARTIFACT}.log"
 	UPLOAD_TASKS "${BUILT_ARTIFACT}"{,.log} 2>&1
