@@ -250,7 +250,7 @@ CLEAN() {
 BUILD_IMAGE_TASKS() {
 	#INSTALL_CACHIX
 	#WITH_CACHIX BUILD_IMAGE
-	BUILD_IMAGE
+	BUILD_IMAGE 2> >(tee "build_${INVOCATION_NAME}.log" >&2)
 }
 
 # UPLOAD_TASKS
@@ -271,10 +271,10 @@ BUILD_AND_UPLOAD() {
 	BUILT_ARTIFACT="$(
 		# and tee build log (from stderr) to build_${INVOCATION_NAME}.log
 		BUILD_IMAGE_TASKS
-	)" 2>&1 >(tee "build_${INVOCATION_NAME}.log")
+	)"
 	# upload built image
 	cp "build_${INVOCATION_NAME}.log" "${BUILT_ARTIFACT}.log"
-	UPLOAD_TASKS "${BUILT_ARTIFACT}"{,.log} 2>&1
+	UPLOAD_TASKS "${BUILT_ARTIFACT}"{,.log} 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
 # BUILD_MATRIX
