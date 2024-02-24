@@ -18,13 +18,17 @@
       "github:numtide/" # nixos-anywhere
       "github:lnl7/" # nix-darwin
       "github:zhaofengli/" # attic
+      "github:ipetkov/crane/"
 
       # me
       "github:b-/"
       "github:briorg/"
       "github:perchnet/"
+
+      "github:"
       "git+https://github.com/"
       "git+ssh://github.com/"
+      "https://github.com/"
     ];
 
     trusted-public-keys = [
@@ -64,8 +68,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      # url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+      type = "github";
+      owner = "b-";
+      repo = "home-manager";
+      ref = "zsh-aliases";
     };
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
@@ -241,7 +249,7 @@
           formatConfigs.proxmox =
             { ... }:
             {
-
+              boot.kernelParams = [ "console=ttyS0" ];
               proxmox = {
                 qemuConf = {
                   agent = true;
@@ -253,6 +261,11 @@
                   cpu = "host";
                 };
               };
+            };
+          formatConfigs.proxmox-lxc =
+            { lib, ... }:
+            {
+              boot.loader.systemd-boot.enable = lib.mkForce false;
             };
         };
 
@@ -499,6 +512,13 @@
           cb = self.packages.${prev.system}.cb;
           devenv = self.packages.${prev.system}.devenv;
         };
+      };
+      hydraJobs = {
+        #serverRawEfi = self.nixosConfigurations."server@x86_64-linux".config.formats.raw-efi;
+        serverProxmox = self.nixosConfigurations."server@x86_64-linux".config.formats.proxmox;
+        serverProxmoxLxc = self.nixosConfigurations."server@x86_64-linux".config.formats.proxmox-lxc;
+        #briProxmox = self.nixosConfigurations."bri@x86_64-linux".config.formats.proxmox;
+        briRawEfi = self.nixosConfigurations."bri@x86_64-linux".config.formats.raw-efi;
       };
     };
 }
