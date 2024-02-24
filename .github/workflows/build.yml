@@ -376,9 +376,3 @@ jobs:
           else
             echo "No change since last `nix flake update`."
           fi
-      - uses: "DeterminateSystems/flakehub-push@main"
-        with:
-          rolling: true
-          visibility: "public"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
