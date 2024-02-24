@@ -156,18 +156,8 @@ WITH_CACHIX() { # Run a command with `cachix
 # all other output to stderr.
 BUILD_IMAGE() { # Build image $TARGET@$ARCH-linux.$FORMAT
 	IMAGE_BUILD_FLAGS=(-v --show-trace --accept-flake-config)
-	local NIX_BUILD_TARGET BUILT_FILE ARCH BASE_FILE HASH CUT_FILE
+	local BUILT_FILE BASE_FILE HASH CUT_FILE
 	mkdir -p build
-	ARCH="$(_ARCH)"
-	# NIX_BUILD_TARGET e.g., `.#nixosConfigurations.server@x86_64-linux.config.formats.raw-efi`
-	NIX_BUILD_TARGET="$(
-		printf .#nixosConfigurations.%s@%s-%s.config.formats.%s \
-			"$(_TARGET)" \
-			"${ARCH//arm/aarch}" \
-			"$(_OS)" \
-			"$(_FORMAT)" \
-			;
-	)"
 	# $BUILT_FILE is the path to the build artifact inside /nix store.
 	# `nix build --print-out-paths` sends all build output to stderr and outputs only the built path(s) to stdout
 	if [[ -n ${DRY_RUN-} ]]; then
@@ -177,23 +167,24 @@ BUILD_IMAGE() { # Build image $TARGET@$ARCH-linux.$FORMAT
 		done
 		BUILT_FILE="/tmp/x9s4kb8sip304fbggdbf9ibjqmdz9c6l-proxmox-nixos-24.05.20240211.f9d39fb.vma.zst"
 		touch "${BUILT_FILE}"
+		printf %s "${BUILT_FILE}"
 	else
-		BUILT_FILE="$(nix build --print-out-paths "${NIX_BUILD_TARGET}" "${IMAGE_BUILD_FLAGS[@]}")"
+		BUILT_FILE="$(nix build --print-out-paths "${NIX_BUILD_TARGETS[@]}" "${IMAGE_BUILD_FLAGS[@]}")"
 	fi
 
-	# BASE_FILE basename of $BUILT_FILE
-	BASE_FILE="$(basename "${BUILT_FILE}")"
-	# HASH first five bytes of $BASE_FILE
-	# e.g., `cHaRs`
-	HASH=$(cut -b-5 <<<"${BASE_FILE}")
-	# CUT_FILE the rest of $BASE_FILE after the full $HASH
-	CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
-	# OUTNAME the final filename of our linked build artifact
-	OUTNAME="build/$(_PREFIX)$(INVOCATION_DATE)-${HASH}_${TARGET}_${CUT_FILE}"
-	export OUTNAME
-	_STDERR ln -fvs "${BUILT_FILE}" "${OUTNAME}"
-	# return "${OUTNAME}"
-	printf %s "${OUTNAME}"
+	# # BASE_FILE basename of $BUILT_FILE
+	# BASE_FILE="$(basename "${BUILT_FILE}")"
+	# # HASH first five bytes of $BASE_FILE
+	# # e.g., `cHaRs`
+	# HASH=$(cut -b-5 <<<"${BASE_FILE}")
+	# # CUT_FILE the rest of $BASE_FILE after the full $HASH
+	# CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
+	# # OUTNAME the final filename of our linked build artifact
+	# OUTNAME="build/$(_PREFIX)$(INVOCATION_DATE)-${HASH}_${TARGET}_${CUT_FILE}"
+	# export OUTNAME
+	# _STDERR ln -fvs "${BUILT_FILE}" "${OUTNAME}"
+	# # return "${OUTNAME}"
+	# printf %s "${OUTNAME}"
 }
 
 # SAVE_SSH_KEY
@@ -250,7 +241,7 @@ CLEAN() {
 BUILD_IMAGE_TASKS() {
 	#INSTALL_CACHIX
 	#WITH_CACHIX BUILD_IMAGE
-	BUILD_IMAGE 2> >(tee "build_${INVOCATION_NAME}.log" >&2)
+	BUILD_IMAGE
 }
 
 # UPLOAD_TASKS
@@ -270,8 +261,11 @@ BUILD_AND_UPLOAD() {
 	# Build image, then set BUILT_ARTIFACT to built image filename
 	BUILT_ARTIFACT="$(
 		# and tee build log (from stderr) to build_${INVOCATION_NAME}.log
-		BUILD_IMAGE_TASKS
+		BUILD_IMAGE_TASKS 2> >(tee "build_${INVOCATION_NAME}.log" >&2)
 	)"
+	_println "   ***"
+	_println "   *** Built ${BUILT_ARTIFACT}"
+	_println "   ***"
 	# upload built image
 	cp "build_${INVOCATION_NAME}.log" "${BUILT_ARTIFACT}.log"
 	UPLOAD_TASKS "${BUILT_ARTIFACT}"{,.log} 2>&1 | tee "upload_${INVOCATION_NAME}.log"
@@ -284,6 +278,8 @@ BUILD_MATRIX() {
 	TARGETS=("${TARGETS[@]-${DEFAULT_TARGETS[@]}}")
 	FORMATS=("${FORMATS[@]-${DEFAULT_FORMATS[@]}}")
 	EXCLUDES=("${EXCLUDES[@]-${DEFAULT_EXCLUDES[@]}}")
+	NIX_BUILD_TARGETS=()
+	export NIX_BUILD_TARGETS
 
 	for FORMAT in "${FORMATS[@]}"; do
 		for TARGET in "${TARGETS[@]}"; do
@@ -296,20 +292,39 @@ BUILD_MATRIX() {
 			done
 			if [[ ${EXCLUDING} -eq 0 ]]; then
 				# not excluding
-				if [[ -n ${NOCLEAN-} ]]; then
-					CLEAN
-				fi
-				BUILD_NAME="$(_TARGET).$(_FORMAT).$(INVOCATION_DATE)"
-				export BUILD_NAME
-				_println ""
-				_println "  *** Starting build ${BUILD_NAME} ***"
-				time BUILD_AND_UPLOAD
-				_println "  *** Finished build ${BUILD_NAME} ***"
+				ARCH="$(_ARCH)"
+				# NIX_BUILD_TARGET e.g., `.#nixosConfigurations.server@x86_64-linux.config.formats.raw-efi`
+				NIX_BUILD_TARGET="$(
+					printf .#nixosConfigurations.%s@%s-%s.config.formats.%s \
+						"$(_TARGET)" \
+						"${ARCH//arm/aarch}" \
+						"$(_OS)" \
+						"$(_FORMAT)" \
+						;
+				)"
+				NIX_BUILD_TARGETS+=("${NIX_BUILD_TARGET}")
+				_println "  *** Including ${NIX_BUILD_TARGET} ***"
+				# if [[ -n ${NOCLEAN-} ]]; then
+				# 	CLEAN
+				# fi
+				# BUILD_NAME="$(_TARGET).$(_FORMAT).$(INVOCATION_DATE)"
+				# export BUILD_NAME
+				# _println ""
+				# _println "  *** Starting build ${BUILD_NAME} ***"
+				# time BUILD_AND_UPLOAD
+				# _println "  *** Finished build ${BUILD_NAME} ***"
 			else
-				_println "  *** Skipping excluded TARGET.FORMAT ${TARGET}.${FORMAT} ***"
+				_println "  *** Skipping ${TARGET}.${FORMAT} ***"
 			fi
 		done
 	done
+	_println "     ***"
+	_println "     *** We will build: "
+	for NIX_BUILD_TARGET in "${NIX_BUILD_TARGETS[@]}"; do
+		_println "       • ${NIX_BUILD_TARGET}"
+	done
+	_println "Building ${NIX_BUILD_TARGETS[*]}..."
+	BUILD_AND_UPLOAD "${NIX_BUILD_TARGETS[@]}"
 	_println "  *** DONE! ***"
 }
 
