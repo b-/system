@@ -67,7 +67,10 @@
     nixos-hardware.url = "github:nixos/nixos-hardware";
     darwin = {
       #url = "github:lnl7/nix-darwin";
-      url = "github:b-/nix-darwin/patch-1";
+      type = "github";
+      owner = "b-";
+      repo = "nix-darwin";
+      ref = "patch-1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
