@@ -48,6 +48,7 @@
     # package repos
     stable.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     deploy-rs.url = "github:serokell/deploy-rs";
     devenv.url = "github:cachix/devenv/latest";
@@ -66,7 +67,7 @@
     nixos-hardware.url = "github:nixos/nixos-hardware";
     darwin = {
       #url = "github:lnl7/nix-darwin";
-      url = "github:b-/nix-darwin";
+      url = "github:b-/nix-darwin/patch-1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -101,6 +102,9 @@
 
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # flakehub cli
+    fh.url = "https://flakehub.com/f/DeterminateSystems/fh/*.tar.gz";
   };
 
   outputs =

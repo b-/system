@@ -76,6 +76,7 @@
       pkgs.home-manager
       inputs.attic.packages.${pkgs.system}.attic-client
       inputs.deploy-rs.packages.${pkgs.system}.deploy-rs
+      inputs.fh.packages.${pkgs.system}.default
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";
