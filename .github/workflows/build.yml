@@ -371,5 +371,5 @@ jobs:
               --title "Auto update $(date -I)")
             gh pr merge $PR --merge --delete-branch
           else
-            echo "No change since last `nix flake update`."
+            echo 'No change since last `nix flake update`.'
           fi
