@@ -29,6 +29,7 @@ jobs:
             trusted-users = root admin @sudo @wheel
             keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
           install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Generate flake.json
         run: |
           nix flake show --json > flake.json
@@ -60,6 +61,7 @@ jobs:
             trusted-users = root admin @sudo @wheel
             keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
           install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Set up git
         run: |
           git config user.email gitbot@ibeep.com
@@ -106,6 +108,7 @@ jobs:
             trusted-users = root admin @sudo @wheel
             keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
           install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Set up cachix
         uses: cachix/cachix-action@master # pathsToPush, please update once we have v11!
         with:
@@ -161,6 +164,7 @@ jobs:
             trusted-users = root admin @sudo @wheel
             keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
           install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Set up cachix
         uses: cachix/cachix-action@master # pathsToPush, please update once we have v11!
         with:
@@ -248,6 +252,7 @@ jobs:
   #           trusted-users = root admin @sudo @wheel
   #           keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
   #         install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+  #     - uses: DeterminateSystems/magic-nix-cache-action@main
   #     - name: Set up cachix
   #       uses: cachix/cachix-action@master # pathsToPush, please update once we have v11!
   #       with:
@@ -283,6 +288,7 @@ jobs:
             trusted-users = root admin @sudo @wheel
             keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
           install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Restore flake.lock
         uses: actions/download-artifact@v4
         with:
