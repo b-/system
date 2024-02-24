@@ -77,7 +77,7 @@ _STDERR() {
 
 # DATE-TIME returns `(date -I)-(date +%H-%M)`
 DATE-TIME() {
-	printf %s "${DATE_TIME-$(date -I)-$(date +"%H-%M")}"
+	printf %s "${DATE_TIME-$(date -I)}"
 }
 
 # _NAME outputs a formatted filename for (_TARGET) (_ARCH) (_OS) (_FORMAT)
@@ -181,12 +181,15 @@ BUILD_IMAGE() { # Build image $TARGET@$ARCH-linux.$FORMAT
 		BUILT_FILE="$(nix build --print-out-paths "${NIX_BUILD_TARGET}" "${IMAGE_BUILD_FLAGS[@]}")"
 	fi
 
+	# HASH first five bytes of $BASE_FILE
+	# e.g., `cHaRs`
+	HASH=$(cut -b-5 <<<"${BASE_FILE}")
 	# BASE_FILE basename of $BUILT_FILE
 	BASE_FILE="$(basename "${BUILT_FILE}")"
 	# CUT_FILE the rest of $BASE_FILE after the full $HASH
 	CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
 	# OUTNAME the final filename of our linked build artifact
-	OUTNAME="build/$(_PREFIX)-$(DATE-TIME)_${TARGET}_${CUT_FILE}"
+	OUTNAME="build/$(_PREFIX)${HASH}-$(DATE-TIME)_${TARGET}_${CUT_FILE}"
 	export OUTNAME
 	_STDERR ln -fvs "${BUILT_FILE}" "${OUTNAME}"
 	# return "${OUTNAME}"
