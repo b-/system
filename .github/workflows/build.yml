@@ -360,17 +360,21 @@ jobs:
           git config user.name "Git Bot"
       - name: Create and merge PR
         run: |
-          git switch -c updates-${{ github.run_id }}
-          git commit -am "flake.lock: Update"
-          git push -u origin updates-${{ github.run_id }}
-          PR=$(gh pr create \
-            --assignee b- \
-            --base bri \
-            --body "Automatic flake update on $(date -I)" \
-            --fill \
-            --label automated \
-            --label dependencies \
-            --title "Auto update $(date -I)")
-          gh pr merge $PR --merge --delete-branch
+          if git diff-files --quiet ; then
+            git switch -c updates-${{ github.run_id }}
+            git commit -am "flake.lock: Update"
+            git push -u origin updates-${{ github.run_id }}
+            PR=$(gh pr create \
+              --assignee b- \
+              --base bri \
+              --body "Automatic flake update on $(date -I)" \
+              --fill \
+              --label automated \
+              --label dependencies \
+              --title "Auto update $(date -I)")
+            gh pr merge $PR --merge --delete-branch
+          else
+            echo "No change since last `nix flake update`."
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
