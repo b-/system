@@ -344,7 +344,7 @@ jobs:
   push_update:
     runs-on: ubuntu-20.04
     permissions: write-all
-    needs: [update_flake, build_flake, check_flake, build_images]
+    needs: [update_flake, build_flake, check_flake, build_images, build_darwin]
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
