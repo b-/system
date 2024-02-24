@@ -49,7 +49,8 @@
     stable.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
-    nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    #nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-unstable.url = "github:b-/nixpkgs/bri-nixos-unstable";
     deploy-rs.url = "github:serokell/deploy-rs";
     devenv.url = "github:cachix/devenv/latest";
     devenv.inputs.nixpkgs.follows = "nixpkgs";
