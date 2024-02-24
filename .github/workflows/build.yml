@@ -378,7 +378,6 @@ jobs:
           fi
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
-          name: "b-/system"
           rolling: true
           visibility: "public"
         env:
