@@ -75,9 +75,9 @@ _STDERR() {
 	"${@}" 1>&2
 }
 
-# DATE-TIME returns `(date -I)-(date +%H-%M)`
-DATE-TIME() {
-	printf %s "${DATE_TIME-$(date -I)}"
+# INVOCATION_DATE returns `(date -I)-(date +%H-%M)`
+INVOCATION_DATE() {
+	printf %s "${INVOCATION_DATE-$(date -I)}"
 }
 
 # _NAME outputs a formatted filename for (_TARGET) (_ARCH) (_OS) (_FORMAT)
@@ -189,7 +189,7 @@ BUILD_IMAGE() { # Build image $TARGET@$ARCH-linux.$FORMAT
 	# CUT_FILE the rest of $BASE_FILE after the full $HASH
 	CUT_FILE="$(cut -d- -f2- <<<"${BASE_FILE}")"
 	# OUTNAME the final filename of our linked build artifact
-	OUTNAME="build/$(_PREFIX)${HASH}-$(DATE-TIME)_${TARGET}_${CUT_FILE}"
+	OUTNAME="build/$(_PREFIX)$(INVOCATION_DATE)-${HASH}_${TARGET}_${CUT_FILE}"
 	export OUTNAME
 	_STDERR ln -fvs "${BUILT_FILE}" "${OUTNAME}"
 	# return "${OUTNAME}"
@@ -265,7 +265,7 @@ UPLOAD_TASKS() {
 # Usage: BUILD_AND_UPLOAD
 # runs (BUILD_IMAGE_TASKS) while saving output to "build_${INVOCATION_NAME}.log".
 BUILD_AND_UPLOAD() {
-	INVOCATION_NAME="${BUILD_NAME-$(_TARGET).$(_FORMAT).$(DATE-TIME)}"
+	INVOCATION_NAME="${BUILD_NAME-$(_TARGET).$(_FORMAT).$(INVOCATION_DATE)}"
 
 	# Build image, then set BUILT_ARTIFACT to built image filename
 	BUILT_ARTIFACT="$(
@@ -274,6 +274,7 @@ BUILD_AND_UPLOAD() {
 	)" 2> >(tee "build_${INVOCATION_NAME}.log")
 	# upload built image
 	UPLOAD_TASKS "${BUILT_ARTIFACT}" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
+	UPLOAD_TASKS "build_${INVOCATION_NAME}.log" 2>&1 | tee "upload_${INVOCATION_NAME}.log"
 }
 
 # BUILD_MATRIX
@@ -298,7 +299,7 @@ BUILD_MATRIX() {
 				if [[ -n ${NOCLEAN-} ]]; then
 					CLEAN
 				fi
-				BUILD_NAME="$(_TARGET).$(_FORMAT).$(DATE-TIME)"
+				BUILD_NAME="$(_TARGET).$(_FORMAT).$(INVOCATION_DATE)"
 				export BUILD_NAME
 				_println ""
 				_println "  *** Starting build ${BUILD_NAME} ***"
@@ -313,10 +314,9 @@ BUILD_MATRIX() {
 }
 
 CI_BUILD() {
-	export DATE_TIME
-	DATE_TIME="$(DATE-TIME)" # save the DATE-TIME so we can upload it
-	time BUILD_MATRIX 2>&1 | tee "ci-build.${DATE_TIME}.log"
-	UPLOAD_ARTIFACT "ci-build.${DATE_TIME}.log"
+	export INVOCATION_DATE
+	INVOCATION_DATE="$(INVOCATION_DATE)" # save the INVOCATION_DATE so we can upload it
+	time BUILD_MATRIX 2>&1 | tee "ci-build.${INVOCATION_DATE}.log"
 }
 
 _main() {
