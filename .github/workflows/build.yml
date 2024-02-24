@@ -122,6 +122,50 @@ jobs:
       - name: Build everything
         run: cachix watch-exec bri -- nix build .#${{ matrix.package }}
 
+  build_darwin:
+    runs-on: macos-14
+    needs: [update_flake]
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        ARCH:
+          - "x86_64"
+          - "aarch64"
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Install nix
+        uses: cachix/install-nix-action@v25
+        with:
+          extra_nix_config: |
+            auto-optimise-store = true
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            experimental-features = nix-command flakes
+            substituters = https://cache.nixos.org https://bri.cachix.org https://devenv.cachix.org https://perchnet.cachix.org https://nix-community.cachix.org https://devenv.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc =nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+            trusted-users = root admin @sudo @wheel
+            keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+          install_url: https://releases.nixos.org/nix/nix-2.19.0/install
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Set up cachix
+        uses: cachix/cachix-action@master # pathsToPush, please update once we have v11!
+        with:
+          name: bri
+          authToken: "${{ secrets.CACHIX_SIGNING_KEY }}"
+          pathsToPush: result
+      - name: Restore flake.lock
+        uses: actions/download-artifact@v4
+        with:
+          name: flake_lock
+      - name: Build everything
+        run: |
+          set -x
+          mkdir -p build
+          cachix watch-exec bri -- nix build ".#darwinConfigurations.bri@${{ matrix.ARCH }}-darwin.system" --accept-flake-config
+
   build_images:
     runs-on: ubuntu-20.04
     needs: [update_flake]
