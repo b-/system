@@ -3,7 +3,7 @@ DATE-TIME() {
 	printf %s "${DATE_TIME-$(date -I)-$(date +"%H-%M")}"
 }
 DATE_TIME="$(DATE-TIME)"
-LOGFILE="$(mktemp "--suffix=${DATE_TIME}.log" ci)"
+LOGFILE="ci-${DATE_TIME}.log"
 TAIL=("tail" "-f")
 rm -f "${LOGFILE}"
 git pull --rebase | tee -a "${LOGFILE}"
