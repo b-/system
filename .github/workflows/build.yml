@@ -357,7 +357,7 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Create and merge PR
         run: |
-          if git diff-files --quiet ; then
+          if ! git diff-files --quiet ; then
             git switch -c updates-${{ github.run_id }}
             git commit -am "flake.lock: Update"
             git push -u origin updates-${{ github.run_id }}
