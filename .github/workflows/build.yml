@@ -354,10 +354,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flake_lock
-      - name: Set up git
-        run: |
-          git config user.email gitbot@ibeep.com
-          git config user.name "Git Bot"
+      - uses: fregante/setup-git-user@v2
       - name: Create and merge PR
         run: |
           if git diff-files --quiet ; then
