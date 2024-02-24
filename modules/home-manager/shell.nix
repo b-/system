@@ -8,7 +8,7 @@ let
   functions = builtins.readFile ./functions.sh;
   aliases =
     rec {
-      ls = "${pkgs.coreutils}/bin/ls --color=auto -h";
+      ls = "${pkgs.eza}/bin/eza --color=auto --classify=auto --git-repos --icons=auto";
       la = "${ls} -a";
       ll = "${ls} -la";
       lt = "${ls} -lat";
