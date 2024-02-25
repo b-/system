@@ -19,6 +19,7 @@ in
   };
   services.gocd-server.enable = true;
   services.gocd-agent.enable = true;
+  services.gocd-agent.goServer = "http://127.0.0.1:8153/go";
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
     enable = true;
