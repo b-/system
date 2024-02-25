@@ -98,6 +98,7 @@
         pkgs.nmap # A utility for network discovery and security auditing
         pkgs.nnn # terminal file manager
         pkgs.p7zip
+        pkgs.packer
         pkgs.parallel
         pkgs.pciutils # lspci
         pkgs.pre-commit
@@ -110,6 +111,7 @@
         pkgs.socat # replacement of openbsd-netcat
         pkgs.starship
         pkgs.sysdo # defined in flake.nix
+        pkgs.talosctl
         pkgs.tree
         pkgs.which
         pkgs.xz

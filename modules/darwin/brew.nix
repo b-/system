@@ -42,6 +42,7 @@
       "1password-cli"
       "anydesk"
       "appcleaner"
+      "docker"
       "firefox-developer-edition"
       "fork"
       "google-chrome"
