@@ -1,18 +1,9 @@
-{
-  lib,
-  pkgs,
-  inputs,
-  modulesPath,
-  ...
-}:
+{ lib, pkgs, ... }:
 let
   domain = "192.168.30.40";
 in
 {
-  imports = [
-    "${inputs.gocd-agent-nixpkgs}/nixos/modules/services/continuous-integration/gocd-agent/default.nix"
-  ];
-  disabledModules = [ "${modulesPath}/services/continuous-integration/gocd-agent/default.nix" ];
+  imports = [ "./gocd-agent.nix" ];
   environment.systemPackages = [
     pkgs.hydra-cli
     pkgs.forgejo
@@ -27,8 +18,6 @@ in
     ];
   };
   services.gocd-server.enable = true;
-  services.gocd-agent.enable = true;
-  services.gocd-agent.goServer = "http://127.0.0.1:8153/go";
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
     enable = true;
