@@ -33,7 +33,7 @@
       packages = [
         # (pkgs.uutils-coreutils.override { prefix = "u"; })
         # pkgs.alejandra
-        # pkgs.cowsay
+        pkgs.cowsay
         # pkgs.fd
         # pkgs.ffmpeg
         # pkgs.glow # markdown previewer in terminal
