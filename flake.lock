@@ -322,6 +322,22 @@
         "type": "github"
       }
     },
+    "gocd-agent-nixpkgs": {
+      "locked": {
+        "lastModified": 1706894945,
+        "narHash": "sha256-+n1/wxI6EarOJtnQMmw0AjYQ2YP4A/x4OKMEjsm+f88=",
+        "owner": "sgonzalezoyuela",
+        "repo": "nixpkgs",
+        "rev": "a9eba62d9e62cee71e69104a600023719e44eacc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sgonzalezoyuela",
+        "ref": "patch-1",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -638,6 +654,7 @@
         "fh": "fh",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils_3",
+        "gocd-agent-nixpkgs": "gocd-agent-nixpkgs",
         "home-manager": "home-manager",
         "my-nixos-unstable": "my-nixos-unstable",
         "nix-index-database": "nix-index-database",
