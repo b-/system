@@ -3,7 +3,7 @@ let
   domain = "192.168.30.40";
 in
 {
-  imports = [ "./gocd-agent.nix" ];
+  imports = [ ./gocd-agent.nix ];
   environment.systemPackages = [
     pkgs.hydra-cli
     pkgs.forgejo

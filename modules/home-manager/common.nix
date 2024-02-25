@@ -33,7 +33,7 @@
       packages = [
         # (pkgs.uutils-coreutils.override { prefix = "u"; })
         # pkgs.alejandra
-        pkgs.cowsay
+        # pkgs.cowsay
         # pkgs.fd
         # pkgs.ffmpeg
         # pkgs.glow # markdown previewer in terminal
@@ -60,7 +60,7 @@
         pkgs.btop # replacement of htop/nmon
         pkgs.cachix
         pkgs.cb # defined in flake.nix
-        pkgs.cirrus-cli
+        # pkgs.cirrus-cli
         pkgs.comma
         pkgs.coreutils-full
         pkgs.curl
@@ -74,7 +74,7 @@
         pkgs.gawk
         pkgs.gh
         pkgs.gnugrep
-        pkgs.gnupg
+        # pkgs.gnupg
         pkgs.gnused
         pkgs.gnutar
         pkgs.helm-docs
@@ -88,7 +88,7 @@
         pkgs.kubernetes-helm
         pkgs.kustomize
         pkgs.lsof # list open files
-        pkgs.luajit
+        # pkgs.luajit
         pkgs.mmv
         pkgs.mtr # A network diagnostic tool
         pkgs.ncdu
@@ -100,11 +100,11 @@
         pkgs.p7zip
         pkgs.packer
         pkgs.parallel
-        pkgs.pciutils # lspci
+        # pkgs.pciutils # lspci
         pkgs.pre-commit
         pkgs.ranger
         pkgs.rclone
-        pkgs.restic
+        # pkgs.restic
         pkgs.ripgrep # recursively searches directories for a regex pattern
         pkgs.rsync
         pkgs.shellcheck
@@ -118,14 +118,14 @@
         pkgs.yq-go # yaml processer https://github.com/mikefarah/yq
         pkgs.zstd
         # python with default packages
-        (pkgs.python3.withPackages (
-          ps: [
-            #ps.numpy
-            #ps.scipy
-            #ps.matplotlib
-            #ps.networkx
-          ]
-        ))
+        # (pkgs.python3.withPackages (
+        #   ps: [
+        #     #ps.numpy
+        #     #ps.scipy
+        #     #ps.matplotlib
+        #     #ps.networkx
+        #   ]
+        # ))
       ];
     };
 
