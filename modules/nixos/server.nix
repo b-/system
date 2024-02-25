@@ -12,9 +12,7 @@ in
   imports = [
     "${inputs.gocd-agent-nixpkgs}/nixos/modules/services/continuous-integration/gocd-agent/default.nix"
   ];
-  disabledModules = [
-    "${modulesPath}/nixos/modules/services/continuous-integration/gocd-agent/default.nix"
-  ];
+  disabledModules = [ "${modulesPath}/services/continuous-integration/gocd-agent/default.nix" ];
   environment.systemPackages = [
     pkgs.hydra-cli
     pkgs.forgejo
