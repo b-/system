@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   domain = "192.168.30.40";
 in
@@ -6,7 +11,7 @@ in
   environment.systemPackages = [
     pkgs.hydra-cli
     pkgs.forgejo
-    pkgs.gocd-agent
+    inputs.gocd-agent-nixpkgs.legacyPackages.${pkgs.system}.gocd-agent
     pkgs.gocd-server
   ];
   security.sudo.wheelNeedsPassword = false;

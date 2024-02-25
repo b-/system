@@ -359,6 +359,22 @@
         "type": "github"
       }
     },
+    "my-nixos-unstable": {
+      "locked": {
+        "lastModified": 1708818670,
+        "narHash": "sha256-WeGYLaKmmj9IaKZEvDaD65vBzlnOPNNHsOfr/2y6bww=",
+        "owner": "b-",
+        "repo": "nixpkgs",
+        "rev": "fdfcabe3d06a7d4d12e70842f3a7fa190e2a2fc8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "b-",
+        "ref": "bri-nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "naersk": {
       "inputs": {
         "nixpkgs": [
@@ -623,6 +639,7 @@
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils_3",
         "home-manager": "home-manager",
+        "my-nixos-unstable": "my-nixos-unstable",
         "nix-index-database": "nix-index-database",
         "nixos-generators": "nixos-generators",
         "nixos-hardware": "nixos-hardware",
