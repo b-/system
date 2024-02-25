@@ -2,16 +2,22 @@
   lib,
   pkgs,
   inputs,
+  modulesPath,
   ...
 }:
 let
   domain = "192.168.30.40";
 in
 {
+  imports = [
+    "${inputs.gocd-agent-nixpkgs}/nixos/modules/services/continuous-integration/gocd-agent/default.nix"
+  ];
+  disabledModules = [
+    "${modulesPath}/nixos/modules/services/continuous-integration/gocd-agent/default.nix"
+  ];
   environment.systemPackages = [
     pkgs.hydra-cli
     pkgs.forgejo
-    inputs.gocd-agent-nixpkgs.legacyPackages.${pkgs.system}.gocd-agent
     pkgs.gocd-server
   ];
   security.sudo.wheelNeedsPassword = false;
