@@ -214,7 +214,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flake_lock
-      - run: sudo nix-collect-garbage --delete-old
+      - run: sudo `which nix-collect-garbage` --delete-old
       - name: Build everything
         run: |
           set -x
