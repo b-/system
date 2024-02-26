@@ -98,7 +98,7 @@
         pkgs.nmap # A utility for network discovery and security auditing
         pkgs.nnn # terminal file manager
         pkgs.p7zip
-        # pkgs.packer
+        # pkgs.packer # y u so big
         pkgs.parallel
         # pkgs.pciutils # lspci
         pkgs.pre-commit
