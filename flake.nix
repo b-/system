@@ -75,7 +75,9 @@
       ref = "patch-1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    my-home-manager-fork = {
       # url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
       type = "github";
@@ -110,6 +112,7 @@
 
     # flakehub cli
     fh.url = "https://flakehub.com/f/DeterminateSystems/fh/*.tar.gz";
+    fh.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -340,7 +343,7 @@
             ./modules/nixos/keybase.nix
             ./modules/nixos/desktop.nix
             #./modules/nixos/gnome.nix
-            ./modules/nixos/plasma5.nix
+            ./modules/nixos/plasma6.nix
             ./modules/nixos/tailscale.nix
             ./profiles/personal.nix
             attic.nixosModules.atticd

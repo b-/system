@@ -12,7 +12,7 @@
     extraPackages = [
       pkgs.rubyPackages.solargraph
       pkgs.nodePackages.pyright
-      pkgs.rnix-lsp
+      pkgs.nil
       pkgs.fzf
     ];
     plugins = [

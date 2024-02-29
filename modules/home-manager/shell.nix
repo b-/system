@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -28,6 +29,10 @@ let
     };
 in
 {
+  # override programs.zsh while waiting for my `alias -- "foo=bar"` fix to hit upstream
+  disabledModules = [ "${inputs.home-manager}/modules/programs/zsh.nix" ];
+  imports = [ "${inputs.my-home-manager-fork}/modules/programs/zsh.nix" ];
+
   programs.zsh =
     let
       mkZshPlugin =

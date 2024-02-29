@@ -63,6 +63,7 @@
       pkgs.bat
       pkgs.fzf
       pkgs.ripgrep
+      pkgs.fswatch
 
       # languages
       pkgs.python3
@@ -93,6 +94,6 @@
 
   fonts = {
     fontDir.enable = true;
-    packages = [ pkgs.jetbrains-mono ]; # fonts.fonts was _not_ renamed to fonts.packages in nix-darwin
+    packages = [ pkgs.jetbrains-mono ];
   };
 }

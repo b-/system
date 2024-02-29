@@ -7,7 +7,7 @@
   home = lib.mkIf pkgs.stdenv.isLinux {
     packages = [
       pkgs.ethtool
-      # pkgs.discord
+      pkgs.discord
       pkgs.dconf
       pkgs.iotop # io monitoring
       pkgs.lm_sensors # for `sensors` command
@@ -32,9 +32,9 @@
     #   );
     # };
   };
-  # programs.chromium = lib.mkIf pkgs.stdenv.isLinux {
-  #   enable = true;
-  #   package = pkgs.google-chrome;
-  #   commandLineArgs = [ "--enable-features=TouchpadOverscrollHistoryNavigation" ];
-  # };
+  programs.chromium = lib.mkIf pkgs.stdenv.isLinux {
+    enable = true;
+    package = pkgs.google-chrome;
+    commandLineArgs = [ "--enable-features=TouchpadOverscrollHistoryNavigation" ];
+  };
 }

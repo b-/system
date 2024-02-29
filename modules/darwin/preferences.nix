@@ -8,6 +8,27 @@
       # show name instead of username
       SHOWFULLNAME = false;
     };
+    CustomUserPreferences = {
+      NSGlobalDomain = {
+        # Add a context menu item for showing the Web Inspector in web views
+
+        WebKitDeveloperExtras = true;
+      };
+      "com.apple.AppleMultitouchTrackpad" = {
+        TrackpadThreeFingerHorizSwipeGesture = 2;
+        TrackpadThreeFingerVertSwipeGesture = 2;
+      };
+      "com.apple.driver.AppleBluetoothMultitouch.trackpad" = {
+        TrackpadThreeFingerHorizSwipeGesture = 2;
+        TrackpadThreeFingerVertSwipeGesture = 1;
+      };
+      "com.apple.Safari" = {
+
+        # Prevent Safari from opening ‘safe’ files automatically after downloading
+        AutoOpenSafeDownloads = false;
+        "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
+      };
+    };
 
     # file viewer settings
     finder = {
