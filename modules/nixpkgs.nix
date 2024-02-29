@@ -2,11 +2,14 @@
   inputs,
   config,
   pkgs,
+  self,
   ...
 }:
 {
-  nixpkgs = {
-    config = import ./config.nix;
+  nixpkgs.config = {
+    allowUnsupportedSystem = true;
+    allowUnfree = true;
+    allowBroken = false;
   };
 
   nix = {
@@ -73,20 +76,9 @@
       "stable"
     ];
     registry = {
-      nixpkgs = {
-        from = {
-          id = "nixpkgs";
-          type = "indirect";
-        };
-        flake = inputs.nixpkgs;
-      };
-      stable = {
-        from = {
-          id = "stable";
-          type = "indirect";
-        };
-        flake = inputs.stable;
-      };
+      # nixpkgs.flake = inputs.nixpkgs; # fucky
+      stable.flake = inputs.stable;
+      system.flake = self;
     };
   };
 }
