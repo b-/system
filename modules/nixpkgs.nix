@@ -19,21 +19,26 @@
       keep-derivations = true
       experimental-features = nix-command flakes
     '';
-    settings = {
+    settings = rec {
       max-jobs = "auto";
+
       substituters = [
         "https://bri.cachix.org"
         "https://perchnet.cachix.org"
         "https://devenv.cachix.org"
         "https://nix-community.cachix.org"
         "https://cache.nixos.org"
+        "https://cache.garnix.io"
       ];
+      trusted-substituters = substituters;
+
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc="
         "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       ];
       allowed-uris = [
         "github:hercules-ci/" # flake-parts
@@ -61,13 +66,6 @@
         "root"
         "@admin"
         "@wheel"
-      ];
-      trusted-substituters = [
-        "https://bri.cachix.org"
-        "https://perchnet.cachix.org"
-        "https://devenv.cachix.org"
-        "https://cache.nixos.org"
-        "https://nix-community.cachix.org"
       ];
     };
     gc = {

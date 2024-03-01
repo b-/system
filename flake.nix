@@ -10,6 +10,7 @@
       "https://devenv.cachix.org"
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
+      "https://cache.garnix.io"
     ];
     trusted-substituters = substituters;
 
@@ -19,6 +20,7 @@
       "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
     ];
     allowed-uris = [
       "github:hercules-ci/" # flake-parts
