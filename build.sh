@@ -200,9 +200,16 @@ BUILD_IMAGE() { # Build image $TARGET@$ARCH-linux.$FORMAT
 # Usage: SAVE_SSH_KEY [var]
 # Saves the (base64-encoded) SSH private key from .env variable $UPLOAD_SSH_KEY_BASE64
 SAVE_SSH_KEY() {
-	base64 <<<"${UPLOAD_SSH_KEY_BASE64// /$'\n'}" -d >/tmp/ci-upload.key
-	# ssh refuses to use a key with open permissions
-	chmod 600 /tmp/ci-upload.key
+	if [[ ${UPLOAD_SSH_KEY_BASE64-"NO_SSH_KEY"} == "NO_SSH_KEY" ]]; then
+		# if no upload key in the env or /tmp then
+		if [[ ! -f /tmp/ci-upload.key ]]; then
+			_die 253 "No upload key found."
+		fi
+	else
+		base64 <<<"${UPLOAD_SSH_KEY_BASE64// /$'\n'}" -d >/tmp/ci-upload.key
+		# ssh refuses to use a key with open permissions
+		chmod 600 /tmp/ci-upload.key
+	fi
 }
 
 # UPLOAD_ARTIFACT
