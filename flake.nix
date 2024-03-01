@@ -2,12 +2,20 @@
   description = "nix system configurations";
 
   nixConfig = {
+    max-jobs = "auto";
     substituters = [
       "https://bri.cachix.org"
       "https://perchnet.cachix.org"
       "https://devenv.cachix.org"
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
+    ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc="
+      "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
     allowed-uris = [
       "github:hercules-ci/" # flake-parts
@@ -31,66 +39,71 @@
       "git+ssh://github.com/"
       "https://github.com/"
     ];
-
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc="
-      "bri.cachix.org-1:/dk2nWYOEZl/BnC8h5CTKgao5HeWjCIgY1Tuj29Bq4s="
-      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    trusted-users = [
+      "root"
+      "@admin"
+      "@wheel"
+    ];
+    trusted-substituters = [
+      "https://bri.cachix.org"
+      "https://perchnet.cachix.org"
+      "https://devenv.cachix.org"
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
     ];
   };
 
-  inputs = {
+  inputs = rec {
 
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+    };
 
-    # package repos
-    stable.url = "github:nixos/nixpkgs/nixos-23.11";
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
+    ########################################
+    # nixpkgs forks and branches
+    nixos-stable.url = "github:nixos/nixpkgs/nixos-23.11";
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     my-nixos-unstable.url = "github:b-/nixpkgs/bri-nixos-unstable";
-    gocd-agent-nixpkgs.url = "github:sgonzalezoyuela/nixpkgs/patch-1";
-    deploy-rs.url = "github:serokell/deploy-rs";
-    devenv.url = "github:cachix/devenv/latest";
-    devenv.inputs.nixpkgs.follows = "nixpkgs";
+    #nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    #fh-nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
 
-    attic.url = "github:zhaofengli/attic";
-    attic.inputs.nixpkgs.follows = "nixpkgs";
-    attic.inputs.nixpkgs-stable.follows = "stable";
+    # patch that fixes gocd-agent module
+    gocd-agent-nixpkgs.url = "github:sgonzalezoyuela/nixpkgs/a9eba62d9e62cee71e69104a600023719e44eacc";
 
-    ###
-    # system management
-    # system-manager = {
-    #   url = "github:numtide/system-manager";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    nixos-hardware.url = "github:nixos/nixos-hardware";
-    darwin = {
-      #url = "github:lnl7/nix-darwin";
-      type = "github";
-      owner = "b-";
-      repo = "nix-darwin";
-      ref = "patch-1";
+    # set primary nixpkgs and stable from above
+    stable = nixos-stable;
+    nixpkgs = nixos-unstable;
+
+    ########################################
+    # darwins
+    upstream-darwin = {
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    my-darwin = {
+      url = "github:b-/nix-darwin/patch-1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    darwin = my-darwin;
+
+    ########################################
+    # home-managers
+    upstream-home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     my-home-manager-fork = {
-      # url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      type = "github";
-      owner = "b-";
-      repo = "home-manager";
-      ref = "zsh-aliases";
-    };
-    nix-index-database = {
-      url = "github:Mic92/nix-index-database";
+      url = "github:b-/home-manager/zsh-aliases";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = upstream-home-manager;
 
+    ########################################
     # hardware and vm support
+    nixos-hardware = {
+      url = "github:nixos/nixos-hardware";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko/make-disk-image";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -104,15 +117,43 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ########################################
     # shell stuff
-    flake-utils.url = "github:numtide/flake-utils";
+    devenv = {
+      url = "github:cachix/devenv/latest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-
+    ########################################
+    # additional inputs
+    attic = {
+      url = "github:zhaofengli/attic";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixpkgs-stable.follows = "stable";
+      };
+    };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # flakehub cli
-    fh.url = "https://flakehub.com/f/DeterminateSystems/fh/*.tar.gz";
-    fh.inputs.nixpkgs.follows = "nixpkgs";
+    fh = {
+      url = "https://flakehub.com/f/DeterminateSystems/fh/*.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
