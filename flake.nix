@@ -1,8 +1,9 @@
 {
   description = "nix system configurations";
 
-  nixConfig = {
+  nixConfig = rec {
     max-jobs = "auto";
+
     substituters = [
       "https://bri.cachix.org"
       "https://perchnet.cachix.org"
@@ -10,6 +11,8 @@
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
     ];
+    trusted-substituters = substituters;
+
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "perchnet.cachix.org-1:0mwmOwJFqL+r4HKl68GZ90ATTFsi3/L4ejSUIWaYYmc="
@@ -43,13 +46,6 @@
       "root"
       "@admin"
       "@wheel"
-    ];
-    trusted-substituters = [
-      "https://bri.cachix.org"
-      "https://perchnet.cachix.org"
-      "https://devenv.cachix.org"
-      "https://cache.nixos.org"
-      "https://nix-community.cachix.org"
     ];
   };
 
