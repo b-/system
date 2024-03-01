@@ -46,12 +46,17 @@
   };
 
   environment.systemPackages = [
-    pkgs.vscode
+    # pkgs.vscode
     pkgs.firefox
     pkgs.google-chrome
     pkgs.gnome.gnome-tweaks
   ];
 
+  home-manager.users.bri.programs.vscode = {
+    enable = true;
+    package = pkgs.vscode;
+    #extensions = [ pkgs.vscode-extensions.ms-vscode-remote ];
+  };
   # Electron applications use Wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
