@@ -26,38 +26,8 @@ build_image_template: &BUILD_IMAGE_TEMPLATE
   name: build_image_${TARGET}@${ARCH}-${CIRRUS_OS}_${FORMAT}
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_TAG != "" || $CIRRUS_PR != "" || $CIRRUS_BUILD_SOURCE == ""
   timeout_in: 120m
-  install_cachix_script: nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
-  build_image_script: |
-    mkdir -p build
-    cp -LR "$(nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
-  #cp -LR "$(cachix watch-exec $CACHIX_USER -- nix build ".#nixosConfigurations.${TARGET}@${ARCH//arm/aarch}-${CIRRUS_OS}.config.formats.${FORMAT}" --print-out-paths --show-trace --accept-flake-config)" build/
-  list_rename_build_artifacts_script: |
-    set -x
-    find build
-    if [[ "${EXT}" == "vma.zst" ]] ; then
-        for i in build/*.${EXT} ; do
-            mv "$i" build/"vzdump-qemu-${TARGET}_$(basename ${i})"
-        done
-    else
-        for i in build/*.${EXT} ; do
-            mv "$i" build/"${TARGET}_$(basename ${i})"
-        done
-    fi
-  ssh_key_file:
-    path: /tmp/ci-upload.key
-    variable_name: UPLOAD_SSH_KEY
-  upload_artifacts_script: |
-        set -x
-        chmod 600 /tmp/ci-upload.key
-        chmod -R 755 build
-        scp -C -i /tmp/ci-upload.key  -oStrictHostKeyChecking=no -oport=222 -oidentitiesonly=true -oPasswordAuthentication=no build/* ci-upload@home.ibeep.com:${DESTDIR}
-    #printenv UPLOAD_SSH_KEY > /tmp/ci-upload.key
-  # compress_artifacts_script: |
-  #       filepath=$(find -L "build" -type f -name '*.${EXT}' | head -n 1)
-  #       nix-shell -p p7zip.out --run "7z a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=256m -ms=on nixos-${FORMAT}.7z $filepath"
-  #       chmod 755 nixos-${FORMAT}.7z
-  # binaries_artifacts:
-  #   path: nixos-${FORMAT}.7z
+  #install_cachix_script: nix profile install github:nixos/nixpkgs/nixpkgs-unstable#cachix --impure && cachix use $CACHIX_USER
+  build_image_script: ./build.sh BUILD_AND_UPLOAD
 
 specs_template: &SPECS
     image: $LINUX_BUILD_IMAGE
