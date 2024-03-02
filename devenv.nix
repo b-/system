@@ -10,6 +10,7 @@
     pkgs.screen # to run disconnected
     pkgs.shfmt
     pkgs.nil
+    pkgs.nixd
     pkgs.nixfmt-rfc-style
     self.packages.${pkgs.system}.pyEnv
     (inputs.treefmt-nix.lib.mkWrapper pkgs (import ./treefmt.nix))

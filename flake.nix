@@ -5,12 +5,12 @@
     max-jobs = "auto";
 
     substituters = [
+      "https://cache.garnix.io"
+      "https://cache.nixos.org"
       "https://bri.cachix.org"
       "https://perchnet.cachix.org"
-      "https://devenv.cachix.org"
       "https://nix-community.cachix.org"
-      "https://cache.nixos.org"
-      "https://cache.garnix.io"
+      "https://devenv.cachix.org"
     ];
     trusted-substituters = substituters;
 
@@ -100,6 +100,7 @@
     # hardware and vm support
     nixos-hardware = {
       url = "github:nixos/nixos-hardware";
+      # doesn't actually use nixpkgs
       # inputs.nixpkgs.follows = "nixpkgs";
     };
     disko = {
@@ -151,6 +152,10 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
       # inputs.nixpkgs.follows = "nixpkgs";
+    };
+    tsnsrv = {
+      url = "github:boinkor-net/tsnsrv";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

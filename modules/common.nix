@@ -73,6 +73,7 @@
       # nix stuff
       pkgs.cachix
       pkgs.nil
+      pkgs.nixd
       pkgs.nixfmt-rfc-style
       pkgs.home-manager
       inputs.attic.packages.${pkgs.system}.attic-client

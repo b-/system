@@ -13,6 +13,7 @@
       pkgs.rubyPackages.solargraph
       pkgs.nodePackages.pyright
       pkgs.nil
+      pkgs.nixd
       pkgs.fzf
     ];
     plugins = [

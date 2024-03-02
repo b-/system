@@ -94,6 +94,7 @@
         pkgs.ncdu
         pkgs.neofetch
         pkgs.nil
+        pkgs.nixd
         pkgs.nix-output-monitor
         pkgs.nmap # A utility for network discovery and security auditing
         pkgs.nnn # terminal file manager
