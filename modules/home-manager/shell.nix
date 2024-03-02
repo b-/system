@@ -40,7 +40,7 @@ in
           pkg,
           file ? "${pkg.pname}.plugin.zsh",
         }:
-        rec {
+        {
           name = pkg.pname;
           src = pkg.src;
           inherit file;

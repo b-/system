@@ -383,6 +383,7 @@
             ./modules/nixos/desktop.nix
             #./modules/nixos/gnome.nix
             ./modules/nixos/plasma6.nix
+            ./modules/nixos/hyprland.nix
             ./modules/nixos/tailscale.nix
             ./profiles/personal.nix
             attic.nixosModules.atticd
