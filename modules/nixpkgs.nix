@@ -1,6 +1,7 @@
 {
   inputs,
   config,
+  lib,
   pkgs,
   self,
   ...
@@ -8,8 +9,20 @@
 {
   nixpkgs.config = {
     allowUnsupportedSystem = true;
-    allowUnfree = true;
+    #allowUnfree = true;
     allowBroken = false;
+    # Enable select unfree packages
+    allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "1password"
+        "1password-cli"
+        "discord"
+        "google-chrome"
+        "vscode"
+        "jetbrains.goland"
+        "jetbrains-toolbox"
+      ];
   };
 
   nix = {

@@ -14,6 +14,8 @@
     ./ssh.nix
     ./tldr.nix
     ./tmux.nix
+    ./linux.nix # conditionals inside the file
+    ./darwin.nix # conditionals inside the file
   ];
 
   nixpkgs.config = {

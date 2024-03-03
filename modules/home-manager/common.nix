@@ -77,8 +77,6 @@
         # pkgs.gnupg
         pkgs.gnused
         pkgs.gnutar
-        pkgs.helm-docs
-        pkgs.hurl
         pkgs.iftop # network monitoring
         pkgs.ipcalc # it is a calculator for the IPv4/v6 addresses
         pkgs.iperf3
@@ -88,6 +86,7 @@
         pkgs.kubernetes-helm
         pkgs.kustomize
         pkgs.lsof # list open files
+        pkgs.lunarvim
         # pkgs.luajit
         pkgs.mmv
         pkgs.mtr # A network diagnostic tool

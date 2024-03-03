@@ -1,15 +1,21 @@
-{ ... }:
+{ pkgs, lib, ... }:
 {
   services.xserver = {
     displayManager = {
-      sddm = {
-        enable = true;
-        wayland.enable = true;
-      };
-      defaultSession = "plasma";
+      defaultSession = lib.mkOverride 800 "plasma";
     };
 
-    desktopManager.plasma6.enable = true;
+    desktopManager.plasma6 = {
+      enable = true;
+      enableQt5Integration = true;
+    };
   };
-  #programs.gnupg.agent.pinentryFlavor = "qt";
+  #programs.ssh.askPassword = lib.mkForce ${pkgs.kdePackages.ksshaskpass};
+  programs.ssh.askPassword = "${pkgs.kdePackages.ksshaskpass.out}/bin/ksshaskpass";
+
+  environment.systemPackages = [
+    pkgs.ktailctl
+    pkgs.maliit-keyboard
+  ];
+  programs.gnupg.agent.pinentryFlavor = lib.mkForce "qt";
 }

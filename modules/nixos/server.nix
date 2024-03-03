@@ -9,6 +9,7 @@ let
 in
 {
   imports = [
+    ./tsnsrv.nix
     ./gocd-agent.nix
     ./buildbot-controller.nix
     ./buildbot-worker.nix
@@ -25,6 +26,12 @@ in
       "console=ttyS0,115200"
       "console=tty1"
     ];
+  };
+  services.code-server = {
+    enable = true;
+    port = 4444;
+    host = "0.0.0.0";
+    auth = "none";
   };
   services.gocd-server.enable = true;
   services.qemuGuest.enable = lib.mkDefault true;

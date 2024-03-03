@@ -5,6 +5,10 @@
   ...
 }:
 {
+  imports = [
+    ./hyprland.nix
+    ./mate.nix
+  ];
   # boot splash
   boot.plymouth.enable = true;
 
@@ -49,27 +53,37 @@
     # pkgs.vscode
     pkgs.firefox
     pkgs.google-chrome
-    pkgs.gnome.gnome-tweaks
+    pkgs.trayscale
   ];
 
-  home-manager.users.bri.programs.vscode = {
-    enable = true;
-    package = pkgs.vscode;
-    #extensions = [ pkgs.vscode-extensions.ms-vscode-remote ];
+  # vscode = {
+  #   enable = true;
+  #   # extensions = [ pkgs.vscode-extensions.ms-vscode-remote ];
+  #   package = pkgs.vscode.fhsWithPackages (
+  #     ps: [
+  #       ps.rustup
+  #       ps.zlib
+  #       ps.openssl.dev
+  #       ps.pkg-config
+  #     ]
+  #   );
+  # };
+  home-manager.users.bri = {
+    programs = {
+      vscode = {
+        enable = true;
+        package = pkgs.vscode;
+        #extensions = [ pkgs.vscode-extensions.ms-vscode-remote ];
+      };
+      chromium = {
+        enable = true;
+        package = pkgs.google-chrome;
+        commandLineArgs = [ "--enable-features=TouchpadOverscrollHistoryNavigation" ];
+      };
+    };
   };
   # Electron applications use Wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
-  # Enable select unfree packages
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "1password"
-      "1password-cli"
-      "discord"
-      "google-chrome"
-      "vscode"
-    ];
 
   programs._1password.enable = true;
   programs._1password-gui = {

@@ -61,6 +61,7 @@
     # nixpkgs forks and branches
     nixos-stable.url = "github:nixos/nixpkgs/nixos-23.11";
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    #master.url = "github:nixos/nixpkgs/master";
     my-nixos-unstable.url = "github:b-/nixpkgs/bri-nixos-unstable";
     #nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     #fh-nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
@@ -153,6 +154,7 @@
       url = "github:numtide/flake-utils";
       # inputs.nixpkgs.follows = "nixpkgs";
     };
+    #nix-colors.url = "github:misterio77/nix-colors";
     tsnsrv = {
       url = "github:boinkor-net/tsnsrv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -386,9 +388,9 @@
             #./disk-config.nix
             ./modules/nixos/keybase.nix
             ./modules/nixos/desktop.nix
-            #./modules/nixos/gnome.nix
+            ./modules/nixos/gnome.nix
             ./modules/nixos/plasma6.nix
-            ./modules/nixos/hyprland.nix
+            #./modules/nixos/hyprland.nix
             ./modules/nixos/tailscale.nix
             ./profiles/personal.nix
             attic.nixosModules.atticd
