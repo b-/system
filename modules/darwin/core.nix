@@ -35,6 +35,15 @@ in
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
 
+  # Run the linux-builder as a background service
+  nix.linux-builder.enable = true;
+
+  # Add needed system-features to the nix daemon
+  # Starting with Nix 2.19, this will be automatic
+  nix.settings.system-features = [
+    "nixos-test"
+    "apple-virt"
+  ];
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
   system.stateVersion = 4;
