@@ -12,6 +12,9 @@
     ../common.nix
   ];
 
+  # let's try something…
+  services.cachix-agent.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users = {
     defaultUserShell = pkgs.zsh;

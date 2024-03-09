@@ -483,14 +483,12 @@
           };
         in
         rec {
-          pyEnv = pkgs.python3.withPackages (
-            ps: [
-              ps.black
-              ps.typer
-              ps.colorama
-              ps.shellingham
-            ]
-          );
+          pyEnv = pkgs.python3.withPackages (ps: [
+            ps.black
+            ps.typer
+            ps.colorama
+            ps.shellingham
+          ]);
           sysdo = pkgs.writeScriptBin "sysdo" ''
             #! ${pyEnv}/bin/python3
             ${builtins.readFile ./bin/do.py}
@@ -548,19 +546,17 @@
         }
       );
 
-      apps = eachSystemMap defaultSystems (
-        system: rec {
-          sysdo = {
-            type = "app";
-            program = "${self.packages.${system}.sysdo}/bin/sysdo";
-          };
-          cb = {
-            type = "app";
-            program = "${self.packages.${system}.cb}/bin/cb";
-          };
-          default = sysdo;
-        }
-      );
+      apps = eachSystemMap defaultSystems (system: rec {
+        sysdo = {
+          type = "app";
+          program = "${self.packages.${system}.sysdo}/bin/sysdo";
+        };
+        cb = {
+          type = "app";
+          program = "${self.packages.${system}.cb}/bin/cb";
+        };
+        default = sysdo;
+      });
 
       overlays = {
         channels = final: prev: {

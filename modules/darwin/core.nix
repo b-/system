@@ -18,7 +18,7 @@ in
     # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
 
     # packages installed in system profile
-    # systemPackages = [ ];
+    systemPackages = [ pkgs.nixos-rebuild ];
   };
 
   homebrew.brewPrefix = if isAarch64 || isAarch32 then "/opt/homebrew/bin" else "/usr/local/bin";
