@@ -397,6 +397,25 @@
             disko.nixosModules.disko
           ];
         };
+        "gaming@x86_64-linux" = mkNixosConfig {
+          # imports = [
+          # ];
+          system = "x86_64-linux";
+          hardwareModules = [
+            ./modules/hardware/hardware.nix
+            self.nixosModules.customFormats
+            # inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+          ];
+          extraModules = [
+            #./disk-config.nix
+            ./modules/nixos/desktop.nix
+            ./modules/nixos/plasma6.nix
+            #./modules/nixos/hyprland.nix
+            ./modules/nixos/tailscale.nix
+            ./modules/nixos/gaming.nix
+            ./profiles/personal.nix
+          ];
+        };
         "server@x86_64-linux" = mkNixosConfig {
           system = "x86_64-linux";
           hardwareModules = [
