@@ -1,9 +1,4 @@
-{
-  lib,
-  pkgs,
-  inputs,
-  ...
-}:
+{ lib, pkgs, ... }:
 let
   domain = "192.168.30.40";
 in
@@ -43,7 +38,7 @@ in
     notificationSender = "hydra@localhost";
     buildMachinesFiles = [ ];
     useSubstitutes = true;
-    package = inputs.stable.legacyPackages."${pkgs.system}".hydra_unstable;
+    #package = inputs.stable.legacyPackages."${pkgs.system}".hydra_unstable;
     # package = pkgs.hydra_unstable.overrideAttrs (
     #   old: {
     #     patches = (if old ? patches then old.patches else [ ]) ++ [
