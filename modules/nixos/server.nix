@@ -27,13 +27,13 @@ in
       "console=tty1"
     ];
   };
-  services.code-server = {
-    enable = true;
-    port = 4444;
-    host = "0.0.0.0";
-    auth = "none";
-    package = inputs.stable.legacyPackages.${pkgs.system}.code-server;
-  };
+  # services.code-server = {
+  #   enable = true;
+  #   port = 4444;
+  #   host = "0.0.0.0";
+  #   auth = "none";
+  #   package = inputs.stable.legacyPackages.${pkgs.system}.code-server;
+  # };
   services.gocd-server.enable = true;
   services.qemuGuest.enable = lib.mkDefault true;
   services.hydra = {
