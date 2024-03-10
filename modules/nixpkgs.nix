@@ -92,7 +92,7 @@
       "stable"
     ];
     registry = {
-      # nixpkgs.flake = inputs.nixpkgs; # fucky
+      nixpkgs.flake = inputs.nixpkgs;
       stable.flake = inputs.stable;
       system.flake = self;
     };
