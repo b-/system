@@ -15,6 +15,7 @@
       "autojump"
       "bash"
       "bat"
+      "pkg-config"
       "rom-tools" # supplies chdman
       "go"
       "just"
@@ -36,32 +37,6 @@
       "homebrew/services"
       "koekeishiya/formulae"
       "teamookla/speedtest"
-    ];
-    casks = [
-      "1password"
-      "1password-cli"
-      "anydesk"
-      "appcleaner"
-      "docker"
-      "firefox-developer-edition"
-      "fork"
-      "google-chrome"
-      "gpg-suite"
-      "hammerspoon"
-      "hot"
-      "iina"
-      "jetbrains-toolbox"
-      "kitty"
-      "obsidian"
-      "raycast"
-      # "rancher"
-      "stats"
-      "utm"
-      "visual-studio-code"
-      "tigervnc-viewer"
-      "wine-stable"
-      "xquartz"
-      "zotero"
     ];
   };
 }
