@@ -1,3 +1,7 @@
+"""
+sysdo:
+    a minimal task runner for local nixos and nix-darwin deployments
+"""
 import os
 import subprocess
 from enum import Enum

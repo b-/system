@@ -117,15 +117,10 @@
         pkgs.xz
         pkgs.yq-go # yaml processer https://github.com/mikefarah/yq
         pkgs.zstd
-        # python with default packages
-        # (pkgs.python3.withPackages (
-        #   ps: [
-        #     #ps.numpy
-        #     #ps.scipy
-        #     #ps.matplotlib
-        #     #ps.networkx
-        #   ]
-        # ))
+        (pkgs.python3.withPackages (ps: [
+          ps.typer
+          #ps.networkx
+        ]))
       ];
     };
 

@@ -14,6 +14,10 @@
     pkgs.nixfmt-rfc-style
     self.packages.${pkgs.system}.pyEnv
     (inputs.treefmt-nix.lib.mkWrapper pkgs (import ./treefmt.nix))
+    (pkgs.python3.withPackages (ps: [
+      ps.typer
+      #ps.networkx
+    ]))
   ];
 
   pre-commit = {
