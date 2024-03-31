@@ -8,6 +8,7 @@
   imports = [
     ./hyprland.nix
     ./mate.nix
+    ./amdgpu.nix
   ];
   # boot splash
   boot.plymouth.enable = true;
