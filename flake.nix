@@ -491,7 +491,7 @@
           ]);
           sysdo = pkgs.writeScriptBin "sysdo" ''
             #! ${pyEnv}/bin/python3
-            ${builtins.readFile ./bin/do.py}
+            ${builtins.readFile ./bin/sysdo.py}
           '';
           cb = pkgs.writeShellScriptBin "cb" ''
                         #! ${pkgs.lib.getExe pkgs.bash}
