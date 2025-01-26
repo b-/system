@@ -1,47 +1,48 @@
 {...}: {
   homebrew = {
     enable = true;
-    global = {
-      brewfile = true;
-    };
+    global = {brewfile = true;};
     brews = [
-      "earthly"
+      "kscript"
+      "mise"
     ];
 
     taps = [
       "1password/tap"
       "beeftornado/rmtree"
-      "cloudflare/cloudflare"
+      "cirruslabs/cli"
+      "coder/coder"
       "earthly/earthly"
+      "hcavarsan/kftray"
       "homebrew/bundle"
-      "homebrew/cask-fonts"
-      "homebrew/cask-versions"
       "homebrew/services"
       "koekeishiya/formulae"
-      "teamookla/speedtest"
+      "kscripting/tap"
+      "nikitabobko/tap"
     ];
     casks = [
       "1password"
       "1password-cli"
-      "alt-tab"
-      "appcleaner"
-      "bartender"
-      "docker"
-      "firefox-developer-edition"
-      "fork"
+      "aerospace"
+      "devpod"
+      "firefox@developer-edition"
+      "ghostty"
       "google-chrome"
-      "gpg-suite"
       "hammerspoon"
-      "hot"
+      "httpie"
       "iina"
       "jetbrains-toolbox"
+      "jordanbaird-ice"
+      "kftray"
       "kitty"
       "obsidian"
+      "orbstack"
       "raycast"
-      # "rancher"
       "stats"
       "utm"
       "visual-studio-code"
+      "vscodium"
+      "zed@preview"
       "zotero"
     ];
   };

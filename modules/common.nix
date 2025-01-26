@@ -64,10 +64,6 @@
       bat
       fzf
       ripgrep
-
-      # languages
-      python3
-      ruby
     ];
     etc = {
       home-manager.source = "${inputs.home-manager}";
@@ -79,7 +75,6 @@
   };
 
   fonts = {
-    fontDir.enable = true;
-    fonts = with pkgs; [jetbrains-mono];
+    packages = with pkgs; [jetbrains-mono];
   };
 }

@@ -11,8 +11,10 @@
     # file viewer settings
     finder = {
       AppleShowAllExtensions = true;
+      AppleShowAllFiles = true;
       FXEnableExtensionChangeWarning = true;
       _FXShowPosixPathInTitle = true;
+      _FXSortFoldersFirstOnDesktop = true;
     };
 
     # trackpad settings
@@ -39,6 +41,10 @@
       stealthenabled = 1;
     };
 
+    spaces = {
+      spans-displays = true;
+    };
+
     # dock settings
     dock = {
       # auto show and hide dock
@@ -54,6 +60,7 @@
       show-process-indicators = true;
       orientation = "bottom";
       mru-spaces = false;
+      expose-group-apps = true;
     };
 
     NSGlobalDomain = {
@@ -65,6 +72,10 @@
       KeyRepeat = 1;
       AppleShowAllExtensions = true;
       AppleShowScrollBars = "Automatic";
+
+      # disable native tabs that render as separate windows with Aerospace
+      # ref: https://github.com/nikitabobko/AeroSpace/issues/68
+      # NSWindowTabbingEnabled = false;
     };
   };
 

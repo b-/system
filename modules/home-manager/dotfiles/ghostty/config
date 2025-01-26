@@ -1,0 +1,18 @@
+# app settings
+auto-update = download
+auto-update-channel = stable
+cursor-style = block
+scrollback-limit = 2147483648
+shell-integration-features = no-cursor
+
+# theme settings
+background-blur-radius = 20
+background-opacity = 0.90
+bold-is-bright = true
+theme = dark:OneHalfDark,light:OneHalfLight
+
+# OS-specific overrides
+config-file = ?os.conf
+
+# escape hatch for non-declarative testing
+config-file = ?local.conf

@@ -2,11 +2,11 @@ env:
   CACHIX_AUTH_TOKEN: ENCRYPTED[!f0f7fdb6a0c000065b7755062731ff7916cee8f510c95478d629e76a2c03604cfe46fe2ec4e74a4128ad0a0aea6d57e7!]
   CACHIX_USER: kclejeune
   CIRRUS_SHELL: bash -il
-  DARWIN_BUILD_IMAGE: ghcr.io/cirruslabs/macos-ventura-base:latest
+  DARWIN_BUILD_IMAGE: ghcr.io/cirruslabs/macos-runner:sonoma
   GITHUB_TOKEN: ENCRYPTED[!c4841aa1f80b4c94abe2742b4cf2cc998e9b7bbc4d1fa182abb50636b09272b6062bcd2be016a597c225e3715f784969!]
   LINUX_BUILD_IMAGE: nixos/nix:latest
   NIX_INSTALLER_NO_CONFIRM: "true"
-  NIX_INSTALLER_TAG: "v0.16.1"
+  NIX_INSTALLER_TAG: "v0.32.2"
   NIX_INSTALLER_EXTRA_CONF: |
     access-tokens = github.com=${GITHUB_TOKEN}
     substituters = https://cache.nixos.org https://kclejeune.cachix.org https://devenv.cachix.org
@@ -17,7 +17,8 @@ build_template: &BUILD_TEMPLATE
   name: build_${CIRRUS_OS}_${ARCH}
   only_if: $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_TAG != "" || $CIRRUS_PR != "" || $CIRRUS_BUILD_SOURCE == ""
   timeout_in: 120m
-  install_cachix_script: nix-env -iA cachix -f https://cachix.org/api/v1/install && cachix use $CACHIX_USER
+  install_cachix_script: nix profile install --impure --accept-flake-config nixpkgs#cachix
+  configure_cachix_script: cachix use $CACHIX_USER
   flake_check_script: cachix watch-exec $CACHIX_USER -- nix flake check -j auto --system ${ARCH//arm/aarch}-${CIRRUS_OS} --impure --show-trace --accept-flake-config
 
 build_darwin_task:

@@ -15,10 +15,13 @@
 
   inputs = {
     # package repos
-    stable.url = "github:nixos/nixpkgs/nixos-23.11";
+    stable.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    devenv.url = "github:cachix/devenv/latest";
+    devenv = {
+      url = "github:cachix/devenv/v1.0.7";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # system management
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -73,7 +76,7 @@
       ],
       extraModules ? [],
     }:
-      inputs.darwin.lib.darwinSystem {
+      darwin.lib.darwinSystem {
         inherit system;
         modules = baseModules ++ extraModules;
         specialArgs = {inherit self inputs nixpkgs;};
@@ -110,7 +113,7 @@
             inherit username;
             homeDirectory = "${homePrefix system}/${username}";
             sessionVariables = {
-              NIX_PATH = "nixpkgs=${nixpkgs}:stable=${inputs.stable}\${NIX_PATH:+:}$NIX_PATH";
+              NIX_PATH = "nixpkgs=${nixpkgs}";
             };
           };
         }
@@ -177,14 +180,6 @@
         system = "x86_64-darwin";
         extraModules = [./profiles/personal.nix ./modules/darwin/apps.nix];
       };
-      "lejeukc1@aarch64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/work.nix];
-      };
-      "lejeukc1@x86_64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/work.nix];
-      };
     };
 
     nixosConfigurations = {
@@ -250,13 +245,9 @@
         inherit system;
         overlays = builtins.attrValues self.overlays;
       };
-    in rec {
-      pyEnv =
-        pkgs.python3.withPackages
-        (ps: with ps; [black typer colorama shellingham]);
-      sysdo = pkgs.writeScriptBin "sysdo" ''
-        #! ${pyEnv}/bin/python3
-        ${builtins.readFile ./bin/do.py}
+    in {
+      sysdo = pkgs.writeShellScriptBin "sysdo" ''
+        ${pkgs.uv}/bin/uv run -q ${./sysdo.py} $@
       '';
       cb = pkgs.writeShellScriptBin "cb" ''
         #! ${pkgs.lib.getExe pkgs.bash}
@@ -328,7 +319,6 @@
       };
       extraPackages = final: prev: {
         sysdo = self.packages.${prev.system}.sysdo;
-        pyEnv = self.packages.${prev.system}.pyEnv;
         cb = self.packages.${prev.system}.cb;
         devenv = self.packages.${prev.system}.devenv;
       };

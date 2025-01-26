@@ -14,7 +14,7 @@
     dataDir = config.user.home;
   };
 
-  environment.systemPackages = with pkgs; [vscode firefox gnome.gnome-tweaks];
+  environment.systemPackages = with pkgs; [vscode firefox gnome-tweaks];
 
   hm = {...}: {imports = [../home-manager/gnome];};
 
@@ -71,7 +71,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryFlavor = "gnome3";
+    pinentryPackage = pkgs.pinentry-gnome3;
   };
 
   # List services that you want to enable:
@@ -88,9 +88,7 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.enable = false;
 
   # Enable the X11 windowing system.
   services.xserver = {

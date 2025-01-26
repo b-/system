@@ -4,82 +4,98 @@
   pkgs,
   ...
 }: let
-  functions = builtins.readFile ./functions.sh;
-  aliases =
-    rec {
-      ls = "${pkgs.coreutils}/bin/ls --color=auto -h";
-      la = "${ls} -a";
-      ll = "${ls} -la";
-      lt = "${ls} -lat";
-    }
-    // lib.optionalAttrs pkgs.stdenvNoCC.isDarwin rec {
-      # darwin specific aliases
-      ibrew = "arch -x86_64 brew";
-      abrew = "arch -arm64 brew";
-    };
+  aliases = {
+    neofetch = "fastfetch";
+    ncdu = "gdu";
+    cat = "bat -pp";
+  };
+  zshCustomPrefix = "oh-my-zsh";
+  commonVariables = {
+    LANG = "en_US.UTF-8";
+    GPG_TTY = "/dev/ttys000";
+    DEFAULT_USER = "${config.home.username}";
+    CLICOLOR = 1;
+    LS_COLORS = "ExFxBxDxCxegedabagacad";
+    TERM = "xterm-256color";
+    MISE_ENV_FILE = ".env";
+  };
 in {
-  programs.zsh = let
+  programs.atuin = {
+    enable = true;
+    package = pkgs.atuin;
+    flags = [];
+  };
+  # configure zsh custom plugin directory
+  xdg = let
     mkZshPlugin = {
       pkg,
-      file ? "${pkg.pname}.plugin.zsh",
-    }: rec {
-      name = pkg.pname;
-      src = pkg.src;
-      inherit file;
+      plugin ? pkg.pname,
+    }: {
+      "${zshCustomPrefix}/plugins/${plugin}" = {
+        source = "${pkg.src}";
+        recursive = true;
+      };
     };
   in {
     enable = true;
+    dataFile = lib.mkMerge [
+      (mkZshPlugin {pkg = pkgs.zsh-autopair;})
+      (mkZshPlugin {pkg = pkgs.zsh-completions;})
+      (mkZshPlugin {pkg = pkgs.zsh-autosuggestions;})
+      (mkZshPlugin {
+        pkg = pkgs.zsh-fast-syntax-highlighting;
+        plugin = "fast-syntax-highlighting";
+      })
+      (mkZshPlugin {pkg = pkgs.zsh-history-substring-search;})
+    ];
+  };
+  programs.zsh = {
+    enable = true;
     autocd = true;
     dotDir = ".config/zsh";
-    localVariables = {
-      LANG = "en_US.UTF-8";
-      GPG_TTY = "/dev/ttys000";
-      DEFAULT_USER = "${config.home.username}";
-      CLICOLOR = 1;
-      LS_COLORS = "ExFxBxDxCxegedabagacad";
-      TERM = "xterm-256color";
-    };
+    sessionVariables =
+      commonVariables
+      // {
+        ZSH_CUSTOM = "${config.xdg.dataHome}/${zshCustomPrefix}";
+      };
     shellAliases = aliases;
-    initExtraBeforeCompInit = ''
-      fpath+=~/.zfunc
-    '';
     initExtra = ''
-      ${functions}
-      ${lib.optionalString pkgs.stdenvNoCC.isDarwin ''
-        if [[ -d /opt/homebrew ]]; then
-          eval "$(/opt/homebrew/bin/brew shellenv)"
-        fi
-      ''}
       unset RPS1
     '';
     profileExtra = ''
-      ${lib.optionalString pkgs.stdenvNoCC.isLinux "[[ -e /etc/profile ]] && source /etc/profile"}
+      ${lib.optionalString pkgs.stdenvNoCC.isLinux "[[ -f /etc/profile ]] && source /etc/profile"}
     '';
-    plugins = with pkgs; [
-      (mkZshPlugin {pkg = zsh-autopair;})
-      (mkZshPlugin {pkg = zsh-completions;})
-      (mkZshPlugin {pkg = zsh-autosuggestions;})
-      (mkZshPlugin {
-        pkg = zsh-fast-syntax-highlighting;
-        file = "fast-syntax-highlighting.plugin.zsh";
-      })
-      (mkZshPlugin {pkg = zsh-history-substring-search;})
-    ];
     oh-my-zsh = {
       enable = true;
-      plugins = ["git" "sudo" "asdf"];
+      plugins = [
+        "1password"
+        "argocd"
+        "brew"
+        "git"
+        "kitty"
+        "mise"
+        "poetry"
+        "starship"
+        "sudo"
+        "zoxide"
+
+        # order matters for these ones, probably
+        "zsh-autopair"
+        "zsh-completions"
+        "zsh-autosuggestions"
+        "fast-syntax-highlighting"
+        "zsh-history-substring-search"
+      ];
     };
   };
 
   programs.bash = {
     enable = true;
     shellAliases = aliases;
+    sessionVariables = commonVariables;
     initExtra = ''
-      ${functions}
-      if [[ -d "${config.home.homeDirectory}/.asdf/" ]]; then
-        . "${config.home.homeDirectory}/.asdf/asdf.sh"
-        . "${config.home.homeDirectory}/.asdf/completions/asdf.bash"
-      fi
+      eval "$(mise activate bash)"
+      eval "$(mise hook-env -s bash)"
     '';
   };
 }
