@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v9
+        uses: DeterminateSystems/nix-installer-action@v16
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v20
+        uses: DeterminateSystems/update-flake-lock@v24
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           pr-title: "Update flake.lock"

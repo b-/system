@@ -1,30 +1,21 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./bat.nix
     ./direnv.nix
     ./dotfiles
     ./fzf.nix
     ./git.nix
-    ./kitty.nix
     ./nushell.nix
     ./nvim
     ./shell.nix
     ./ssh.nix
     ./tldr.nix
     ./tmux.nix
+    ./gnome.nix
+    ./nixpkgs.nix
   ];
 
-  nixpkgs.config = {
-    allowUnfree = true;
-  };
-
-  home = let
-    NODE_GLOBAL = "${config.home.homeDirectory}/.node-packages";
-  in {
+  home = {
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
     # when a new Home Manager release introduces backwards
@@ -34,38 +25,30 @@
     # the Home Manager release notes for a list of state version
     # changes in each release.
     stateVersion = "22.05";
-    sessionVariables = {
-      GPG_TTY = "/dev/ttys000";
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-      CLICOLOR = 1;
-      LSCOLORS = "ExFxBxDxCxegedabagacad";
-      KAGGLE_CONFIG_DIR = "${config.xdg.configHome}/kaggle";
-      NODE_PATH = "${NODE_GLOBAL}";
-    };
-    sessionPath = [
-      "${NODE_GLOBAL}/bin"
-      "${config.home.homeDirectory}/.rd/bin"
-      "${config.home.homeDirectory}/.local/bin"
-    ];
 
     # define package definitions for current user environment
     packages = with pkgs; [
       # age
       alejandra
-      cachix
+      argocd
+      asciidoctor
+      cacert
+      stable.cachix
       cb
       cirrus-cli
       comma
       coreutils-full
       curl
+      d2
       diffutils
       dive
-      duckdb
+      dotenvx
       fd
       ffmpeg
       findutils
       gawk
+      gdu
+      git-absorb
       gnugrep
       gnupg
       gnused
@@ -73,6 +56,9 @@
       helm-docs
       httpie
       hurl
+      hyperfine
+      jetbrains-mono
+      jnv
       kotlin
       kubectl
       kubectx
@@ -81,28 +67,27 @@
       lazydocker
       luajit
       mmv
-      ncdu
-      neofetch
-      nix
-      nixfmt
-      nixpkgs-fmt
+      nixd
+      nixfmt-rfc-style
+      nixpacks
       nmap
       nodejs_20
+      openldap
       parallel
-      poetry
       pre-commit
       # python with default packages
-      (python3.withPackages
-        (ps:
+      (python3.withPackages (
+        ps:
           with ps; [
             duckdb
             httpx
             matplotlib
             networkx
             numpy
-            pandas
+            polars
             scipy
-          ]))
+          ]
+      ))
       ranger
       rclone
       restic
@@ -110,12 +95,19 @@
       rsync
       shellcheck
       stylua
+      starship
       sysdo
       tree
-      treefmt
       trivy
+      uv
+      yadm
       yq-go
+      zoxide
     ];
+  };
+
+  fonts.fontconfig = {
+    enable = true;
   };
 
   programs = {
@@ -123,14 +115,18 @@
       enable = true;
     };
     dircolors.enable = true;
+    eza = {
+      enable = true;
+      extraOptions = [
+        "--group-directories-first"
+        "--git"
+      ];
+    };
+    fastfetch.enable = true;
     go.enable = true;
     gpg.enable = true;
     htop.enable = true;
     jq.enable = true;
-    java = {
-      enable = true;
-      package = pkgs.jdk21;
-    };
     k9s.enable = true;
     lazygit.enable = true;
     less.enable = true;
@@ -138,8 +134,6 @@
     nix-index.enable = true;
     pandoc.enable = true;
     ripgrep.enable = true;
-    starship.enable = true;
     yt-dlp.enable = true;
-    zoxide.enable = true;
   };
 }

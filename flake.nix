@@ -14,14 +14,13 @@
   };
 
   inputs = {
-    # package repos
-    stable.url = "github:nixos/nixpkgs/nixos-23.11";
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+    stable.url = "github:nixos/nixpkgs/nixos-24.11";
+    unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.follows = "unstable";
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    devenv.url = "github:cachix/devenv/latest";
-
-    # system management
     nixos-hardware.url = "github:nixos/nixos-hardware";
+    nixGL.url = "github:nix-community/nixGL";
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,33 +33,29 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # shell stuff
-    flake-utils.url = "github:numtide/flake-utils";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs = {
     self,
     darwin,
-    devenv,
-    flake-utils,
     home-manager,
     ...
   } @ inputs: let
-    inherit (flake-utils.lib) eachSystemMap;
+    inherit (inputs.nixpkgs) lib;
+    inherit (lib) elem filterAttrs genAttrs intersectLists map mapAttrs mapAttrs' mapAttrsToList mergeAttrsList nameValuePair platforms;
 
-    isDarwin = system: (builtins.elem system inputs.nixpkgs.lib.platforms.darwin);
+    defaultSystems =
+      intersectLists
+      (platforms.linux ++ platforms.darwin)
+      (platforms.x86_64 ++ platforms.aarch64);
+    darwinSystems = intersectLists defaultSystems platforms.darwin;
+    linuxSystems = intersectLists defaultSystems platforms.linux;
+    eachSystemMap = genAttrs;
+
     homePrefix = system:
-      if isDarwin system
+      if (elem system darwinSystems)
       then "/Users"
       else "/home";
-    defaultSystems = [
-      # "aarch64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
-      "x86_64-linux"
-    ];
 
     # generate a base darwin configuration with the
     # specified hostname, overlays, and any extraModules applied
@@ -73,7 +68,7 @@
       ],
       extraModules ? [],
     }:
-      inputs.darwin.lib.darwinSystem {
+      darwin.lib.darwinSystem {
         inherit system;
         modules = baseModules ++ extraModules;
         specialArgs = {inherit self inputs nixpkgs;};
@@ -109,155 +104,157 @@
           home = {
             inherit username;
             homeDirectory = "${homePrefix system}/${username}";
-            sessionVariables = {
-              NIX_PATH = "nixpkgs=${nixpkgs}:stable=${inputs.stable}\${NIX_PATH:+:}$NIX_PATH";
-            };
           };
         }
       ],
       extraModules ? [],
     }:
-      inputs.home-manager.lib.homeManagerConfiguration rec {
+      inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           inherit system;
-          overlays = builtins.attrValues self.overlays;
+          overlays = [self.overlays.default];
         };
         extraSpecialArgs = {inherit self inputs nixpkgs;};
         modules = baseModules ++ extraModules;
       };
-
-    mkChecks = {
-      arch,
-      os,
-      username ? "kclejeune",
-    }: {
-      "${arch}-${os}" = {
-        "${username}_${os}" =
-          (
-            if os == "darwin"
-            then self.darwinConfigurations
-            else self.nixosConfigurations
-          )
-          ."${username}@${arch}-${os}"
-          .config
-          .system
-          .build
-          .toplevel;
-        "${username}_home" =
-          self.homeConfigurations."${username}@${arch}-${os}".activationPackage;
-        devShell = self.devShells."${arch}-${os}".default;
+    mkHooks = system:
+      inputs.pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          black.enable = true;
+          shellcheck.enable = true;
+          alejandra.enable = true;
+          shfmt.enable = false;
+          stylua.enable = true;
+          deadnix = {
+            enable = true;
+            settings = {
+              edit = true;
+              noLambdaArg = true;
+            };
+          };
+        };
       };
-    };
   in {
-    checks =
-      {}
-      // (mkChecks {
-        arch = "aarch64";
-        os = "darwin";
-      })
-      // (mkChecks {
-        arch = "x86_64";
-        os = "darwin";
-      })
-      // (mkChecks {
-        arch = "aarch64";
-        os = "linux";
-      })
-      // (mkChecks {
-        arch = "x86_64";
-        os = "linux";
-      });
+    checks = mergeAttrsList [
+      # verify devShell + pre-commit hooks; need to work on all platforms
+      (eachSystemMap defaultSystems (
+        system: {
+          devShell = self.devShells.${system}.default;
+          pre-commit-check = mkHooks system;
+        }
+      ))
+      # home-manager checks; add _home suffix to original config to avoid nixos coflict
+      (eachSystemMap defaultSystems (system:
+        mapAttrs'
+        (name: drv: (nameValuePair "${name}_home" drv.activationPackage))
+        (filterAttrs
+          (name: drv: lib.strings.hasSuffix system name)
+          self.homeConfigurations)))
+      # darwin checks; limit these to darwinSystems
+      (eachSystemMap darwinSystems (system:
+        mapAttrs
+        (name: drv: drv.config.system.build.toplevel)
+        (filterAttrs
+          (name: drv: lib.strings.hasSuffix system name)
+          self.darwinConfigurations)))
+      # nixos checks; limit these to linuxSystems
+      (eachSystemMap linuxSystems (system:
+        mapAttrs
+        (name: drv: drv.config.system.build.toplevel)
+        (filterAttrs
+          (name: drv: lib.strings.hasSuffix system name)
+          self.nixosConfigurations)))
+    ];
 
-    darwinConfigurations = {
-      "kclejeune@aarch64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/personal.nix ./modules/darwin/apps.nix];
-      };
-      "kclejeune@x86_64-darwin" = mkDarwinConfig {
-        system = "x86_64-darwin";
-        extraModules = [./profiles/personal.nix ./modules/darwin/apps.nix];
-      };
-      "lejeukc1@aarch64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/work.nix];
-      };
-      "lejeukc1@x86_64-darwin" = mkDarwinConfig {
-        system = "aarch64-darwin";
-        extraModules = [./profiles/work.nix];
-      };
-    };
+    darwinConfigurations =
+      # generate darwin configs for each supported platform
+      mergeAttrsList (
+        # arch-independent configs that can operate on both x86_64-darwin and aarch64-darwin
+        (map
+          (system: {
+            "kclejeune@${system}" = mkDarwinConfig {
+              inherit system;
+              extraModules = [./profiles/personal ./modules/darwin/apps.nix];
+            };
+            "klejeune@${system}" = mkDarwinConfig {
+              inherit system;
+              extraModules = [
+                ./profiles/work
+              ];
+            };
+          })
+          darwinSystems)
+        # and "custom" ones that aren't universal
+        ++ []
+      );
 
-    nixosConfigurations = {
-      "kclejeune@x86_64-linux" = mkNixosConfig {
-        system = "x86_64-linux";
-        hardwareModules = [
-          ./modules/hardware/phil.nix
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
-        ];
-        extraModules = [./profiles/personal.nix];
-      };
-      # "kclejeune@aarch64-linux" = mkNixosConfig {
-      #   system = "aarch64-linux";
-      #   hardwareModules = [./modules/hardware/phil.nix];
-      #   extraModules = [./profiles/personal.nix];
-      # };
-    };
+    nixosConfigurations =
+      # generate nixos configs, if these are ever applicable
+      mergeAttrsList [
+        {
+          "kclejeune@x86_64-linux" = mkNixosConfig {
+            system = "x86_64-linux";
+            hardwareModules = [
+              ./modules/hardware/phil.nix
+              inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t460s
+            ];
+            extraModules = [./profiles/personal];
+          };
+        }
+      ];
 
-    homeConfigurations = {
-      "kclejeune@x86_64-linux" = mkHomeConfig {
-        username = "kclejeune";
-        system = "x86_64-linux";
-        extraModules = [./profiles/home-manager/personal.nix];
-      };
-      # "kclejeune@aarch64-linux" = mkHomeConfig {
-      #   username = "kclejeune";
-      #   system = "aarch64-linux";
-      #   extraModules = [./profiles/home-manager/personal.nix];
-      # };
-      "kclejeune@x86_64-darwin" = mkHomeConfig {
-        username = "kclejeune";
-        system = "x86_64-darwin";
-        extraModules = [./profiles/home-manager/personal.nix];
-      };
-      "kclejeune@aarch64-darwin" = mkHomeConfig {
-        username = "kclejeune";
-        system = "aarch64-darwin";
-        extraModules = [./profiles/home-manager/personal.nix];
-      };
-      "lejeukc1@x86_64-linux" = mkHomeConfig {
-        username = "lejeukc1";
-        system = "x86_64-linux";
-        extraModules = [./profiles/home-manager/work.nix];
-      };
-    };
+    homeConfigurations =
+      # generate home-manager configs for each supported platform
+      mergeAttrsList (
+        (map (system: {
+            "kclejeune@${system}" = mkHomeConfig {
+              inherit system;
+              username = "kclejeune";
+              extraModules = [./profiles/personal/home-manager];
+            };
+            "klejeune@${system}" = mkHomeConfig {
+              inherit system;
+              username = "klejeune";
+              extraModules = [
+                ./profiles/work/home-manager
+              ];
+            };
+          })
+          defaultSystems)
+        # and "custom" ones that aren't universal
+        ++ []
+      );
 
     devShells = eachSystemMap defaultSystems (system: let
       pkgs = import inputs.nixpkgs {
         inherit system;
-        overlays = builtins.attrValues self.overlays;
+        overlays = [self.overlays.default];
       };
+      pre-commit-check = mkHooks system;
     in {
-      default = devenv.lib.mkShell {
-        inherit inputs pkgs;
-        modules = [
-          (import ./devenv.nix)
-        ];
+      default = pkgs.mkShell {
+        inherit (pre-commit-check) shellHook;
+        packages = with pkgs;
+          [
+            bashInteractive
+            fd
+            nixd
+            ripgrep
+            uv
+          ]
+          ++ (mapAttrsToList (name: value: value) self.packages.${system});
+        inputsFrom = pre-commit-check.enabledPackages;
       };
     });
 
     packages = eachSystemMap defaultSystems (system: let
       pkgs = import inputs.nixpkgs {
         inherit system;
-        overlays = builtins.attrValues self.overlays;
+        overlays = [self.overlays.default];
       };
-    in rec {
-      pyEnv =
-        pkgs.python3.withPackages
-        (ps: with ps; [black typer colorama shellingham]);
-      sysdo = pkgs.writeScriptBin "sysdo" ''
-        #! ${pyEnv}/bin/python3
-        ${builtins.readFile ./bin/do.py}
-      '';
+    in {
+      sysdo = pkgs.writeShellScriptBin "sysdo" "${pkgs.uv}/bin/uv run -q ${./bin/sysdo.py} $@";
       cb = pkgs.writeShellScriptBin "cb" ''
         #! ${pkgs.lib.getExe pkgs.bash}
         # universal clipboard, stephen@niedzielski.com
@@ -288,8 +285,8 @@
           alias cbcopy=putclip
           alias cbpaste=getclip
         else
-          alias cbcopy='${pkgs.xclip} -sel c'
-          alias cbpaste='${pkgs.xclip} -sel c -o'
+          alias cbcopy='${pkgs.xclip}/bin/xclip -sel c'
+          alias cbpaste='${pkgs.xclip}/bin/xclip -sel c -o'
         fi
 
         # ------------------------------------------------------------------------------
@@ -322,15 +319,10 @@
     });
 
     overlays = {
-      channels = final: prev: {
-        # expose other channels via overlays
-        stable = import inputs.stable {system = prev.system;};
-      };
-      extraPackages = final: prev: {
+      default = final: prev: {
         sysdo = self.packages.${prev.system}.sysdo;
-        pyEnv = self.packages.${prev.system}.pyEnv;
         cb = self.packages.${prev.system}.cb;
-        devenv = self.packages.${prev.system}.devenv;
+        stable = import inputs.stable {inherit (prev) system;};
       };
     };
   };

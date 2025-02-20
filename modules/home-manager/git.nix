@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.github-cli pkgs.git-crypt];
+  home.packages = [pkgs.github-cli pkgs.git-crypt pkgs.transcrypt];
   programs.git = {
     userName = "Kennan LeJeune";
     enable = true;
@@ -19,6 +19,12 @@
       push.followTags = true;
       push.autoSetupRemote = true;
     };
+    includes = [
+      {
+        path = "~/.gitconfig";
+      }
+    ];
+
     aliases = {
       fix = "commit --amend --no-edit";
       oops = "reset HEAD~1";
