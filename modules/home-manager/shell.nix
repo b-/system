@@ -30,18 +30,9 @@ in {
       neofetch = "fastfetch";
       ncdu = "gdu";
     };
+    packages = [pkgs.atuin];
   };
 
-  programs.atuin = {
-    enable = true;
-    package = pkgs.atuin;
-    daemon.enable = false;
-    settings = {
-      update_check = false;
-      sync_frequency = "15m";
-    };
-    flags = [];
-  };
   # configure zsh custom plugin directory
   xdg = let
     mkZshPlugin = {
